@@ -1,13 +1,12 @@
 import 'package:equatable/equatable.dart';
-import 'package:poly_scheduler/domain/entities/building.dart';
 
 class Room extends Equatable {
   final int id;
+  final int buildingId;
   final String name;
-  final Building building;
 
-  const Room({required this.id, required this.name, required this.building});
+  const Room({required this.id, required this.buildingId, required this.name});
 
   @override
-  List<Object?> get props => [id, name];
+  List<Object?> get props => [id, buildingId, name];
 }

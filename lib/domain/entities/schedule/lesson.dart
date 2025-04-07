@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:poly_scheduler/domain/entities/group.dart';
-import 'package:poly_scheduler/domain/entities/room.dart';
-import 'package:poly_scheduler/domain/entities/teacher.dart';
+
+import '../group.dart';
+import '../room.dart';
+import '../teacher.dart';
 
 class Lesson extends Equatable {
   final String subject;
