@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'building.dart';
-
 class RoomId extends Equatable {
   final int roomId;
   final int buildingId;
@@ -21,7 +20,7 @@ class Room extends Equatable {
   RoomId getId() {
     return RoomId(roomId: id, buildingId: building.id);
   }
-
+    
   @override
   List<Object?> get props => [id, building, name];
 }
