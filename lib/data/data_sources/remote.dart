@@ -8,7 +8,20 @@ import '../models/building.dart';
 import '../models/schedule/week.dart';
 import '../../domain/entities/room.dart';
 
-class RemoteDataSourceImpl {
+abstract class RemoteDataSource {
+  Future<List<TeacherModel>> findTeachers(String query);
+  Future<List<GroupModel>> findGroups(String query);
+
+  Future<List<BuildingModel>> getAllBuildings();
+
+  Future<List<RoomModel>> getAllRoomsOfBuilding(BuildingModel building);
+
+  Future<WeekModel> getScheduleByTeacher(int teacherId, DateTime dayTime);
+  Future<WeekModel> getScheduleByGroup(int groupId, DateTime dayTime);
+  Future<WeekModel> getScheduleByRoom(RoomId roomId, DateTime dayTime);
+}
+
+class RemoteDataSourceImpl implements RemoteDataSource {
   final Client client;
   RemoteDataSourceImpl({required this.client});
 
@@ -17,6 +30,7 @@ class RemoteDataSourceImpl {
     return json.decode(utf8.decode(response.bodyBytes));
   }
 
+  @override
   Future<List<TeacherModel>> findTeachers(String query) async {
     final response = await client.get(
       Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/search/teachers?q=$query'),
@@ -30,6 +44,7 @@ class RemoteDataSourceImpl {
     }
   }
 
+  @override
   Future<List<GroupModel>> findGroups(String query) async {
     final response = await client.get(
       Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/search/groups?q=$query'),
@@ -43,6 +58,7 @@ class RemoteDataSourceImpl {
     }
   }
 
+  @override
   Future<List<BuildingModel>> getAllBuildings() async {
     final response = await client.get(
       Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/buildings'),
@@ -56,6 +72,7 @@ class RemoteDataSourceImpl {
     }
   }
 
+  @override
   Future<List<RoomModel>> getAllRoomsOfBuilding(BuildingModel building) async {
     final response = await client.get(
       Uri.parse(
@@ -77,6 +94,7 @@ class RemoteDataSourceImpl {
     return '${dayTime.year}-${dayTime.month}-${dayTime.day}';
   }
 
+  @override
   Future<WeekModel> getScheduleByTeacher(
     int teacherId,
     DateTime dayTime,
@@ -95,6 +113,7 @@ class RemoteDataSourceImpl {
     }
   }
 
+  @override
   Future<WeekModel> getScheduleByGroup(int groupId, DateTime dayTime) async {
     final response = await client.get(
       Uri.parse(
@@ -110,6 +129,7 @@ class RemoteDataSourceImpl {
     }
   }
 
+  @override
   Future<WeekModel> getScheduleByRoom(RoomId roomId, DateTime dayTime) async {
     final response = await client.get(
       Uri.parse(

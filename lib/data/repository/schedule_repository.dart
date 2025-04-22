@@ -1,4 +1,4 @@
-import '../../domain/repositores/schedule_repository.dart';
+import '../../domain/repositories/schedule_repository.dart';
 
 import '../../domain/entities/group.dart';
 import '../../domain/entities/teacher.dart';
