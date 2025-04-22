@@ -8,22 +8,7 @@ import '../models/building.dart';
 import '../models/schedule/week.dart';
 import '../../domain/entities/room.dart';
 
-abstract class DataSource {
-  Future<List<TeacherModel>> findTeachers(String query);
-  Future<List<GroupModel>> findGroups(String query);
-
-  Future<List<BuildingModel>> getAllBuildings();
-
-  Future<List<RoomModel>> getAllRoomsOfBuilding(int buildingId);
-
-  Future<TeacherModel> getTeacher(int teacherId);
-  Future<GroupModel> getGroup(int groupId);
-  Future<RoomModel> getRoom(RoomId roomId);
-
-  Future<WeekModel> getScheduleByTeacher(int teacherId, DateTime dayTime);
-  Future<WeekModel> getScheduleByGroup(int groupId, DateTime dayTime);
-  Future<WeekModel> getScheduleByRoom(RoomId roomId, DateTime dayTime);
-}
+import 'base.dart';
 
 class RemoteDataSourceImpl implements DataSource {
   final Client client;
