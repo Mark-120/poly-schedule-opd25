@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'building.dart';
+
 class RoomId extends Equatable {
   final int roomId;
   final int buildingId;
@@ -8,6 +9,18 @@ class RoomId extends Equatable {
 
   @override
   List<Object?> get props => [roomId, buildingId];
+
+  factory RoomId.parse(String string) {
+    final splitted = string.split('_');
+    return RoomId(
+      roomId: int.parse(splitted[0]),
+      buildingId: int.parse(splitted[1]),
+    );
+  }
+  @override
+  String toString() {
+    return "${roomId}_$buildingId";
+  }
 }
 
 class Room extends Equatable {
@@ -20,7 +33,7 @@ class Room extends Equatable {
   RoomId getId() {
     return RoomId(roomId: id, buildingId: building.id);
   }
-    
+
   @override
   List<Object?> get props => [id, building, name];
 }

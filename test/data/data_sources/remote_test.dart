@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:poly_scheduler/domain/entities/group.dart';
 import '../../../lib/data/models/schedule/day.dart';
 import '../../../lib/data/models/schedule/lesson.dart';
 import '../../../lib/data/models/schedule/week.dart';
@@ -107,8 +108,8 @@ void main() {
       final groups = await source.findGroups('group');
 
       expect(groups, [
-        GroupModel(id: 1, name: '1', facultyId: 1),
-        GroupModel(id: 2, name: '2', facultyId: 2),
+        GroupModel(id: 1, name: '1'),
+        GroupModel(id: 2, name: '2'),
       ]);
     });
 
@@ -134,20 +135,80 @@ void main() {
   {
    "id": 2,
    "name": "2"
-  }]}"""),
+  }]},
+  "building": {
+    
+  "id": 938,
+  "name": "build",
+  "abbr": "bld",
+  "address": "none"
+  }"""),
             200,
             headers: {'content-type': 'text/plain; charset=utf-8'},
           );
         }),
       );
 
-      final groups = await source.getAllRoomsOfBuilding(building);
+      final groups = await source.getAllRoomsOfBuilding(building.id);
 
       expect(groups, [
         RoomModel(id: 1, name: 'А', building: building),
         RoomModel(id: 2, name: '2', building: building),
       ]);
     });
+
+    test('getRoom', () async {
+      final source = RemoteDataSourceImpl(
+        client: MockClient((request) async {
+          return http.Response("""{
+        "rooms": [
+          {
+          "id": 1612,
+          "name": "24"
+          }
+        ],
+        "building": {
+          "id": 12,
+          "name": "Химический корпус",
+          "abbr": "Хим. к.",
+          "address": ""
+        }
+        }""", 200);
+        }),
+      );
+
+      var group = await source.getGroup(1);
+      expect(group, GroupModel(id: 1, name: 'Group1'));
+    });
+
+    test('getGroup', () async {
+      final source = RemoteDataSourceImpl(
+        client: MockClient((request) async {
+          return http.Response("""{
+            "id": 1,
+            "name": "Group1"
+            }""", 200);
+        }),
+      );
+
+      var group = await source.getGroup(1);
+      expect(group, GroupModel(id: 1, name: 'Group1'));
+    });
+
+    test('getTeacher', () async {
+      final source = RemoteDataSourceImpl(
+        client: MockClient((request) async {
+          return http.Response("""{
+          "id": 1,
+          "full_name": "South"
+         }""", 200);
+        }),
+      );
+
+      var teacher = await source.getTeacher(1);
+      expect(teacher, TeacherModel(id: 1, fullName: 'South'));
+    });
+
     test('getScheduleByGroup', () async {
       final source = RemoteDataSourceImpl(
         client: MockClient((request) async {
@@ -242,8 +303,8 @@ void main() {
                   start: "10:00",
                   end: "11:40",
                   groups: [
-                    GroupModel(id: 101, facultyId: 2, name: "10101"),
-                    GroupModel(id: 102, facultyId: 2, name: "10102"),
+                    GroupModel(id: 101, name: "10101"),
+                    GroupModel(id: 102, name: "10102"),
                   ],
                   auditories: [
                     RoomModel(

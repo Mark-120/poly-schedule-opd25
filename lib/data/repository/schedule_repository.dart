@@ -22,11 +22,7 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
 
   @override
   Future<List<Room>> getAllRoomsOfBuilding(int buildingId) async =>
-      remoteSource.getAllRoomsOfBuilding(
-        (await remoteSource.getAllBuildings()).firstWhere(
-          (x) => x.id == buildingId,
-        ),
-      );
+      remoteSource.getAllRoomsOfBuilding(buildingId);
   @override
   Future<Week> getScheduleByTeacher(int teacherId, DateTime dayTime) =>
       remoteSource.getScheduleByTeacher(teacherId, dayTime);
