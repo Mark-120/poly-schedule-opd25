@@ -11,7 +11,7 @@ import '../../domain/entities/teacher.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/building.dart';
 import '../../domain/entities/schedule/week.dart';
-
+import '../../core/data/date_formater.dart';
 
 import 'base.dart';
 
@@ -88,18 +88,11 @@ class RemoteDataSourceImpl implements DataSource {
     }
   }
 
-  String _getStringFromDayTime(DateTime dayTime) {
-    return '${dayTime.year}-${dayTime.month}-${dayTime.day}';
-  }
-
   @override
-  Future<Week> getScheduleByTeacher(
-    int teacherId,
-    DateTime dayTime,
-  ) async {
+  Future<Week> getScheduleByTeacher(int teacherId, DateTime dayTime) async {
     final response = await client.get(
       Uri.parse(
-        'https://ruz.spbstu.ru/api/v1/ruz/teachers/$teacherId/scheduler?date=${_getStringFromDayTime(dayTime)}',
+        'https://ruz.spbstu.ru/api/v1/ruz/teachers/$teacherId/scheduler?date=${DateFormater.getStringFromDayTime(dayTime)}',
       ),
     );
     if (response.statusCode == 200) {
@@ -115,7 +108,7 @@ class RemoteDataSourceImpl implements DataSource {
   Future<Week> getScheduleByGroup(int groupId, DateTime dayTime) async {
     final response = await client.get(
       Uri.parse(
-        'https://ruz.spbstu.ru/api/v1/ruz/scheduler/$groupId?date=${_getStringFromDayTime(dayTime)}',
+        'https://ruz.spbstu.ru/api/v1/ruz/scheduler/$groupId?date=${DateFormater.getStringFromDayTime(dayTime)}',
       ),
     );
     if (response.statusCode == 200) {
@@ -131,7 +124,7 @@ class RemoteDataSourceImpl implements DataSource {
   Future<Week> getScheduleByRoom(RoomId roomId, DateTime dayTime) async {
     final response = await client.get(
       Uri.parse(
-        'ttps://ruz.spbstu.ru/api/v1/ruz/buildings/${roomId.buildingId}/rooms/${roomId.roomId}/scheduler?date=${_getStringFromDayTime(dayTime)}',
+        'ttps://ruz.spbstu.ru/api/v1/ruz/buildings/${roomId.buildingId}/rooms/${roomId.roomId}/scheduler?date=${DateFormater.getStringFromDayTime(dayTime)}',
       ),
     );
     if (response.statusCode == 200) {
