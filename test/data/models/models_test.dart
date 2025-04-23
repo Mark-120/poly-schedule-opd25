@@ -1,13 +1,9 @@
 import 'dart:convert';
-
-import 'package:http/http.dart';
-import 'package:http/testing.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../lib/domain/entities/teacher.dart';
 
-import '../../../lib/data/models/room.dart';
-import '../../../lib/data/models/building.dart';
-import '../../../lib/data/models/group.dart';
 import '../../../lib/data/models/teacher.dart';
+
 
 
 
@@ -27,9 +23,18 @@ void main() {
     "id": 2,
     "full_name": "2"
     }"""));
-  
     expect(a, b);
   });
+  test('teacherJson', ()  {
+    var a = TeacherModel.fromJson(jsonDecode("""{
+    "id": 2,
+    "full_name": "2"
+    }"""));
+    var c = Teacher(id: 2, fullName: '2');
+    //TeacherModel is a subclass of Teacher, so it's another class and should not be equal
+    expect(a, isNot(c));
+  });
+  
 
   });
 }

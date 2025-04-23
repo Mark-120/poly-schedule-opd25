@@ -1,4 +1,4 @@
-import 'package:poly_scheduler/domain/entities/schedule/week.dart';
+import '../entities/schedule/week.dart';
 import '../entities/group.dart';
 import '../entities/teacher.dart';
 import '../entities/room.dart';

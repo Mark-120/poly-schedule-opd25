@@ -1,25 +1,24 @@
-import '../models/teacher.dart';
-import '../models/group.dart';
-import '../models/room.dart';
-import '../models/building.dart';
-import '../models/schedule/week.dart';
 import '../../domain/entities/room.dart';
+import '../../domain/entities/teacher.dart';
+import '../../domain/entities/group.dart';
+import '../../domain/entities/building.dart';
+import '../../domain/entities/schedule/week.dart';
 
 abstract class DataSource {
-  Future<List<TeacherModel>> findTeachers(String query);
-  Future<List<GroupModel>> findGroups(String query);
+  Future<List<Teacher>> findTeachers(String query);
+  Future<List<Group>> findGroups(String query);
 
-  Future<List<BuildingModel>> getAllBuildings();
+  Future<List<Building>> getAllBuildings();
 
-  Future<List<RoomModel>> getAllRoomsOfBuilding(int buildingId);
+  Future<List<Room>> getAllRoomsOfBuilding(int buildingId);
 
-  Future<TeacherModel> getTeacher(int teacherId);
-  Future<GroupModel> getGroup(int groupId);
-  Future<RoomModel> getRoom(RoomId roomId);
+  Future<Teacher> getTeacher(int teacherId);
+  Future<Group> getGroup(int groupId);
+  Future<Room> getRoom(RoomId roomId);
 
-  Future<WeekModel> getScheduleByTeacher(int teacherId, DateTime dayTime);
-  Future<WeekModel> getScheduleByGroup(int groupId, DateTime dayTime);
-  Future<WeekModel> getScheduleByRoom(RoomId roomId, DateTime dayTime);
+  Future<Week> getScheduleByTeacher(int teacherId, DateTime dayTime);
+  Future<Week> getScheduleByGroup(int groupId, DateTime dayTime);
+  Future<Week> getScheduleByRoom(RoomId roomId, DateTime dayTime);
 }
 
 class PassThroughSource extends DataSource {
@@ -27,40 +26,40 @@ class PassThroughSource extends DataSource {
   PassThroughSource({required this.prevDataSource});
 
   @override
-  Future<List<GroupModel>> findGroups(String query) =>
+  Future<List<Group>> findGroups(String query) =>
       prevDataSource.findGroups(query);
 
   @override
-  Future<List<TeacherModel>> findTeachers(String query) =>
+  Future<List<Teacher>> findTeachers(String query) =>
       prevDataSource.findTeachers(query);
 
   @override
-  Future<List<BuildingModel>> getAllBuildings() =>
+  Future<List<Building>> getAllBuildings() =>
       prevDataSource.getAllBuildings();
 
   @override
-  Future<List<RoomModel>> getAllRoomsOfBuilding(int building) =>
+  Future<List<Room>> getAllRoomsOfBuilding(int building) =>
       prevDataSource.getAllRoomsOfBuilding(building);
 
   @override
-  Future<GroupModel> getGroup(int groupId) => prevDataSource.getGroup(groupId);
+  Future<Group> getGroup(int groupId) => prevDataSource.getGroup(groupId);
 
   @override
-  Future<RoomModel> getRoom(RoomId roomId) => prevDataSource.getRoom(roomId);
+  Future<Room> getRoom(RoomId roomId) => prevDataSource.getRoom(roomId);
 
   @override
-  Future<TeacherModel> getTeacher(int teacherId) =>
+  Future<Teacher> getTeacher(int teacherId) =>
       prevDataSource.getTeacher(teacherId);
 
   @override
-  Future<WeekModel> getScheduleByGroup(int groupId, DateTime dayTime) =>
+  Future<Week> getScheduleByGroup(int groupId, DateTime dayTime) =>
       prevDataSource.getScheduleByGroup(groupId, dayTime);
 
   @override
-  Future<WeekModel> getScheduleByRoom(RoomId roomId, DateTime dayTime) =>
+  Future<Week> getScheduleByRoom(RoomId roomId, DateTime dayTime) =>
       prevDataSource.getScheduleByRoom(roomId, dayTime);
 
   @override
-  Future<WeekModel> getScheduleByTeacher(int teacherId, DateTime dayTime) =>
+  Future<Week> getScheduleByTeacher(int teacherId, DateTime dayTime) =>
       prevDataSource.getScheduleByTeacher(teacherId, dayTime);
 }
