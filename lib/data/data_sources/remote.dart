@@ -7,6 +7,11 @@ import '../models/room.dart';
 import '../models/building.dart';
 import '../models/schedule/week.dart';
 import '../../domain/entities/room.dart';
+import '../../domain/entities/teacher.dart';
+import '../../domain/entities/group.dart';
+import '../../domain/entities/building.dart';
+import '../../domain/entities/schedule/week.dart';
+
 
 import 'base.dart';
 
@@ -20,7 +25,7 @@ class RemoteDataSourceImpl implements DataSource {
   }
 
   @override
-  Future<List<TeacherModel>> findTeachers(String query) async {
+  Future<List<Teacher>> findTeachers(String query) async {
     final response = await client.get(
       Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/search/teachers?q=$query'),
     );
@@ -34,7 +39,7 @@ class RemoteDataSourceImpl implements DataSource {
   }
 
   @override
-  Future<List<GroupModel>> findGroups(String query) async {
+  Future<List<Group>> findGroups(String query) async {
     final response = await client.get(
       Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/search/groups?q=$query'),
     );
@@ -48,7 +53,7 @@ class RemoteDataSourceImpl implements DataSource {
   }
 
   @override
-  Future<List<BuildingModel>> getAllBuildings() async {
+  Future<List<Building>> getAllBuildings() async {
     final response = await client.get(
       Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/buildings'),
     );
@@ -62,7 +67,7 @@ class RemoteDataSourceImpl implements DataSource {
   }
 
   @override
-  Future<List<RoomModel>> getAllRoomsOfBuilding(int building) async {
+  Future<List<Room>> getAllRoomsOfBuilding(int building) async {
     final response = await client.get(
       Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/buildings/$building/rooms'),
     );
@@ -88,7 +93,7 @@ class RemoteDataSourceImpl implements DataSource {
   }
 
   @override
-  Future<WeekModel> getScheduleByTeacher(
+  Future<Week> getScheduleByTeacher(
     int teacherId,
     DateTime dayTime,
   ) async {
@@ -107,7 +112,7 @@ class RemoteDataSourceImpl implements DataSource {
   }
 
   @override
-  Future<WeekModel> getScheduleByGroup(int groupId, DateTime dayTime) async {
+  Future<Week> getScheduleByGroup(int groupId, DateTime dayTime) async {
     final response = await client.get(
       Uri.parse(
         'https://ruz.spbstu.ru/api/v1/ruz/scheduler/$groupId?date=${_getStringFromDayTime(dayTime)}',
@@ -123,7 +128,7 @@ class RemoteDataSourceImpl implements DataSource {
   }
 
   @override
-  Future<WeekModel> getScheduleByRoom(RoomId roomId, DateTime dayTime) async {
+  Future<Week> getScheduleByRoom(RoomId roomId, DateTime dayTime) async {
     final response = await client.get(
       Uri.parse(
         'ttps://ruz.spbstu.ru/api/v1/ruz/buildings/${roomId.buildingId}/rooms/${roomId.roomId}/scheduler?date=${_getStringFromDayTime(dayTime)}',
@@ -139,9 +144,9 @@ class RemoteDataSourceImpl implements DataSource {
   }
 
   @override
-  Future<GroupModel> getGroup(int groupId) async {
+  Future<Group> getGroup(int groupId) async {
     final response = await client.get(
-      Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/groups/${groupId}'),
+      Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/groups/$groupId'),
     );
     if (response.statusCode == 200) {
       return GroupModel.fromJson(_decodeToJson(response));
@@ -153,14 +158,14 @@ class RemoteDataSourceImpl implements DataSource {
   }
 
   @override
-  Future<RoomModel> getRoom(RoomId roomId) async {
+  Future<Room> getRoom(RoomId roomId) async {
     return (await getAllRoomsOfBuilding(
       roomId.buildingId,
     )).firstWhere((x) => x.id == roomId.roomId);
   }
 
   @override
-  Future<TeacherModel> getTeacher(int teacherId) async {
+  Future<Teacher> getTeacher(int teacherId) async {
     final response = await client.get(
       Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/teachers/$teacherId'),
     );

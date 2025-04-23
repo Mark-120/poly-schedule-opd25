@@ -1,8 +1,5 @@
 import '../../../domain/entities/schedule/lesson.dart';
 
-import '../../../domain/entities/group.dart';
-import '../../../domain/entities/room.dart';
-import '../../../domain/entities/teacher.dart';
 import '../group.dart';
 import '../room.dart';
 import '../teacher.dart';

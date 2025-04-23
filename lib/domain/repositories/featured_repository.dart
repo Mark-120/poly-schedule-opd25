@@ -4,14 +4,14 @@ import '../entities/room.dart';
 
 abstract class FeaturedRepository {
   Future<List<Teacher>> getFeaturedTeachers();
-  void setFeaturedTeachers(List<int> newTeacherIds);
-  void addFeaturedTeacher(int newTeacherId);
+  Future<void> setFeaturedTeachers(List<int> newTeacherIds);
+  Future<void> addFeaturedTeacher(int newTeacherId);
 
   Future<List<Group>> getFeaturedGroups();
-  void setFeaturedGroups(List<int> newGroupIds);
-  void addFeaturedGroup(int newGroupId);
+  Future<void> setFeaturedGroups(List<int> newGroupIds);
+  Future<void> addFeaturedGroup(int newGroupId);
 
   Future<List<Room>> getFeaturedRooms();
-  void setFeaturedRooms(List<RoomId> newRoomIds);
-  void addFeaturedRoom(RoomId newRoomId);
+  Future<void> setFeaturedRooms(List<RoomId> newRoomIds);
+  Future<void> addFeaturedRoom(RoomId newRoomId);
 }
