@@ -7,16 +7,16 @@ import 'base.dart';
 
 abstract class FeaturedDataSource {
   Future<List<Teacher>> getFeaturedTeachers();
-  Future<void> setFeaturedTeachers(List<int> newTeacherIds);
-  Future<void> addFeaturedTeacher(int newTeacherId);
+  Future<void> setFeaturedTeachers(List<Teacher> newTeachers);
+  Future<void> addFeaturedTeacher(Teacher newTeacher);
 
   Future<List<Group>> getFeaturedGroups();
-  Future<void> setFeaturedGroups(List<int> newGroupIds);
-  Future<void> addFeaturedGroup(int newGroupId);
+  Future<void> setFeaturedGroups(List<Group> newGroups);
+  Future<void> addFeaturedGroup(Group newGroup);
 
   Future<List<Room>> getFeaturedRooms();
-  Future<void> setFeaturedRooms(List<RoomId> newRoomIds);
-  Future<void> addFeaturedRoom(RoomId newRoomId);
+  Future<void> setFeaturedRooms(List<Room> newRooms);
+  Future<void> addFeaturedRoom(Room newRoom);
 }
 
 class FeaturedDataSourceImpl extends PassThroughSource
@@ -49,21 +49,18 @@ class FeaturedDataSourceImpl extends PassThroughSource
   }
 
   @override
-  Future<void> addFeaturedGroup(int groupId) async {
-    await featuredGroups.put(groupId, await prevDataSource.getGroup(groupId));
+  Future<void> addFeaturedGroup(Group group) async {
+    await featuredGroups.put(group.id, group);
   }
 
   @override
-  Future<void> addFeaturedRoom(RoomId newRoomId) async {
-    await featuredRooms.put(newRoomId, await prevDataSource.getRoom(newRoomId));
+  Future<void> addFeaturedRoom(Room newRoom) async {
+    await featuredRooms.put(newRoom.getId(), newRoom);
   }
 
   @override
-  Future<void> addFeaturedTeacher(int newTeacherId) async {
-    await featuredTeachers.put(
-      newTeacherId,
-      await prevDataSource.getTeacher(newTeacherId),
-    );
+  Future<void> addFeaturedTeacher(Teacher newTeacher) async {
+    await featuredTeachers.put(newTeacher.id, newTeacher);
   }
 
   @override
@@ -82,32 +79,26 @@ class FeaturedDataSourceImpl extends PassThroughSource
   }
 
   @override
-  Future<void> setFeaturedGroups(List<int> newGroupIds) async {
-    var newGroups = await Future.wait(
-      newGroupIds.map((i) async => await getGroup(i)),
-    );
-
+  Future<void> setFeaturedGroups(List<Group> newGroups) async {
     featuredGroups.clear();
-    featuredGroups.putAll(Map.fromIterables(newGroupIds, newGroups));
+    featuredGroups.putAll(
+      Map.fromIterables(newGroups.map((x) => x.id), newGroups),
+    );
   }
 
   @override
-  Future<void> setFeaturedRooms(List<RoomId> newRoomIds) async {
-    var newRooms = await Future.wait(
-      newRoomIds.map((i) async => await getRoom(i)),
-    );
-
+  Future<void> setFeaturedRooms(List<Room> newRooms) async {
     featuredRooms.clear();
-    featuredRooms.putAll(Map.fromIterables(newRoomIds, newRooms));
+    featuredRooms.putAll(
+      Map.fromIterables(newRooms.map((x) => x.getId()), newRooms),
+    );
   }
 
   @override
-  Future<void> setFeaturedTeachers(List<int> newTeacherIds) async {
-    var newTeachers = await Future.wait(
-      newTeacherIds.map((i) async => await getTeacher(i)),
-    );
-
+  Future<void> setFeaturedTeachers(List<Teacher> newTeachers) async {
     featuredTeachers.clear();
-    featuredTeachers.putAll(Map.fromIterables(newTeacherIds, newTeachers));
+    featuredTeachers.putAll(
+      Map.fromIterables(newTeachers.map((x) => x.id), newTeachers),
+    );
   }
 }

@@ -8,16 +8,16 @@ class FeaturedRepositoryImpl implements FeaturedRepository {
   FeaturedDataSource dataSource;
   FeaturedRepositoryImpl({required this.dataSource});
   @override
-  Future<void> addFeaturedGroup(int newGroupId) =>
-      dataSource.addFeaturedGroup(newGroupId);
+  Future<void> addFeaturedGroup(Group newGroup) =>
+      dataSource.addFeaturedGroup(newGroup);
 
   @override
-  Future<void> addFeaturedRoom(RoomId newRoomId) =>
-      dataSource.addFeaturedRoom(newRoomId);
+  Future<void> addFeaturedRoom(Room newRoomI) =>
+      dataSource.addFeaturedRoom(newRoom);
 
   @override
-  Future<void> addFeaturedTeacher(int newTeacherId) =>
-      dataSource.addFeaturedTeacher(newTeacherId);
+  Future<void> addFeaturedTeacher(Teacher newTeacher) =>
+      dataSource.addFeaturedTeacher(newTeacher);
 
   @override
   Future<List<Group>> getFeaturedGroups() => dataSource.getFeaturedGroups();
@@ -30,14 +30,14 @@ class FeaturedRepositoryImpl implements FeaturedRepository {
       dataSource.getFeaturedTeachers();
 
   @override
-  Future<void> setFeaturedGroups(List<int> newGroupIds) =>
-      dataSource.setFeaturedGroups(newGroupIds);
+  Future<void> setFeaturedGroups(List<Group> newGroups) =>
+      dataSource.setFeaturedGroups(newGroups);
 
   @override
-  Future<void> setFeaturedRooms(List<RoomId> newRoomIds) =>
-      dataSource.setFeaturedRooms(newRoomIds);
+  Future<void> setFeaturedRooms(List<Room> newRooms) =>
+      dataSource.setFeaturedRooms(newRooms);
 
   @override
-  Future<void> setFeaturedTeachers(List<int> newTeacherIds) =>
-      dataSource.setFeaturedTeachers(newTeacherIds);
+  Future<void> setFeaturedTeachers(List<Teacher> newTeachers) =>
+      dataSource.setFeaturedTeachers(newTeachers);
 }
