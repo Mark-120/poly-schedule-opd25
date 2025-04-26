@@ -7,8 +7,8 @@ import '../teacher.dart';
 class LessonModel extends Lesson {
   const LessonModel({
     required super.subject,
-    required super.abbr,
     required super.type,
+    required super.typeAbbr,
     required super.start,
     required super.end,
     required super.groups,
@@ -21,8 +21,8 @@ class LessonModel extends Lesson {
   factory LessonModel.fromJson(Map<String, dynamic> json) {
     return LessonModel(
       subject: json['subject'],
-      abbr: json['abbr'],
       type: json['typeObj']['name'],
+      typeAbbr: json['typeObj']['abbr'],
       start: json['time_start'],
       end: json['time_end'],
       groups:
