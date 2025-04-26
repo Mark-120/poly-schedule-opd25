@@ -12,6 +12,7 @@ import '../../domain/entities/group.dart';
 import '../../domain/entities/building.dart';
 import '../../domain/entities/schedule/week.dart';
 import '../../core/data/date_formater.dart';
+import '../../core/exception/remote_exception.dart';
 
 import 'base.dart';
 
@@ -34,7 +35,7 @@ class RemoteDataSourceImpl implements DataSource {
           .map((teacher) => TeacherModel.fromJson(teacher))
           .toList();
     } else {
-      throw Exception('Failed to load teachers from server query is $query');
+      throw RemoteException('Failed to load teachers from server query is $query');
     }
   }
 
@@ -48,7 +49,7 @@ class RemoteDataSourceImpl implements DataSource {
           .map((group) => GroupModel.fromJson(group))
           .toList();
     } else {
-      throw Exception('Failed to load groups from server, query is $query');
+      throw RemoteException('Failed to load groups from server, query is $query');
     }
   }
 
@@ -62,7 +63,7 @@ class RemoteDataSourceImpl implements DataSource {
           .map((group) => BuildingModel.fromJson(group))
           .toList();
     } else {
-      throw Exception('Failed to load buildings from server');
+      throw RemoteException('Failed to load buildings from server');
     }
   }
 
@@ -82,7 +83,7 @@ class RemoteDataSourceImpl implements DataSource {
           )
           .toList();
     } else {
-      throw Exception(
+      throw RemoteException(
         'Failed to load rooms from server from building $building',
       );
     }
@@ -98,7 +99,7 @@ class RemoteDataSourceImpl implements DataSource {
     if (response.statusCode == 200) {
       return WeekModel.fromJson(_decodeToJson(response));
     } else {
-      throw Exception(
+      throw RemoteException(
         'Failed to load schedule from server from teacher $teacherId, date $dayTime',
       );
     }
@@ -114,7 +115,7 @@ class RemoteDataSourceImpl implements DataSource {
     if (response.statusCode == 200) {
       return WeekModel.fromJson(_decodeToJson(response));
     } else {
-      throw Exception(
+      throw RemoteException(
         'Failed to load schedule from server from teacher $groupId, date $dayTime',
       );
     }
@@ -130,7 +131,7 @@ class RemoteDataSourceImpl implements DataSource {
     if (response.statusCode == 200) {
       return WeekModel.fromJson(_decodeToJson(response));
     } else {
-      throw Exception(
+      throw RemoteException(
         'Failed to load schedule from server from room $roomId, date $dayTime',
       );
     }
@@ -144,7 +145,7 @@ class RemoteDataSourceImpl implements DataSource {
     if (response.statusCode == 200) {
       return GroupModel.fromJson(_decodeToJson(response));
     } else {
-      throw Exception(
+      throw RemoteException(
         'Failed to load teacher info from server from teacher $groupId',
       );
     }
@@ -165,7 +166,7 @@ class RemoteDataSourceImpl implements DataSource {
     if (response.statusCode == 200) {
       return TeacherModel.fromJson(_decodeToJson(response));
     } else {
-      throw Exception(
+      throw RemoteException(
         'Failed to load teacher info from server from teacher $teacherId',
       );
     }
