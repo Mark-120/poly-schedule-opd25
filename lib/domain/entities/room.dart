@@ -23,7 +23,7 @@ class RoomId extends Equatable {
   }
 }
 
-class Room extends Equatable {
+class Room {
   final int id;
   final String name;
   final Building building;
@@ -33,7 +33,4 @@ class Room extends Equatable {
   RoomId getId() {
     return RoomId(roomId: id, buildingId: building.id);
   }
-
-  @override
-  List<Object?> get props => [id, building, name];
 }
