@@ -5,7 +5,7 @@ import '../../domain/entities/teacher.dart';
 import '../../domain/entities/room.dart';
 import '../../domain/entities/building.dart';
 import '../../domain/entities/schedule/week.dart';
-import '../../core/data/date_formater.dart';
+import '../../core/date_formater.dart';
 
 class ScheduleRepositoryImpl extends ScheduleRepository {
   final DataSource dataSource;

@@ -12,7 +12,7 @@ class FeaturedRepositoryImpl implements FeaturedRepository {
       dataSource.addFeaturedGroup(newGroup);
 
   @override
-  Future<void> addFeaturedRoom(Room newRoomI) =>
+  Future<void> addFeaturedRoom(Room newRoom) =>
       dataSource.addFeaturedRoom(newRoom);
 
   @override
