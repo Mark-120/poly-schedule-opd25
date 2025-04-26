@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class DateFormater {
   static DateTime truncDate(DateTime input) {
     var truncHour = input.subtract(
@@ -15,5 +17,19 @@ class DateFormater {
 
   static String getStringFromDayTime(DateTime dayTime) {
     return '${dayTime.year}-${dayTime.month}-${dayTime.day}';
+  }
+
+  static String showShortDateToUser(DateTime dateTime) {
+    return DateFormat('dd.MM', 'ru').format(dateTime);
+  }
+
+
+  static String showDateToUser(DateTime dateTime) {
+    return DateFormat('d MMMM', 'ru').format(dateTime);
+  }
+
+  static String showWeekdayToUser(DateTime dateTime) {
+    final weekday = DateFormat('EEEE', 'ru').format(dateTime);
+    return weekday[0].toUpperCase() + weekday.substring(1);
   }
 }

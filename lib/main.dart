@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'presentation/pages/schedule_screen.dart';
 
-void main() {
+void main() async {
+  await initializeDateFormatting('ru', null);
   runApp(const MainApp());
 }
 
@@ -11,7 +13,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: ScheduleScreen(),
     );
   }

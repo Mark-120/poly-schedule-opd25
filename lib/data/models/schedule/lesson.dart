@@ -21,7 +21,7 @@ class LessonModel extends Lesson {
   factory LessonModel.fromJson(Map<String, dynamic> json) {
     return LessonModel(
       subject: json['subject'],
-      abbr: json['abbr'],
+      abbr: json['abbr'] ?? '',
       type: json['typeObj']['name'],
       start: json['time_start'],
       end: json['time_end'],
