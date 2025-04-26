@@ -1,0 +1,43 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Dart
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # скачивание проекта на виртуальную машину
+      - uses: actions/checkout@v4
+
+      #установка flutter sdk
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'  # Можно указать конкретную версию
+
+
+      # установка зависимостей
+      - name: Install dependencies
+        run: flutter pub get
+      
+      # анализ кода
+      - name: Analyze code
+        run: flutter analyze
+        
+      # тестирование
+      - name: Run tests
+        run: flutter test
+
+      # проверка сборки
+      - name: Build APK
+        run: flutter build apk --debug
