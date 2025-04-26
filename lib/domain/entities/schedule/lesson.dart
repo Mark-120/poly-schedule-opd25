@@ -1,13 +1,11 @@
-import 'package:equatable/equatable.dart';
-
 import '../group.dart';
 import '../room.dart';
 import '../teacher.dart';
 
-class Lesson extends Equatable {
+class Lesson {
   final String subject;
-  final String abbr;
   final String type;
+  final String typeAbbr;
   final String start;
   final String end;
   final List<Group> groups;
@@ -18,7 +16,7 @@ class Lesson extends Equatable {
 
   const Lesson({
     required this.subject,
-    required this.abbr,
+    required this.typeAbbr,
     required this.type,
     required this.start,
     required this.end,
@@ -28,18 +26,4 @@ class Lesson extends Equatable {
     required this.webinarUrl,
     required this.lmsUrl,
   });
-
-  @override
-  List<Object?> get props => [
-    subject,
-    abbr,
-    type,
-    start,
-    end,
-    groups,
-    auditories,
-    teachers,
-    webinarUrl,
-    lmsUrl,
-  ];
 }

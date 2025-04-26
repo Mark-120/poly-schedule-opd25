@@ -1,8 +1,6 @@
-import 'package:equatable/equatable.dart';
-
 import 'day.dart';
 
-class Week extends Equatable {
+class Week {
   final DateTime dateStart;
   final DateTime dateEnd;
   final bool isOdd;
@@ -13,7 +11,4 @@ class Week extends Equatable {
     required this.isOdd,
     required this.days,
   });
-
-  @override
-  List<Object?> get props => [dateStart, dateEnd, isOdd, days];
 }

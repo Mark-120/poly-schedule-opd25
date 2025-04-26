@@ -1,10 +1,5 @@
-import 'package:equatable/equatable.dart';
-
-class Group extends Equatable {
+class Group {
   final int id;
   final String name;
   const Group({required this.id, required this.name});
-
-  @override
-  List<Object?> get props => [id, name];
 }
