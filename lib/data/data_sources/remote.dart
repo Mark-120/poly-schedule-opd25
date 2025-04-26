@@ -11,7 +11,7 @@ import '../../domain/entities/teacher.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/building.dart';
 import '../../domain/entities/schedule/week.dart';
-import '../../core/data/date_formater.dart';
+import '../../core/date_formater.dart';
 
 import 'base.dart';
 

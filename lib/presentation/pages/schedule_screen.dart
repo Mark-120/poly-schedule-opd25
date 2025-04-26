@@ -5,15 +5,14 @@ import 'package:poly_scheduler/core/date_formater.dart';
 import 'package:poly_scheduler/data/models/schedule/week.dart';
 import 'package:poly_scheduler/domain/entities/schedule/week.dart';
 
-import '../../core/moked_data/moked_week_json.dart';
-import '../widgets/class_card.dart';
+import '../../core/mocked_data/mocked_week_json.dart';
 import '../widgets/day_section.dart';
 
 
 
 class ScheduleScreen extends StatelessWidget {
 
-  final Week week = WeekModel.fromJson(jsonDecode(MokedWeekJson.mokedWeekJson));
+  final Week week = WeekModel.fromJson(jsonDecode(MockedWeekEntity.mockedWeekJson));
 
   ScheduleScreen({super.key});
 

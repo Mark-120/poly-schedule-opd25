@@ -1,6 +1,6 @@
-class MokedWeekEntity {
+class MockedWeekEntity {
 
-  static const mokedWeekJson = '''{
+  static const mockedWeekJson = '''{
     "week": {
         "date_start": "2025.03.17",
         "date_end": "2025.03.23",
