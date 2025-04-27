@@ -1,4 +1,6 @@
-class Building {
+import 'package:equatable/equatable.dart';
+
+class Building with EquatableMixin {
   final int id;
   final String name;
   final String abbr;
@@ -9,4 +11,6 @@ class Building {
     required this.abbr,
     required this.address,
   });
+  @override
+  List<Object?> get props => [id, name, abbr, address];
 }

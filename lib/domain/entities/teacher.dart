@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class Teacher extends Equatable {
+abstract class Teacher with EquatableMixin {
   final int id;
   final String fullName;
   const Teacher({required this.id, required this.fullName});

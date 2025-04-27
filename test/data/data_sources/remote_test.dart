@@ -22,7 +22,7 @@ void main() {
 
       expect(
         buildings.firstWhere((x) => x.id == 11),
-        BuildingModel(id: 55, name: 'Главное здание', abbr: "ГЗ", address: ''),
+        BuildingModel(id: 11, name: 'Главное здание', abbr: "ГЗ", address: ''),
       );
     });
   });
@@ -52,8 +52,8 @@ void main() {
       final buildings = await source.getAllBuildings();
 
       expect(buildings, [
-        BuildingModel(id: 1, name: 'Building 1', address: 'k1'),
-        BuildingModel(id: 2, name: 'Building 2', address: 'k2'),
+        BuildingModel(id: 1, name: 'Building 1', abbr: "b 1", address: 'k1'),
+        BuildingModel(id: 2, name: 'Building 2', abbr: "b 2", address: 'k2'),
       ]);
     });
 
@@ -117,6 +117,7 @@ void main() {
       BuildingModel building = BuildingModel(
         id: 938,
         name: "build",
+        abbr: "bld",
         address: "none",
       );
 
@@ -298,8 +299,8 @@ void main() {
               lessons: [
                 LessonModel(
                   subject: "Зельеварение",
-                  abbr: "Зельеварение",
                   type: "Лекции",
+                  typeAbbr: "Лек",
                   start: "10:00",
                   end: "11:40",
                   groups: [
@@ -312,6 +313,7 @@ void main() {
                       building: BuildingModel(
                         id: 25,
                         name: "Школа Чародейства и волшебства Хогвартс",
+                        abbr: "Хогвартса",
                         address: "Великобритания",
                       ),
                       name: "Кабинет Зельеварения",

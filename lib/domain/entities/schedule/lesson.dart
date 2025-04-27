@@ -1,8 +1,10 @@
+import 'package:equatable/equatable.dart';
+
 import '../group.dart';
 import '../room.dart';
 import '../teacher.dart';
 
-class Lesson {
+class Lesson with EquatableMixin {
   final String subject;
   final String type;
   final String typeAbbr;
@@ -26,4 +28,18 @@ class Lesson {
     required this.webinarUrl,
     required this.lmsUrl,
   });
+
+  @override
+  List<Object?> get props => [
+    subject,
+    type,
+    typeAbbr,
+    start,
+    end,
+    groups,
+    teachers,
+    auditories,
+    webinarUrl,
+    lmsUrl,
+  ];
 }
