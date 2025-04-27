@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'day.dart';
 
-class Week with EquatableMixin {
+abstract class Week with EquatableMixin {
   final DateTime dateStart;
   final DateTime dateEnd;
   final bool isOdd;

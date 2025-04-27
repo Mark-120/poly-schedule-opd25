@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class Group with EquatableMixin {
+abstract class Group with EquatableMixin {
   final int id;
   final String name;
   const Group({required this.id, required this.name});

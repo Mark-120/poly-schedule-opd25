@@ -4,7 +4,7 @@ import '../group.dart';
 import '../room.dart';
 import '../teacher.dart';
 
-class Lesson with EquatableMixin {
+abstract class Lesson with EquatableMixin {
   final String subject;
   final String type;
   final String typeAbbr;

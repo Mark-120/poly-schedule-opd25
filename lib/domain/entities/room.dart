@@ -23,7 +23,7 @@ class RoomId extends Equatable {
   }
 }
 
-class Room with EquatableMixin {
+abstract class Room with EquatableMixin {
   final int id;
   final String name;
   final Building building;

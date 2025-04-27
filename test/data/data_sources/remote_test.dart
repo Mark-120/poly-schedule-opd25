@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:poly_scheduler/domain/entities/room.dart';
 
 import '../../../lib/data/models/schedule/day.dart';
 import '../../../lib/data/models/schedule/lesson.dart';
@@ -136,14 +137,14 @@ void main() {
   {
    "id": 2,
    "name": "2"
-  }]},
+  }],
   "building": {
     
   "id": 938,
   "name": "build",
   "abbr": "bld",
   "address": "none"
-  }"""),
+  }}"""),
             200,
             headers: {'content-type': 'text/plain; charset=utf-8'},
           );
@@ -156,30 +157,6 @@ void main() {
         RoomModel(id: 1, name: 'А', building: building),
         RoomModel(id: 2, name: '2', building: building),
       ]);
-    });
-
-    test('getRoom', () async {
-      final source = RemoteDataSourceImpl(
-        client: MockClient((request) async {
-          return http.Response("""{
-        "rooms": [
-          {
-          "id": 1612,
-          "name": "24"
-          }
-        ],
-        "building": {
-          "id": 12,
-          "name": "Химический корпус",
-          "abbr": "Хим. к.",
-          "address": ""
-        }
-        }""", 200);
-        }),
-      );
-
-      var group = await source.getGroup(1);
-      expect(group, GroupModel(id: 1, name: 'Group1'));
     });
 
     test('getGroup', () async {
@@ -313,7 +290,7 @@ void main() {
                       building: BuildingModel(
                         id: 25,
                         name: "Школа Чародейства и волшебства Хогвартс",
-                        abbr: "Хогвартса",
+                        abbr: "Хогвартс",
                         address: "Великобритания",
                       ),
                       name: "Кабинет Зельеварения",

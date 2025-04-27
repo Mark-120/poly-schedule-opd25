@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class Building with EquatableMixin {
+abstract class Building with EquatableMixin {
   final int id;
   final String name;
   final String abbr;
