@@ -21,8 +21,8 @@ void main() {
       final buildings = await source.getAllBuildings();
 
       expect(
-        buildings.firstWhere((x) => x.id == 55),
-        BuildingModel(id: 55, name: 'Гидробашня', address: ''),
+        buildings.firstWhere((x) => x.id == 11),
+        BuildingModel(id: 55, name: 'Главное здание', abbr: "ГЗ", address: ''),
       );
     });
   });
