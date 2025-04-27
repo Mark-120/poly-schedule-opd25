@@ -23,7 +23,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'  # Можно указать конкретную версию
+          flutter-version: 3.29.2  # Можно указать конкретную версию
 
 
       # установка зависимостей
