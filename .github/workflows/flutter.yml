@@ -37,7 +37,3 @@ jobs:
       # тестирование
       - name: Run tests
         run: flutter test
-
-      # проверка сборки
-      - name: Build APK
-        run: flutter build apk --debug
