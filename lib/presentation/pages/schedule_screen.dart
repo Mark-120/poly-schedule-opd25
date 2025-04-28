@@ -6,18 +6,26 @@ import 'package:poly_scheduler/data/models/schedule/week.dart';
 import 'package:poly_scheduler/domain/entities/schedule/week.dart';
 
 import '../../core/mocked_data/mocked_week_json.dart';
+import '../../domain/entities/schedule/day.dart';
 import '../widgets/day_section.dart';
 
-
-
 class ScheduleScreen extends StatelessWidget {
-
-  final Week week = WeekModel.fromJson(jsonDecode(MockedWeekEntity.mockedWeekJson));
+  final Week week = WeekModel.fromJson(
+    jsonDecode(MockedWeekEntity.mockedWeekJson),
+  );
 
   ScheduleScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final Map<DateTime, Day> daysWithSchedule = {
+      for (var e in week.days) e.date: e,
+    };
+    final daysToShow = List.generate(
+      6,
+      (i) => week.dateStart.add(Duration(days: i)),
+    );
+
     return Scaffold(
       backgroundColor: const Color(0xFFEFEFEF),
       appBar: AppBar(
@@ -37,7 +45,10 @@ class ScheduleScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(week.isOdd ? 'четная' : 'нечетная', style: TextStyle(color: Colors.white, fontSize: 14)),
+            Text(
+              week.isOdd ? 'четная' : 'нечетная',
+              style: TextStyle(color: Colors.white, fontSize: 14),
+            ),
           ],
         ),
         centerTitle: true,
@@ -49,13 +60,17 @@ class ScheduleScreen extends StatelessWidget {
         ],
       ),
       body: ListView.separated(
-        itemBuilder:(context, index) {
-          final day = week.days[index];
-          return daySection(DateFormater.showDateToUser(day.date) , DateFormater.showWeekdayToUser(day.date), day.lessons);
+        itemBuilder: (context, index) {
+          final date = daysToShow[index];
+          return daySection(
+            DateFormater.showDateToUser(date),
+            DateFormater.showWeekdayToUser(date),
+            daysWithSchedule[date]?.lessons,
+          );
         },
-        itemCount: week.days.length,
+        itemCount: daysToShow.length,
         padding: const EdgeInsets.all(16),
-        separatorBuilder: (context, index) => SizedBox(height: 16,),
+        separatorBuilder: (context, index) => SizedBox(height: 16),
       ),
       bottomNavigationBar: BottomAppBar(
         color: const Color(0xFF4FA24E),

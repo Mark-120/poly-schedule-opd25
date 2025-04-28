@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:poly_scheduler/domain/entities/schedule/lesson.dart';
 import 'package:poly_scheduler/presentation/widgets/class_card.dart';
 
-Widget daySection(String date, String day, List<Lesson> classes) {
+Widget daySection(String date, String day, List<Lesson>? classes) {
   return Container(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -32,23 +32,39 @@ Widget daySection(String date, String day, List<Lesson> classes) {
             ],
           ),
           const SizedBox(height: 10),
-          ...List.generate(classes.length, (index) {
-            final lesson = classes[index];
-            final teachers = lesson.teachers
-                .map((teacher) => teacher.fullName)
-                .join(', ');
-            final auditories = lesson.auditories
-                .map((room) => '${room.name} ауд., ${room.building.name}')
-                .join(';');
-            return classCard(
-              lesson.start,
-              lesson.end,
-              lesson.subject,
-              teachers,
-              lesson.type,
-              auditories,
-            );
-          }),
+          classes == null || classes.isEmpty
+              ? SizedBox(
+                height: 69,
+                child: Center(
+                  child: Text(
+                    'Информация о парах отсутствует',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF244029),
+                    ),
+                  ),
+                ),
+              )
+              : Column(
+                children: List.generate(classes.length, (index) {
+                  final lesson = classes[index];
+                  final teachers = lesson.teachers
+                      .map((teacher) => teacher.fullName)
+                      .join(', ');
+                  final auditories = lesson.auditories
+                      .map((room) => '${room.name} ауд., ${room.building.name}')
+                      .join(';');
+                  return classCard(
+                    lesson.start,
+                    lesson.end,
+                    lesson.subject,
+                    teachers,
+                    lesson.type,
+                    auditories,
+                  );
+                }),
+              ),
         ],
       ),
     ),
