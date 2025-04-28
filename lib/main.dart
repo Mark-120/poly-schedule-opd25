@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:poly_scheduler/presentation/pages/featured_screen.dart';
 
 import 'presentation/pages/schedule_screen.dart';
 
@@ -14,7 +15,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ScheduleScreen(),
+      home: FeaturedScreen(),
     );
   }
 }
