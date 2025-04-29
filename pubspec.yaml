@@ -24,3 +24,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets: 
+    - assets/icons/drag_icon.png
+    - assets/icons/1.5x/drag_icon.png
+    - assets/icons/2.0x/drag_icon.png
+    - assets/icons/3.0x/drag_icon.png
