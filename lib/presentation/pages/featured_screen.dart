@@ -11,24 +11,12 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   bool _editMode = false;
-  List<List<String>> _groupsData;
-  List<List<String>> _originalData;
+  final List<List<String>> _featuredData;
 
   final List<String> _pageTitles = ['Группы', 'Преподаватели', 'Аудитории'];
 
   _FeaturedScreenState()
-    : _groupsData = [
-        List.generate(15, (e) => '5130903/3000$e'),
-        List.generate(4, (e) => 'Филимоненкова Надежда Викторовна'),
-        List.generate(
-          8,
-          (e) =>
-              e == 0
-                  ? '132 ауд. 11 уч. корпус'
-                  : '156 ауд. Гидротехнический уч. корпус',
-        ),
-      ],
-      _originalData = [
+    : _featuredData = [
         List.generate(15, (e) => '5130903/3000$e'),
         List.generate(4, (e) => 'Филимоненкова Надежда Викторовна'),
         List.generate(
@@ -49,25 +37,12 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
   void _toggleEditMode() {
     setState(() {
       _editMode = !_editMode;
-      if (!_editMode) {
-        // При выходе из режима редактирования сохраняем оригинальные данные
-        _originalData = List<List<String>>.from(
-          _groupsData.map((e) => List<String>.from(e)),
-        );
-      }
-    });
-  }
-
-  void _saveChanges() {
-    setState(() {
-      _editMode = false;
-      // Здесь можно добавить сохранение в базу данных
     });
   }
 
   void _deleteItem(int pageIndex, int index) {
     setState(() {
-      _groupsData[pageIndex].removeAt(index);
+      _featuredData[pageIndex].removeAt(index);
     });
   }
 
@@ -76,8 +51,8 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
       if (oldIndex < newIndex) {
         newIndex -= 1;
       }
-      final item = _groupsData[pageIndex].removeAt(oldIndex);
-      _groupsData[pageIndex].insert(newIndex, item);
+      final item = _featuredData[pageIndex].removeAt(oldIndex);
+      _featuredData[pageIndex].insert(newIndex, item);
     });
   }
 
@@ -89,6 +64,10 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
         children: [
           Expanded(
             child: PageView(
+              physics:
+                  _editMode
+                      ? const NeverScrollableScrollPhysics()
+                      : const PageScrollPhysics(),
               controller: _pageController,
               onPageChanged: (index) {
                 setState(() {
@@ -102,32 +81,61 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 57),
-            child: FloatingActionButton(
-              onPressed: _toggleEditMode,
-              child: const Icon(Icons.edit_outlined, color: Colors.white),
-              backgroundColor: Color(0xFF4FA24E),
-              shape: CircleBorder(),
-              elevation: 0,
-            ),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            child:
+                _editMode
+                    ? Padding(
+                      key: ValueKey('add_button'),
+                      padding: const EdgeInsets.only(top: 57),
+                      child: FloatingActionButton(
+                        onPressed: () {},
+                        backgroundColor: Color(0xFF4FA24E),
+                        shape: CircleBorder(),
+                        elevation: 0,
+                        child: const Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 38,
+                        ),
+                      ),
+                    )
+                    : Padding(
+                      key: ValueKey('edit_button'),
+                      padding: const EdgeInsets.only(top: 57),
+                      child: FloatingActionButton(
+                        onPressed: _toggleEditMode,
+                        backgroundColor: Color(0xFF4FA24E),
+                        shape: CircleBorder(),
+                        elevation: 0,
+                        child: const Icon(
+                          Icons.edit_outlined,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 56),
-            child: _bottomIndicator(),
+          AnimatedOpacity(
+            opacity: _editMode ? 0.0 : 1.0,
+            duration: Duration(milliseconds: 500),
+            child: Padding(
+              key: ValueKey('page_routing_dots'),
+              padding: EdgeInsets.symmetric(vertical: 56),
+              child: _bottomIndicator(),
+            ),
           ),
         ],
       ),
-      // floatingActionButton:
-      //     _editMode
-      //         ? null
-      //         : FloatingActionButton(
-      //           onPressed: _toggleEditMode,
-      //           child: const Icon(Icons.edit_outlined, color: Colors.white),
-      //           backgroundColor: const Color(0xFF4FA24E),
-      //           shape: const CircleBorder(),
-      //           elevation: 0,
-      //         ),
+      floatingActionButton:
+          _editMode
+              ? FloatingActionButton(
+                onPressed: _toggleEditMode,
+                backgroundColor: const Color(0xFF4FA24E),
+                shape: const CircleBorder(),
+                elevation: 0,
+                child: const Icon(Icons.done, color: Colors.white, size: 40),
+              )
+              : null,
     );
   }
 
@@ -135,7 +143,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 100, bottom: 65),
+          padding: const EdgeInsets.only(top: 100, bottom: 36),
           child: Column(
             children: [
               Text(
@@ -146,39 +154,52 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                   color: Color(0xFF244029),
                 ),
               ),
-              if (_editMode)
-                const Padding(
-                  padding: EdgeInsets.only(top: 8),
+              AnimatedOpacity(
+                key: ValueKey('edit_title'),
+                opacity: _editMode ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 500),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 2),
                   child: Text(
-                    'Режим редактирования',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                    'режим изменения',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF5F5F5F),
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
+              ),
             ],
           ),
         ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child:
-                _editMode
-                    ? ReorderableListView.builder(
-                      physics: const ClampingScrollPhysics(),
-                      itemCount: _groupsData[pageIndex].length,
-                      onReorder:
-                          (oldIndex, newIndex) =>
-                              _reorderItems(pageIndex, oldIndex, newIndex),
-                      itemBuilder:
-                          (context, index) => _editableCard(pageIndex, index),
-                    )
-                    : ListView.builder(
-                      padding: EdgeInsets.zero,
-                      physics: const ClampingScrollPhysics(),
-                      itemCount: _groupsData[pageIndex].length,
-                      itemBuilder:
-                          (_, index) =>
-                              _featuredCard(_groupsData[pageIndex][index]),
-                    ),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              child:
+                  _editMode
+                      ? ReorderableListView.builder(
+                        key: ValueKey('reorder_list'),
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: _featuredData[pageIndex].length,
+                        onReorder:
+                            (oldIndex, newIndex) =>
+                                _reorderItems(pageIndex, oldIndex, newIndex),
+                        itemBuilder:
+                            (context, index) => _editableCard(pageIndex, index),
+                      )
+                      : ListView.builder(
+                        key: ValueKey('choose_list'),
+                        padding: EdgeInsets.zero,
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: _featuredData[pageIndex].length,
+                        itemBuilder:
+                            (_, index) =>
+                                _featuredCard(_featuredData[pageIndex][index]),
+                      ),
+            ),
           ),
         ),
       ],
@@ -204,6 +225,8 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                   fontWeight: FontWeight.w400,
                   color: Color(0xFF244029),
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -228,19 +251,19 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
               padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
               child: Row(
                 children: [
-                  // const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      _groupsData[pageIndex][index],
+                      _featuredData[pageIndex][index],
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
                         color: Color(0xFF244029),
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Image.asset('assets/icons/drag_icon.png'),
-                  // const SizedBox(width: 8),
                 ],
               ),
             ),
@@ -264,7 +287,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
             onTap: () {
               _pageController.animateToPage(
                 index,
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
               );
             },
