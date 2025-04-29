@@ -15,7 +15,13 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
   final List<List<String>> _groupsData = [
     List.generate(15, (e) => '5130903/3000$e'),
     List.generate(4, (e) => 'Филимоненкова Надежда Викторовна'),
-    List.generate(8, (e) => e == 0 ? '132 ауд. 11 уч. корпус' : '156 ауд. Гидротехнический уч. корпус'),
+    List.generate(
+      8,
+      (e) =>
+          e == 0
+              ? '132 ауд. 11 уч. корпус'
+              : '156 ауд. Гидротехнический уч. корпус',
+    ),
   ];
 
   @override
@@ -49,7 +55,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
             padding: const EdgeInsets.only(top: 57),
             child: FloatingActionButton(
               onPressed: () {},
-              child: const Icon(Icons.edit_outlined, color: Colors.white,),
+              child: const Icon(Icons.edit_outlined, color: Colors.white),
               backgroundColor: Color(0xFF4FA24E),
               shape: CircleBorder(),
               elevation: 0,
@@ -65,34 +71,35 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
   }
 
   Widget _featuredSection(int pageIndex) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                SizedBox(height: 100),
-                Text(
-                  _pageTitles[pageIndex],
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 30,
-                    color: Color(0xFF244029),
-                  ),
-                ),
-                SizedBox(height: 65),
-              ],
+    return Column(
+      children: [
+        // Фиксированный заголовок
+        Padding(
+          padding: const EdgeInsets.only(top: 100, bottom: 65),
+          child: Text(
+            _pageTitles[pageIndex],
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 30,
+              color: Color(0xFF244029),
             ),
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (_, index) => _featuredCard(_groupsData[pageIndex][index]),
-              childCount: _groupsData[pageIndex].length,
+        ),
+
+        // Прокручиваемый список
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              physics: const ClampingScrollPhysics(),
+              itemCount: _groupsData[pageIndex].length,
+              itemBuilder:
+                  (_, index) => _featuredCard(_groupsData[pageIndex][index]),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -107,13 +114,20 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
           padding: const EdgeInsets.symmetric(vertical: 9),
           child: Row(
             children: [
-              SizedBox(width: 16,),
-              Text(groupName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Color(0xFF244029))),
+              SizedBox(width: 16),
+              Text(
+                groupName,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF244029),
+                ),
+              ),
             ],
           ),
         ),
         onTap: () {},
-      )
+      ),
     );
   }
 
@@ -137,7 +151,10 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 23),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _currentPage == index ? Color(0xFF4FA24A) : Color(0xFFACC3AC),
+                color:
+                    _currentPage == index
+                        ? Color(0xFF4FA24A)
+                        : Color(0xFFACC3AC),
               ),
             ),
           );
