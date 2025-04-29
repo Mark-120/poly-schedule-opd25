@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/featured_card.dart';
+
 class FeaturedScreen extends StatefulWidget {
   const FeaturedScreen({super.key});
 
@@ -197,42 +199,12 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                         itemCount: _featuredData[pageIndex].length,
                         itemBuilder:
                             (_, index) =>
-                                _featuredCard(_featuredData[pageIndex][index]),
+                                featuredCard(_featuredData[pageIndex][index]),
                       ),
             ),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _featuredCard(String groupName) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      elevation: 0,
-      color: const Color(0xFFCFE3CF),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(15),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 9),
-          child: Row(
-            children: [
-              SizedBox(width: 16),
-              Text(
-                groupName,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF244029),
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-        onTap: () {},
-      ),
     );
   }
 

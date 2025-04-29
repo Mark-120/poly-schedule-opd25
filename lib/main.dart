@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:poly_scheduler/presentation/pages/featured_screen.dart';
+import 'package:poly_scheduler/presentation/pages/group_search_screen.dart';
 
 void main() async {
   await initializeDateFormatting('ru', null);
@@ -12,8 +12,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: FeaturedScreen(),
-    );
+    return MaterialApp(home: GroupSearchScreen());
   }
 }
