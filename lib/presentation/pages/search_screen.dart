@@ -1,35 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:poly_scheduler/presentation/search_screen_type.dart';
 import 'package:poly_scheduler/presentation/widgets/featured_card.dart';
 
-class GroupSearchScreen extends StatefulWidget {
-  const GroupSearchScreen({super.key});
+class SearchScreen extends StatefulWidget {
+  final SearchScreenType searchScreenType;
+  const SearchScreen({super.key, required this.searchScreenType});
 
   @override
-  State<GroupSearchScreen> createState() => _GroupSearchScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _GroupSearchScreenState extends State<GroupSearchScreen> {
+class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<String> _searchResults = [];
-  final List<String> _allGroups = [
-    '5130903/30001',
-    '5130903/30002',
-    '5130903/30003',
-    '5130904/30001',
-    '5130904/30002',
-    '5130905/30001',
-  ];
-  int _chosenIndex;
-  bool _isChosen;
+  late final List<String> _allFeatured;
+  int _chosenIndex = 0;
+  bool _isChosen = false;
 
-  _GroupSearchScreenState() : _chosenIndex = 0, _isChosen = false;
+  @override
+  void initState() {
+    super.initState();
+    _chosenIndex = 0;
+    _isChosen = false;
+    _allFeatured = _getFeaturedListByType(widget.searchScreenType);
+  }
 
   void _performSearch(String query) {
     setState(() {
       _searchResults =
-          _allGroups
+          _allFeatured
               .where(
-                (group) => group.toLowerCase().contains(query.toLowerCase()),
+                (featured) =>
+                    featured.toLowerCase().contains(query.toLowerCase()),
               )
               .toList();
       _isChosen = false;
@@ -40,6 +42,8 @@ class _GroupSearchScreenState extends State<GroupSearchScreen> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+    _chosenIndex = 0;
+    _isChosen = false;
   }
 
   @override
@@ -52,8 +56,12 @@ class _GroupSearchScreenState extends State<GroupSearchScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 40),
-            const Text(
-              'Поиск группы',
+            Text(
+              _getStringByType(
+                widget.searchScreenType,
+                groupString: 'Поиск группы',
+                teacherString: 'Поиск преподавателя',
+              ),
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 30,
@@ -96,7 +104,11 @@ class _GroupSearchScreenState extends State<GroupSearchScreen> {
           cursorColor: Color(0xFF244029),
           selectionControls: materialTextSelectionHandleControls,
           decoration: InputDecoration(
-            hintText: 'Введите номер группы...',
+            hintText: _getStringByType(
+              widget.searchScreenType,
+              groupString: 'Введите номер группы...',
+              teacherString: 'Введите ФИО преподавателя...',
+            ),
             hintStyle: TextStyle(color: Color(0xFF5F5F5F)),
             isDense: true,
             border: InputBorder.none,
@@ -129,7 +141,7 @@ class _GroupSearchScreenState extends State<GroupSearchScreen> {
     if (_searchResults.isEmpty) {
       return Center(
         child: Text(
-          'Группы "${_searchController.text}" не найдены',
+          'По запросу "${_searchController.text}" ничего не найдено',
           style: const TextStyle(color: Colors.grey),
         ),
       );
@@ -152,5 +164,41 @@ class _GroupSearchScreenState extends State<GroupSearchScreen> {
         );
       },
     );
+  }
+
+  List<String> _getFeaturedListByType(SearchScreenType searchScreenType) {
+    switch (searchScreenType) {
+      case SearchScreenType.groups:
+        return [
+          '5130903/30001',
+          '5130903/30002',
+          '5130903/30003',
+          '5130904/30001',
+          '5130904/30002',
+          '5130905/30001',
+        ];
+      case SearchScreenType.teachers:
+        return [
+          'Филимоненкова Надежда Викторовна',
+          'Щукин Александр Валентинович',
+          'Пак Вадим Геннадьевич',
+          'Андрианова Екатерина Евгеньевна',
+          'Хитров Егор Германович',
+          'Бышук Галина Владимировна',
+        ];
+    }
+  }
+
+  String _getStringByType(
+    SearchScreenType searchScreenType, {
+    required String groupString,
+    required String teacherString,
+  }) {
+    switch (searchScreenType) {
+      case SearchScreenType.groups:
+        return groupString;
+      case SearchScreenType.teachers:
+        return teacherString;
+    }
   }
 }
