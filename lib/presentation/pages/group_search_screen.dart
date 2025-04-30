@@ -146,7 +146,6 @@ class _GroupSearchScreenState extends State<GroupSearchScreen> {
           onTap: () {
             setState(() {
               _chosenIndex = index;
-              print('chosen index: $index');
               _isChosen = true;
             });
           },
