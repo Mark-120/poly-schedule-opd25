@@ -20,8 +20,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    _chosenIndex = 0;
-    _isChosen = false;
     _allFeatured = _getFeaturedListByType(widget.searchScreenType);
   }
 
@@ -42,8 +40,6 @@ class _SearchScreenState extends State<SearchScreen> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
-    _chosenIndex = 0;
-    _isChosen = false;
   }
 
   @override
