@@ -4,6 +4,7 @@ Widget featuredCard(
   String featureName, {
   Function()? onTap,
   bool isChosen = false,
+  bool isCenterText = false,
 }) {
   return Card(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -14,21 +15,16 @@ Widget featuredCard(
       onTap: onTap ?? () {},
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                featureName,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: isChosen ? Colors.white : Color(0xFF244029),
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
+        child: Text(
+          featureName,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            color: isChosen ? Colors.white : Color(0xFF244029),
+          ),
+          textAlign: isCenterText ? TextAlign.center : null,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     ),

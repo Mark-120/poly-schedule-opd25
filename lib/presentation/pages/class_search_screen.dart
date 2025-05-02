@@ -17,7 +17,15 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
   @override
   void initState() {
     super.initState();
-    _allClasses = List.generate(40, (i) => '1$i');
+    _allClasses =
+        List.generate(40, (i) => '1$i') +
+        [
+          'Белый зал',
+          'Практическая',
+          'Спорт. зал',
+          '1202 ГПН, лекционная',
+          'ЛБиБ ВШБСиТ',
+        ];
   }
 
   @override
@@ -82,6 +90,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
         return featuredCard(
           _allClasses[index],
           isChosen: index == _chosenIndex && _isChosen,
+          isCenterText: true,
           onTap: () {
             setState(() {
               _chosenIndex = index;
