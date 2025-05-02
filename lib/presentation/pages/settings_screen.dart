@@ -112,51 +112,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         SizedBox(width: 16),
         Expanded(child: _buildThemeDropdown(value, valueList, onTap)),
-        // DropdownButton<String>(
-        //   items: List.generate(
-        //     valueList.length,
-        //     (i) => DropdownMenuItem(
-        //       value: valueList[i],
-        //       child: Text(valueList[i]),
-        //     ),
-        //   ),
-        //   onChanged: onTap,
-        // ),
-        // Expanded(
-        //   child: Card(
-        //     shape: RoundedRectangleBorder(
-        //       borderRadius: BorderRadius.circular(15),
-        //     ),
-        //     elevation: 0,
-        //     color: const Color(0xFFCFE3CF),
-        //     child: InkWell(
-        //       borderRadius: BorderRadius.circular(15),
-        //       onTap: onTap,
-        //       child: Padding(
-        //         padding: const EdgeInsets.symmetric(
-        //           vertical: 9,
-        //           horizontal: 16,
-        //         ),
-        //         child: Row(
-        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //           children: [
-        //             Text(
-        //               value,
-        // style: TextStyle(
-        //   fontSize: 16,
-        //   fontWeight: FontWeight.w400,
-        //   color: Color(0xFF244029),
-        //               ),
-        //               maxLines: 1,
-        //               overflow: TextOverflow.ellipsis,
-        //             ),
-        //             Icon(Icons.expand_more),
-        //           ],
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ),
       ],
     );
   }
@@ -167,16 +122,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     void Function(String?)? onTap,
   ) {
     return Container(
-      height: 40, 
+      height: 40,
       decoration: BoxDecoration(
-        color: const Color(0xFFCFE3CF), 
+        color: const Color(0xFFCFE3CF),
         borderRadius: BorderRadius.circular(15),
       ),
       child: DropdownButton<String>(
         alignment: AlignmentDirectional.topCenter,
-        value: value, 
+        value: value,
         isExpanded: true,
-        underline: Container(), 
+        underline: Container(),
         items:
             valueList.map((String value) {
               return DropdownMenuItem<String>(
@@ -193,7 +148,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               );
             }).toList(),
-
         onChanged: onTap,
         icon: const Padding(
           padding: EdgeInsets.only(right: 16),
@@ -203,115 +157,5 @@ class _SettingsScreenState extends State<SettingsScreen> {
         borderRadius: BorderRadius.circular(15),
       ),
     );
-  }
-
-  void _showThemePicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                'Выберите тему',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-            ..._themeOptions.map(
-              (theme) => ListTile(
-                title: Text(theme),
-                trailing:
-                    _selectedTheme == theme
-                        ? const Icon(Icons.check, color: Color(0xFF4CAF50))
-                        : null,
-                onTap: () {
-                  setState(() => _selectedTheme = theme);
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            SizedBox(height: 50),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showLanguagePicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                'Выберите язык',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-            ..._languageOptions.map(
-              (lang) => ListTile(
-                title: Text(lang),
-                trailing:
-                    _selectedLanguage == lang
-                        ? const Icon(Icons.check, color: Color(0xFF4CAF50))
-                        : null,
-                onTap: () {
-                  setState(() => _selectedLanguage = lang);
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            SizedBox(height: 50),
-          ],
-        );
-      },
-    );
-  }
-
-  void _reportBug() {
-    // Реализация отправки сообщения об ошибке
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Сообщить об ошибке'),
-            content: const TextField(
-              maxLines: 5,
-              decoration: InputDecoration(
-                hintText: 'Опишите проблему...',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Отмена'),
-              ),
-              TextButton(
-                onPressed: () {
-                  // Отправка сообщения
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Спасибо за ваш отзыв!')),
-                  );
-                },
-                child: const Text('Отправить'),
-              ),
-            ],
-          ),
-    );
-  }
-
-  void _saveSettings() {
-    // Сохранение настроек
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Настройки сохранены')));
-    Navigator.pop(context);
   }
 }
