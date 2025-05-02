@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:poly_scheduler/presentation/pages/class_search_screen.dart';
-
+import 'class_search_screen.dart';
 import '../widgets/featured_card.dart';
 
 class BuildingSearchScreen extends StatefulWidget {
@@ -102,7 +101,11 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
                 backgroundColor: const Color(0xFF4FA24E),
                 shape: const CircleBorder(),
                 elevation: 0,
-                child: const Icon(Icons.arrow_right_alt, color: Colors.white, size: 40),
+                child: const Icon(
+                  Icons.arrow_right_alt,
+                  color: Colors.white,
+                  size: 40,
+                ),
               )
               : null,
     );

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
-Widget featuredCard(String featureName, {Function()? onTap, bool? isChosen}) {
+Widget featuredCard(
+  String featureName, {
+  Function()? onTap,
+  bool isChosen = false,
+}) {
   return Card(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
     elevation: 0,
-    color: (isChosen ?? false) ? Color(0xFF4FA24A) : const Color(0xFFCFE3CF),
+    color: isChosen ? Color(0xFF4FA24A) : const Color(0xFFCFE3CF),
     child: InkWell(
       borderRadius: BorderRadius.circular(15),
       onTap: onTap ?? () {},
@@ -18,7 +22,7 @@ Widget featuredCard(String featureName, {Function()? onTap, bool? isChosen}) {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
-                  color: (isChosen ?? false) ? Colors.white : Color(0xFF244029),
+                  color: isChosen ? Colors.white : Color(0xFF244029),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
