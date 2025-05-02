@@ -1,0 +1,1 @@
+enum SearchScreenType { groups, teachers }
