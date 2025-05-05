@@ -11,11 +11,6 @@ class AppTheme {
   static const Color s = Colors.white;
   static const Color backgroundLightColor = Color(0xFFF5F5F5);
   static const Color editGray = Color(0xFF5F5F5F);
-  // static const Color cardColor = Color(0xFFCFE3CF);
-  // static const Color secondaryTextColor = Color(0xFF5F5F5F);
-  // static const Color iconColor = Color(0xFF244029);
-  // static const Color textColor = Color(0xFF244029);
-  // static const Color accentColor = Color(0xFF4CAF50);
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -36,7 +31,7 @@ class AppTheme {
         // Используется для заголовка ошибки
         headlineMedium: TextStyle(
           color: Colors.white,
-          fontSize: 20,
+          fontSize: 24,
           fontWeight: FontWeight.bold,
         ),
         //Используется для подзаголовков (дни недели в AppBar на странице "ScheduleScreen")
@@ -45,16 +40,25 @@ class AppTheme {
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        //Отдельный стиль для дня недели в карточке "DaySection"
-        labelLarge: TextStyle(color: Color(0xFF5F7863), fontSize: 20),
         //Отдельный стиль для надписи "Информация о парах отсутствует"
-        labelMedium: TextStyle(
+        displayMedium: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w400,
           color: Color(0xFF244029),
         ),
-        
+        //Отдельный стиль для дня недели в карточке "DaySection"
+        labelLarge: TextStyle(color: Color(0xFF5F7863), fontSize: 20),
+        // Отдельный стиль для
+        labelSmall: TextStyle(color: Colors.white, fontSize: 14),
+        // Стиль для надписей в карточке FeaturedCard
+        bodyLarge: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: Color(0xFF244029),
+        ),
+        bodyMedium: TextStyle(
 
+        )
       ),
       cardTheme: CardTheme(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
