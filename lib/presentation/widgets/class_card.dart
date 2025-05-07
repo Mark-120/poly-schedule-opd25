@@ -51,6 +51,7 @@ Widget classCard(
                       style: const TextStyle(
                         color: Color(0xFF244029),
                         fontWeight: FontWeight.w400,
+                        fontSize: 14,
                         height: 1,
                       ),
                       softWrap: true,

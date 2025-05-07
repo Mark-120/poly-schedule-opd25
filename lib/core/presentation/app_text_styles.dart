@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:poly_scheduler/core/presentation/app_colors.dart';
 
 class AppTextStyles {
   final Brightness brightness;
@@ -6,77 +7,105 @@ class AppTextStyles {
   AppTextStyles(this.brightness);
 
   // Цвета текста для разных тем
-  Color get _textColorPrimary =>
-      brightness == Brightness.light ? Colors.black : Colors.white;
+  Color get _primaryColor =>
+      brightness == Brightness.light
+          ? AppColors.secondaryColor
+          : AppColors.lightGreenColor;
 
-  Color get _textColorSecondary =>
-      brightness == Brightness.light ? Colors.grey[800]! : Colors.grey[300]!;
+  Color get _errorColor =>
+      brightness == Brightness.light
+          ? AppColors.lightGreenColor
+          : AppColors.secondaryColor;
 
-  Color get _textColorAccent =>
-      brightness == Brightness.light ? Colors.blue[700]! : Colors.blue[200]!;
+  Color get _secondaryColor =>
+      brightness == Brightness.light
+          ? AppColors.darkGrayGreenColor
+          : AppColors.lightGrayGreenColor;
+
+  Color get _lessonTypeColor =>
+      brightness == Brightness.light
+          ? AppColors.editGray
+          : AppColors.lightGrayGreenColor;
 
   // Используется для заголовков
-  TextStyle get title =>
-      TextStyle(fontWeight: FontWeight.w600, fontSize: 30, color: titleColor);
+  TextStyle get title => TextStyle(
+    fontWeight: FontWeight.w600,
+    fontSize: 30,
+    color: _primaryColor,
+  );
 
   //SettingsScreen
   TextStyle get itemText => TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w400,
-    color: itemColor,
+    color: _primaryColor,
   );
 
   //ScheduleScreen
-    TextStyle get titleAppbar =>
-      TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold);
-  // Используется для заголовка ошибки
+  TextStyle get titleAppbar => TextStyle(
+    color: AppColors.white,
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+  );
+
+  TextStyle get subtitleAppbar => TextStyle(
+    color: AppColors.white,
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+  );
+
   TextStyle get errorTitle =>
-      TextStyle(fontWeight: FontWeight.w600, fontSize: 30, color: errorColor);
+      TextStyle(fontWeight: FontWeight.w600, fontSize: 30, color: _errorColor);
 
-  // Используется для содержимого ошибки
   TextStyle get errorBody =>
-      TextStyle(fontWeight: FontWeight.w400, fontSize: 18, color: errorColor);
-
-  TextStyle get subtitleAppbar => TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold);
-
-  //Используется для подзаголовков (дни недели в AppBar на странице "ScheduleScreen")
-
-
-
+      TextStyle(fontWeight: FontWeight.w400, fontSize: 18, color: _errorColor);
 
   TextStyle get noInfoMessage => TextStyle(
-    color: noInfoMessageColor,
+    color: _primaryColor,
     fontSize: 24,
     fontWeight: FontWeight.w400,
   );
 
+  TextStyle get titleBottomAppBar => TextStyle(
+    color: AppColors.white,
+    fontWeight: FontWeight.bold,
+    fontSize: 20,
+  );
 
-  TextStyle get 
+  //Стили для карточки "DaySection"
+  TextStyle get subtitleDaySection => TextStyle(
+    color: _secondaryColor,
+    fontSize: 20,
+    fontWeight: FontWeight.w400,
+  );
 
-  //Отдельный стиль для надписи "Информация о парах отсутствует"
-  TextStyle get displayMedium => TextStyle(
+  TextStyle get mainInfoClassCard => TextStyle(
+    color: _primaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get teacherInfoClassCard =>
+      TextStyle(color: _secondaryColor, fontSize: 12, height: 1);
+
+  TextStyle get typeOfLessonClassCard => TextStyle(
+    color: _lessonTypeColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get noLessonsMessage => TextStyle(
+    color: _primaryColor,
     fontSize: 18,
     fontWeight: FontWeight.w400,
-    color: Color(0xFF244029),
   );
-  //Отдельный стиль для дня недели в карточке "DaySection"
-  TextStyle get labelLarge => TextStyle(color: Color(0xFF5F7863), fontSize: 20);
-  // Отдельный стиль для
-  TextStyle get labelSmall => TextStyle(color: Colors.white, fontSize: 14);
-  // Стиль для надписей в карточке FeaturedCard
-  TextStyle get bodyLarge => TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    color: Color(0xFF244029),
-  );
-  TextStyle get bodyMedium => TextStyle();
 
-  // Основные текстовые стили
-  // Используется для содержимого сообщения об ошибке
-  TextStyle get bodyError => TextStyle(
-    color: bodyErrorColor,
-    fontSize: 24,
-    fontWeight: FontWeight.bold,
+  //Стили для экранов добавления Избранного
+
+  TextStyle get subtitleChangeMode => const TextStyle(
+    fontSize: 16,
+    color: Color(0xFF5F5F5F),
+    fontWeight: FontWeight.w400,
   );
 }
 
@@ -85,10 +114,10 @@ class AppTextStylesProvider extends InheritedWidget {
   final AppTextStyles styles;
 
   const AppTextStylesProvider({
-    Key? key,
+    super.key,
     required this.styles,
-    required Widget child,
-  }) : super(key: key, child: child);
+    required super.child,
+  });
 
   static AppTextStyles of(BuildContext context) {
     final result =

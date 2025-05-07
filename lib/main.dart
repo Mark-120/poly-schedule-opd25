@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:poly_scheduler/presentation/pages/schedule_screen.dart';
 import 'package:poly_scheduler/presentation/pages/settings_screen.dart';
 
 void main() async {
@@ -13,7 +14,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SettingsScreen(),
+      home: ScheduleScreen(),
     );
   }
 }
