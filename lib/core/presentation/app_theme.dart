@@ -45,15 +45,3 @@ class AppTheme {
     );
   }
 }
-
-extension CustomTheme on ThemeData {
-  Color get primaryColor =>
-      brightness == Brightness.light
-          ? AppColors.secondaryColor
-          : AppColors.lightGreenColor;
-
-  Color get daySectionBackgroundColor =>
-      brightness == Brightness.light
-          ? AppColors.lightGreenColor
-          : AppColors.secondaryColor;
-}

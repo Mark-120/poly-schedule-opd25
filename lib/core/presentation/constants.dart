@@ -1,5 +1,4 @@
 class AppStrings {
-  
   //Schedule Screen
   static const String evenWeek = 'четная';
   static const String oddWeek = 'нечетная';

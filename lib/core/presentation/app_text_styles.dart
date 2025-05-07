@@ -50,8 +50,8 @@ class AppTextStyles {
 
   TextStyle get subtitleAppbar => TextStyle(
     color: AppColors.white,
-    fontSize: 20,
-    fontWeight: FontWeight.bold,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
   );
 
   TextStyle get errorTitle =>
