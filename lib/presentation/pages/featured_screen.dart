@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:poly_scheduler/core/presentation/app_text_styles.dart';
+import 'package:poly_scheduler/core/presentation/theme_extension.dart';
 
+import '../../core/presentation/constants.dart';
 import '../widgets/featured_card.dart';
 
 class FeaturedScreen extends StatefulWidget {
@@ -15,7 +18,11 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
   bool _editMode = false;
   final List<List<String>> _featuredData;
 
-  final List<String> _pageTitles = ['Группы', 'Преподаватели', 'Аудитории'];
+  final List<String> _pageTitles = [
+    AppStrings.groupsFeaturedPageTitle,
+    AppStrings.lecturersFeaturedPageTitle,
+    AppStrings.classesFeaturedPageTitle,
+  ];
 
   _FeaturedScreenState()
     : _featuredData = [
@@ -60,8 +67,9 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F0F0),
       body: Column(
         children: [
           Expanded(
@@ -76,11 +84,10 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                   _currentPage = index;
                 });
               },
-              children: [
-                _featuredSection(0),
-                _featuredSection(1),
-                _featuredSection(2),
-              ],
+              children: List.generate(
+                _pageTitles.length,
+                (i) => _featuredSection(i, context),
+              ),
             ),
           ),
           AnimatedSwitcher(
@@ -92,12 +99,9 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                       padding: const EdgeInsets.only(top: 57),
                       child: FloatingActionButton(
                         onPressed: () {},
-                        backgroundColor: Color(0xFF4FA24E),
-                        shape: CircleBorder(),
-                        elevation: 0,
-                        child: const Icon(
+                        child: Icon(
                           Icons.add,
-                          color: Colors.white,
+                          color: context.appTheme.iconColor,
                           size: 38,
                         ),
                       ),
@@ -107,12 +111,9 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                       padding: const EdgeInsets.only(top: 57),
                       child: FloatingActionButton(
                         onPressed: _toggleEditMode,
-                        backgroundColor: Color(0xFF4FA24E),
-                        shape: CircleBorder(),
-                        elevation: 0,
-                        child: const Icon(
+                        child: Icon(
                           Icons.edit_outlined,
-                          color: Colors.white,
+                          color: context.appTheme.iconColor,
                         ),
                       ),
                     ),
@@ -132,30 +133,26 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
           _editMode
               ? FloatingActionButton(
                 onPressed: _toggleEditMode,
-                backgroundColor: const Color(0xFF4FA24E),
-                shape: const CircleBorder(),
-                elevation: 0,
-                child: const Icon(Icons.done, color: Colors.white, size: 40),
+                child: Icon(
+                  Icons.done,
+                  color: context.appTheme.iconColor,
+                  size: 40,
+                ),
               )
               : null,
     );
   }
 
-  Widget _featuredSection(int pageIndex) {
+  Widget _featuredSection(int pageIndex, BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 100, bottom: 36),
           child: Column(
             children: [
-              Text(
-                _pageTitles[pageIndex],
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 30,
-                  color: Color(0xFF244029),
-                ),
-              ),
+              Text(_pageTitles[pageIndex], style: textStyles.title),
               AnimatedOpacity(
                 key: ValueKey('edit_title'),
                 opacity: _editMode ? 1.0 : 0.0,
@@ -163,12 +160,8 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                 child: Padding(
                   padding: EdgeInsets.only(top: 2),
                   child: Text(
-                    'режим изменения',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFF5F5F5F),
-                      fontWeight: FontWeight.w400,
-                    ),
+                    AppStrings.editModeSubtitle,
+                    style: textStyles.subtitleChangeMode,
                   ),
                 ),
               ),
@@ -190,7 +183,8 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                             (oldIndex, newIndex) =>
                                 _reorderItems(pageIndex, oldIndex, newIndex),
                         itemBuilder:
-                            (context, index) => _editableCard(pageIndex, index),
+                            (context, index) =>
+                                _editableCard(pageIndex, index, context),
                       )
                       : ListView.builder(
                         key: ValueKey('choose_list'),
@@ -198,8 +192,10 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                         physics: const ClampingScrollPhysics(),
                         itemCount: _featuredData[pageIndex].length,
                         itemBuilder:
-                            (_, index) =>
-                                featuredCard(_featuredData[pageIndex][index]),
+                            (_, index) => featuredCard(
+                              _featuredData[pageIndex][index],
+                              context,
+                            ),
                       ),
             ),
           ),
@@ -208,17 +204,15 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
     );
   }
 
-  Widget _editableCard(int pageIndex, int index) {
+  Widget _editableCard(int pageIndex, int index, BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     return Row(
       key: Key('item_$index'),
       children: [
         Expanded(
           child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            elevation: 0,
-            color: const Color(0xFFCFE3CF),
+            color: context.appTheme.firstLayerCardBackgroundColor,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
               child: Row(
@@ -226,11 +220,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                   Expanded(
                     child: Text(
                       _featuredData[pageIndex][index],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xFF244029),
-                      ),
+                      style: textStyles.itemText,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -242,7 +232,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
           ),
         ),
         IconButton(
-          icon: const Icon(Icons.close, color: Color(0xFF244029)),
+          icon: Icon(Icons.close, color: context.appTheme.secondaryColor),
           onPressed: () => _deleteItem(pageIndex, index),
         ),
       ],
@@ -271,8 +261,8 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                 shape: BoxShape.circle,
                 color:
                     _currentPage == index
-                        ? Color(0xFF4FA24A)
-                        : Color(0xFFACC3AC),
+                        ? context.appTheme.primaryColor
+                        : context.appTheme.secondLayerCardBackgroundColor,
               ),
             ),
           );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:poly_scheduler/core/presentation/theme_extension.dart';
 
 import 'app_colors.dart';
 
@@ -15,7 +16,6 @@ class AppTheme {
       cardTheme: CardTheme(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         elevation: 0,
-        color: AppColors.lightGrayGreenColor,
         margin: const EdgeInsets.only(bottom: 12),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -26,8 +26,10 @@ class AppTheme {
       bottomAppBarTheme: BottomAppBarTheme(color: AppColors.primaryColor),
       extensions: <ThemeExtension<dynamic>>[
         CustomThemeExtension(
-          primaryColor: AppColors.secondaryColor,
-          daySectionBackgroundColor: AppColors.lightGreenColor,
+          primaryColor: AppColors.primaryColor,
+          secondaryColor: AppColors.secondaryColor,
+          firstLayerCardBackgroundColor: AppColors.lightGreenColor,
+          secondLayerCardBackgroundColor: AppColors.lightGrayGreenColor,
           iconColor: AppColors.white,
         ),
       ],
@@ -47,44 +49,17 @@ class AppTheme {
       cardTheme: CardTheme(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         elevation: 0,
-        color: AppColors.darkGrayGreenColor,
         margin: const EdgeInsets.only(bottom: 12),
       ),
       extensions: <ThemeExtension<dynamic>>[
         CustomThemeExtension(
-          primaryColor: AppColors.lightGreenColor,
-          daySectionBackgroundColor: AppColors.secondaryColor,
+          primaryColor: AppColors.primaryColor,
+          secondaryColor: AppColors.lightGreenColor,
+          firstLayerCardBackgroundColor: AppColors.secondaryColor,
+          secondLayerCardBackgroundColor: AppColors.darkGrayGreenColor,
           iconColor: AppColors.white,
         ),
       ],
     );
   }
-}
-
-class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
-  final Color primaryColor;
-  final Color daySectionBackgroundColor;
-  final Color iconColor;
-
-  CustomThemeExtension({
-    required this.primaryColor,
-    required this.daySectionBackgroundColor,
-    required this.iconColor,
-  });
-
-  @override
-  ThemeExtension<CustomThemeExtension> copyWith() => this;
-
-  @override
-  ThemeExtension<CustomThemeExtension> lerp(
-    ThemeExtension<CustomThemeExtension>? other,
-    double t,
-  ) {
-    return this;
-  }
-}
-
-extension ThemeContext on BuildContext {
-  CustomThemeExtension get appTheme =>
-      Theme.of(this).extension<CustomThemeExtension>()!;
 }

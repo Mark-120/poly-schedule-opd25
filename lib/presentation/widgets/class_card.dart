@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:poly_scheduler/core/presentation/app_text_styles.dart';
-import 'package:poly_scheduler/core/presentation/app_theme.dart';
+import 'package:poly_scheduler/core/presentation/theme_extension.dart';
 
 Widget classCard(
   String timeStart,
@@ -26,6 +26,7 @@ Widget classCard(
         ),
       ),
       Card(
+        color: context.appTheme.secondLayerCardBackgroundColor,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
           child: Row(
@@ -54,7 +55,7 @@ Widget classCard(
                   IconButton(
                     icon: Icon(
                       Icons.expand_more,
-                      color: context.appTheme.primaryColor,
+                      color: context.appTheme.secondaryColor,
                     ),
                     onPressed: () {},
                   ),

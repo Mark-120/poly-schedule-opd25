@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:poly_scheduler/core/presentation/app_text_styles.dart';
-import 'package:poly_scheduler/core/presentation/app_theme.dart';
 import 'package:poly_scheduler/core/presentation/constants.dart';
+import 'package:poly_scheduler/core/presentation/theme_extension.dart';
 import 'package:poly_scheduler/domain/entities/schedule/lesson.dart';
 import 'package:poly_scheduler/presentation/widgets/class_card.dart';
 
@@ -16,7 +16,7 @@ Widget daySection(
   return Container(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(15)),
-      color: context.appTheme.daySectionBackgroundColor,
+      color: context.appTheme.firstLayerCardBackgroundColor,
     ),
     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
     child: SingleChildScrollView(
@@ -38,7 +38,7 @@ Widget daySection(
                 child: Center(
                   child: Text(
                     AppStrings.noLessonInfoMessage,
-                    style: textStyles.noLessonsMessage
+                    style: textStyles.noLessonsMessage,
                   ),
                 ),
               )
@@ -58,7 +58,7 @@ Widget daySection(
                     teachers,
                     lesson.type,
                     auditories,
-                    context
+                    context,
                   );
                 }),
               ),
