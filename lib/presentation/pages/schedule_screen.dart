@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:poly_scheduler/core/date_formater.dart';
 import 'package:poly_scheduler/core/presentation/app_text_styles.dart';
+import 'package:poly_scheduler/core/presentation/app_theme.dart';
 import 'package:poly_scheduler/core/presentation/constants.dart';
-import 'package:poly_scheduler/core/presentation/theme_extension.dart';
 import 'package:poly_scheduler/data/models/schedule/week.dart';
 import 'package:poly_scheduler/domain/entities/schedule/week.dart';
 
@@ -34,7 +34,7 @@ class ScheduleScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).iconColor),
+          icon: Icon(Icons.arrow_back_ios, color: context.appTheme.iconColor),
           onPressed: () {},
         ),
         title: Column(
@@ -53,7 +53,7 @@ class ScheduleScreen extends StatelessWidget {
           IconButton(
             icon: Icon(
               Icons.arrow_forward_ios,
-              color: Theme.of(context).iconColor,
+              color: context.appTheme.iconColor,
             ),
             onPressed: () {},
           ),
@@ -66,6 +66,7 @@ class ScheduleScreen extends StatelessWidget {
             DateFormater.showDateToUser(date),
             DateFormater.showWeekdayToUser(date),
             daysWithSchedule[date]?.lessons,
+            context,
           );
         },
         itemCount: daysToShow.length,
@@ -80,7 +81,7 @@ class ScheduleScreen extends StatelessWidget {
             IconButton(
               icon: Icon(
                 Icons.settings_outlined,
-                color: Theme.of(context).iconColor,
+                color: context.appTheme.iconColor,
               ),
               iconSize: 28,
               onPressed: () {},
@@ -89,7 +90,7 @@ class ScheduleScreen extends StatelessWidget {
             IconButton(
               icon: Icon(
                 Icons.star_outline_outlined,
-                color: Theme.of(context).iconColor,
+                color: context.appTheme.iconColor,
               ),
               iconSize: 28,
               onPressed: () {},

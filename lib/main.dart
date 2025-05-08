@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:poly_scheduler/core/presentation/app_theme.dart';
-import 'package:poly_scheduler/presentation/pages/schedule_screen.dart';
-import 'package:poly_scheduler/presentation/pages/settings_screen.dart';
 
+import 'core/presentation/app_theme.dart';
+import 'presentation/pages/schedule_screen.dart';
 import 'core/presentation/app_text_styles.dart';
 
 void main() async {
@@ -19,11 +18,11 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.dark,
       home: Builder(
         builder: (context) {
-          final brightness = MediaQuery.of(context).platformBrightness;
           return AppTextStylesProvider(
-            styles: AppTextStyles(brightness),
+            styles: AppTextStyles(context),
             child: ScheduleScreen(),
           );
         },

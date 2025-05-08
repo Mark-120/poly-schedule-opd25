@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:poly_scheduler/core/presentation/app_text_styles.dart';
+import 'package:poly_scheduler/core/presentation/app_theme.dart';
+import 'package:poly_scheduler/core/presentation/constants.dart';
 import 'package:poly_scheduler/domain/entities/schedule/lesson.dart';
 import 'package:poly_scheduler/presentation/widgets/class_card.dart';
 
-Widget daySection(String date, String day, List<Lesson>? classes) {
+Widget daySection(
+  String date,
+  String day,
+  List<Lesson>? classes,
+  BuildContext context,
+) {
+  final textStyles = AppTextStylesProvider.of(context);
+
   return Container(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(15)),
-      color: Color(0xFFCFE3CF),
+      color: context.appTheme.daySectionBackgroundColor,
     ),
     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
     child: SingleChildScrollView(
@@ -17,18 +27,8 @@ Widget daySection(String date, String day, List<Lesson>? classes) {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                date,
-                style: const TextStyle(
-                  color: Color(0xFF244029),
-                  fontSize: 30,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                day,
-                style: const TextStyle(color: Color(0xFF5F7863), fontSize: 20),
-              ),
+              Text(date, style: textStyles.title),
+              Text(day, style: textStyles.subtitleDaySection),
             ],
           ),
           const SizedBox(height: 10),
@@ -37,12 +37,8 @@ Widget daySection(String date, String day, List<Lesson>? classes) {
                 height: 69,
                 child: Center(
                   child: Text(
-                    'Информация о парах отсутствует',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF244029),
-                    ),
+                    AppStrings.noLessonInfoMessage,
+                    style: textStyles.noLessonsMessage
                   ),
                 ),
               )
@@ -62,6 +58,7 @@ Widget daySection(String date, String day, List<Lesson>? classes) {
                     teachers,
                     lesson.type,
                     auditories,
+                    context
                   );
                 }),
               ),

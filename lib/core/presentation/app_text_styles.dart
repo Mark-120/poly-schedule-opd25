@@ -2,28 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:poly_scheduler/core/presentation/app_colors.dart';
 
 class AppTextStyles {
-  final Brightness brightness;
+  final BuildContext context;
 
-  AppTextStyles(this.brightness);
+  AppTextStyles(this.context);
+
+  Brightness get _brightness => Theme.of(context).brightness;
 
   // Цвета текста для разных тем
   Color get _primaryColor =>
-      brightness == Brightness.light
+      _brightness == Brightness.light
           ? AppColors.secondaryColor
           : AppColors.lightGreenColor;
 
   Color get _errorColor =>
-      brightness == Brightness.light
+      _brightness == Brightness.light
           ? AppColors.lightGreenColor
           : AppColors.secondaryColor;
 
   Color get _secondaryColor =>
-      brightness == Brightness.light
+      _brightness == Brightness.light
           ? AppColors.darkGrayGreenColor
           : AppColors.lightGrayGreenColor;
 
   Color get _lessonTypeColor =>
-      brightness == Brightness.light
+      _brightness == Brightness.light
           ? AppColors.editGray
           : AppColors.lightGrayGreenColor;
 
@@ -83,6 +85,7 @@ class AppTextStyles {
     color: _primaryColor,
     fontSize: 14,
     fontWeight: FontWeight.w400,
+    height: 1,
   );
 
   TextStyle get teacherInfoClassCard =>
@@ -101,7 +104,6 @@ class AppTextStyles {
   );
 
   //Стили для экранов добавления Избранного
-
   TextStyle get subtitleChangeMode => const TextStyle(
     fontSize: 16,
     color: Color(0xFF5F5F5F),
@@ -109,7 +111,7 @@ class AppTextStyles {
   );
 }
 
-// Обёртка для предоставления стилей в дереве виджетов
+//Обёртка для предоставления стилей в дереве виджетов
 class AppTextStylesProvider extends InheritedWidget {
   final AppTextStyles styles;
 
