@@ -183,6 +183,9 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                         itemBuilder:
                             (context, index) =>
                                 _editableCard(pageIndex, index, context),
+                        proxyDecorator:
+                            (child, index, animation) =>
+                                Material(elevation: 0, child: child),
                       )
                       : ListView.builder(
                         key: ValueKey('choose_list'),
@@ -210,6 +213,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
       children: [
         Expanded(
           child: Card(
+            margin: EdgeInsets.symmetric(vertical: 4),
             color: context.appTheme.firstLayerCardBackgroundColor,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
