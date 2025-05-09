@@ -1,15 +1,14 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:poly_scheduler/core/date_formater.dart';
-import 'package:poly_scheduler/core/presentation/app_text_styles.dart';
-import 'package:poly_scheduler/core/presentation/constants.dart';
-import 'package:poly_scheduler/core/presentation/theme_extension.dart';
-import 'package:poly_scheduler/data/models/schedule/week.dart';
-import 'package:poly_scheduler/domain/entities/schedule/week.dart';
 
-import '../../core/mocked_data/mocked_week_json.dart';
+import '../../data/models/schedule/week.dart';
 import '../../domain/entities/schedule/day.dart';
+import '../../domain/entities/schedule/week.dart';
+import '../../core/date_formater.dart';
+import '../../core/mocked_data/mocked_week_json.dart';
+import '../../core/presentation/app_text_styles.dart';
+import '../../core/presentation/constants.dart';
+import '../../core/presentation/theme_extension.dart';
 import '../widgets/day_section.dart';
 
 class ScheduleScreen extends StatelessWidget {

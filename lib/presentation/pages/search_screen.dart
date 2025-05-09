@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:poly_scheduler/presentation/search_screen_type.dart';
-import 'package:poly_scheduler/presentation/widgets/featured_card.dart';
+
+import '../../presentation/widgets/featured_card.dart';
 
 class SearchScreen extends StatefulWidget {
   final SearchScreenType searchScreenType;
@@ -199,3 +199,5 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 }
+
+enum SearchScreenType { groups, teachers }

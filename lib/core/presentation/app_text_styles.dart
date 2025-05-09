@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:poly_scheduler/core/presentation/app_colors.dart';
+
+import 'app_colors.dart';
 
 class AppTextStyles {
   final BuildContext context;
@@ -106,7 +107,7 @@ class AppTextStyles {
   //Стили для экранов добавления Избранного
   TextStyle get subtitleChangeMode => const TextStyle(
     fontSize: 16,
-    color: Color(0xFF5F5F5F),
+    color: AppColors.editGray,
     fontWeight: FontWeight.w400,
   );
 }

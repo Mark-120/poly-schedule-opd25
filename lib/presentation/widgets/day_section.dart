@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:poly_scheduler/core/presentation/app_text_styles.dart';
-import 'package:poly_scheduler/core/presentation/constants.dart';
-import 'package:poly_scheduler/core/presentation/theme_extension.dart';
-import 'package:poly_scheduler/domain/entities/schedule/lesson.dart';
-import 'package:poly_scheduler/presentation/widgets/class_card.dart';
+
+import '../../core/presentation/app_text_styles.dart';
+import '../../core/presentation/constants.dart';
+import '../../core/presentation/theme_extension.dart';
+import '../../domain/entities/schedule/lesson.dart';
+import '../../presentation/widgets/class_card.dart';
 
 Widget daySection(
   String date,
@@ -49,7 +50,7 @@ Widget daySection(
                       .map((teacher) => teacher.fullName)
                       .join(', ');
                   final auditories = lesson.auditories
-                      .map((room) => '${room.name} ауд., ${room.building.name}')
+                      .map((room) => '${room.name} ауд., ${room.building.abbr}')
                       .join(';');
                   return classCard(
                     lesson.start,

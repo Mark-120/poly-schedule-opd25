@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:poly_scheduler/core/presentation/theme_extension.dart';
 
+import 'theme_extension.dart';
 import 'app_colors.dart';
 
 class AppTheme {
@@ -39,13 +39,7 @@ class AppTheme {
   static ThemeData get darkTheme {
     return AppTheme.lightTheme.copyWith(
       brightness: Brightness.dark,
-      primaryColor: AppColors.primaryColor,
       scaffoldBackgroundColor: AppColors.backgroundDarkColor,
-      appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.primaryColor,
-        elevation: 0,
-        centerTitle: true,
-      ),
       cardTheme: CardTheme(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         elevation: 0,
