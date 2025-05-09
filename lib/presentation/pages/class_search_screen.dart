@@ -82,8 +82,8 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
       padding: EdgeInsets.zero,
       children: List.generate(_allClasses.length, (index) {
         return featuredCard(
-          _allClasses[index],
           context,
+          _allClasses[index],
           isChosen: index == _chosenIndex && _isChosen,
           isCenterText: true,
           onTap: () {

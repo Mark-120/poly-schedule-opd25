@@ -5,8 +5,8 @@ import '../../core/presentation/theme_extension.dart';
 import '../../core/presentation/app_colors.dart';
 
 Widget featuredCard(
-  String featureName,
-  BuildContext context, {
+  BuildContext context,
+  String featureName, {
   Function()? onTap,
   bool isChosen = false,
   bool isCenterText = false,

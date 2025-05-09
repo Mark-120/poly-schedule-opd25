@@ -84,7 +84,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
               },
               children: List.generate(
                 _pageTitles.length,
-                (i) => _featuredSection(i, context),
+                (i) => _featuredSection(context, pageIndex: i),
               ),
             ),
           ),
@@ -141,7 +141,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
     );
   }
 
-  Widget _featuredSection(int pageIndex, BuildContext context) {
+  Widget _featuredSection(BuildContext context, {required int pageIndex}) {
     final textStyles = AppTextStylesProvider.of(context);
 
     return Column(
@@ -182,7 +182,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                                 _reorderItems(pageIndex, oldIndex, newIndex),
                         itemBuilder:
                             (context, index) =>
-                                _editableCard(pageIndex, index, context),
+                                _editableCard(context, pageIndex, index),
                         proxyDecorator:
                             (child, index, animation) =>
                                 Material(elevation: 0, child: child),
@@ -194,8 +194,8 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                         itemCount: _featuredData[pageIndex].length,
                         itemBuilder:
                             (_, index) => featuredCard(
-                              _featuredData[pageIndex][index],
                               context,
+                              _featuredData[pageIndex][index],
                             ),
                       ),
             ),
@@ -205,7 +205,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
     );
   }
 
-  Widget _editableCard(int pageIndex, int index, BuildContext context) {
+  Widget _editableCard(BuildContext context, int pageIndex, int index) {
     final textStyles = AppTextStylesProvider.of(context);
 
     return Row(
