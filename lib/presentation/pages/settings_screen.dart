@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:poly_scheduler/core/presentation/app_text_styles.dart';
+import 'package:poly_scheduler/core/presentation/theme_extension.dart';
+
+import '../../core/presentation/constants.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -8,52 +12,32 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _selectedTheme = 'Темная';
-  String _selectedLanguage = 'Русский';
+  String _selectedTheme = AppThemeMode.system.displayName;
 
   final List<String> _themeOptions = ['Светлая', 'Темная', 'Системная'];
-  final List<String> _languageOptions = ['Русский', 'English'];
 
   @override
   Widget build(BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
       body: Padding(
         padding: const EdgeInsets.only(top: 100.0, left: 32, right: 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 40),
-            Text(
-              'Настройки',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 30,
-                color: Color(0xFF244029),
-              ),
-            ),
+            Text(AppStrings.settingsTitle, style: textStyles.title),
             const SizedBox(height: 65),
             _buildSettingItem(
-              title: 'Тема',
+              context,
+              title: AppStrings.themeOption,
               value: _selectedTheme,
               valueList: _themeOptions,
               onTap: (String? newValue) {
                 if (newValue != null) {
                   setState(() {
                     _selectedTheme = newValue;
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildSettingItem(
-              title: 'Язык',
-              value: _selectedLanguage,
-              valueList: _languageOptions,
-              onTap: (String? newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    _selectedLanguage = newValue;
                   });
                 }
               },
@@ -69,14 +53,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onTap: () {},
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 8),
-                    child: const Text(
-                      'Сообщить об ошибке',
-                      style: TextStyle(
-                        color: Color(0xFF4CAF50),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
+                    child: Text(
+                      AppStrings.errorReportButton,
+                      style: textStyles.itemText.copyWith(
+                        color: context.appTheme.primaryColor,
                         decoration: TextDecoration.underline,
-                        decorationColor: Color(0xFF4CAF50),
+                        decorationColor: context.appTheme.primaryColor,
                         decorationThickness: 2,
                       ),
                     ),
@@ -90,15 +72,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        backgroundColor: const Color(0xFF4FA24E),
-        shape: const CircleBorder(),
-        elevation: 0,
-        child: const Icon(Icons.done, color: Colors.white, size: 40),
+        child: Icon(Icons.done, color: context.appTheme.iconColor, size: 40),
       ),
     );
   }
 
-  Widget _buildSettingItem({
+  Widget _buildSettingItem(
+    BuildContext context, {
     required String title,
     required String value,
     required List<String> valueList,
@@ -106,17 +86,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }) {
     return Row(
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 16, color: Color(0xFF244029)),
-        ),
+        Text(title, style: AppTextStylesProvider.of(context).itemText),
         SizedBox(width: 16),
-        Expanded(child: _buildThemeDropdown(value, valueList, onTap)),
+        Expanded(child: _buildThemeDropdown(context, value, valueList, onTap)),
       ],
     );
   }
 
   Widget _buildThemeDropdown(
+    BuildContext context,
     String value,
     List<String> valueList,
     void Function(String?)? onTap,
@@ -124,7 +102,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       height: 40,
       decoration: BoxDecoration(
-        color: const Color(0xFFCFE3CF),
+        color: context.appTheme.firstLayerCardBackgroundColor,
         borderRadius: BorderRadius.circular(15),
       ),
       child: DropdownButton<String>(
@@ -132,6 +110,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
         value: value,
         isExpanded: true,
         underline: Container(),
+        icon: Padding(
+          padding: EdgeInsets.only(right: 16),
+          child: Icon(
+            Icons.expand_more,
+            color: context.appTheme.secondaryColor,
+          ),
+        ),
+        dropdownColor: context.appTheme.firstLayerCardBackgroundColor,
+        borderRadius: BorderRadius.circular(15),
+        onChanged: onTap,
         items:
             valueList.map((String value) {
               return DropdownMenuItem<String>(
@@ -140,22 +128,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     value,
-                    style: const TextStyle(
-                      color: Color(0xFF244029),
-                      fontSize: 16,
-                    ),
+                    style: AppTextStylesProvider.of(context).itemText,
                   ),
                 ),
               );
             }).toList(),
-        onChanged: onTap,
-        icon: const Padding(
-          padding: EdgeInsets.only(right: 16),
-          child: Icon(Icons.expand_more, color: Color(0xFF244029)),
-        ),
-        dropdownColor: const Color(0xFFCFE3CF),
-        borderRadius: BorderRadius.circular(15),
       ),
+    );
+  }
+}
+
+enum AppThemeMode  {
+  light('Светлая'),
+  dark('Темная'),
+  system('Системная');
+
+  final String displayName;
+
+  const AppThemeMode (this.displayName);
+
+  static AppThemeMode fromDisplayName(String displayName) {
+    return values.firstWhere(
+      (e) => e.displayName == displayName,
+      orElse: () => AppThemeMode.system,
     );
   }
 }
