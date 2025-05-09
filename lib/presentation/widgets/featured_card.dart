@@ -14,6 +14,7 @@ Widget featuredCard(
   final textStyles = AppTextStylesProvider.of(context);
 
   return Card(
+    margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
     color:
         isChosen
             ? context.appTheme.primaryColor
