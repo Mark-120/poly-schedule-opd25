@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
 
+import '../../core/presentation/app_text_styles.dart';
+import '../../core/presentation/theme_extension.dart';
+import '../../core/presentation/app_colors.dart';
+
 Widget featuredCard(
+  BuildContext context,
   String featureName, {
   Function()? onTap,
   bool isChosen = false,
   bool isCenterText = false,
 }) {
+  final textStyles = AppTextStylesProvider.of(context);
+
   return Card(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-    elevation: 0,
-    color: isChosen ? Color(0xFF4FA24A) : const Color(0xFFCFE3CF),
+    margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+    color:
+        isChosen
+            ? context.appTheme.primaryColor
+            : context.appTheme.firstLayerCardBackgroundColor,
     child: InkWell(
       borderRadius: BorderRadius.circular(15),
       onTap: onTap ?? () {},
@@ -17,11 +26,10 @@ Widget featuredCard(
         padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
         child: Text(
           featureName,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: isChosen ? Colors.white : Color(0xFF244029),
-          ),
+          style:
+              isChosen
+                  ? textStyles.itemText.copyWith(color: AppColors.white)
+                  : textStyles.itemText,
           textAlign: isCenterText ? TextAlign.center : null,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../core/presentation/app_text_styles.dart';
+import '../../core/presentation/theme_extension.dart';
+import '../../core/presentation/app_strings.dart';
 import '../widgets/featured_card.dart';
 
 class ClassSearchScreen extends StatefulWidget {
@@ -35,33 +38,23 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
       body: Padding(
         padding: const EdgeInsets.only(top: 100, left: 16, right: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 40),
-            Text(
-              'Поиск аудитории',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 30,
-                color: Color(0xFF244029),
-              ),
-            ),
+            Text(AppStrings.classSearchTitle, style: textStyles.title),
             const SizedBox(height: 65),
-            Expanded(child: _buildSearchResults()),
+            Expanded(child: _buildSearchResults(context)),
             Padding(
               padding: EdgeInsets.only(top: 88, bottom: 112),
               child: Text(
-                '2/2',
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 24,
-                  color: Color(0xFF244029),
-                ),
+                AppStrings.secondPage,
+                style: textStyles.noInfoMessage,
               ),
             ),
           ],
@@ -71,16 +64,17 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
           _isChosen
               ? FloatingActionButton(
                 onPressed: () {},
-                backgroundColor: const Color(0xFF4FA24E),
-                shape: const CircleBorder(),
-                elevation: 0,
-                child: const Icon(Icons.done, color: Colors.white, size: 40),
+                child: Icon(
+                  Icons.done,
+                  color: context.appTheme.iconColor,
+                  size: 40,
+                ),
               )
               : null,
     );
   }
 
-  Widget _buildSearchResults() {
+  Widget _buildSearchResults(BuildContext context) {
     return GridView.count(
       crossAxisCount: 3,
       childAspectRatio: 3,
@@ -88,6 +82,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
       padding: EdgeInsets.zero,
       children: List.generate(_allClasses.length, (index) {
         return featuredCard(
+          context,
           _allClasses[index],
           isChosen: index == _chosenIndex && _isChosen,
           isCenterText: true,

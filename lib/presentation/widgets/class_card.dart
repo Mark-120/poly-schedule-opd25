@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../core/presentation/app_text_styles.dart';
+import '../../core/presentation/theme_extension.dart';
+
 Widget classCard(
   String timeStart,
   String timeEnd,
@@ -7,37 +10,24 @@ Widget classCard(
   String teacher,
   String type,
   String location,
+  BuildContext context,
 ) {
+  final textStyles = AppTextStylesProvider.of(context);
+
   return Column(
     children: [
       Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              '$timeStart - $timeEnd',
-              style: const TextStyle(
-                color: Color(0xFF244029),
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            Text(
-              location,
-              style: const TextStyle(
-                color: Color(0xFF244029),
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
+            Text('$timeStart - $timeEnd', style: textStyles.mainInfoClassCard),
+            Text(location, style: textStyles.mainInfoClassCard),
           ],
         ),
       ),
       Card(
-        color: Color(0xFFACC3AC),
-        margin: const EdgeInsets.only(bottom: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        color: context.appTheme.secondLayerCardBackgroundColor,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
           child: Row(
@@ -48,21 +38,13 @@ Widget classCard(
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        color: Color(0xFF244029),
-                        fontWeight: FontWeight.w400,
-                        height: 1,
-                      ),
+                      style: textStyles.mainInfoClassCard,
                       softWrap: true,
                     ),
                     SizedBox(height: 6),
                     Text(
                       teacher,
-                      style: const TextStyle(
-                        color: Color(0xFF5F7863),
-                        fontSize: 12,
-                        height: 1,
-                      ),
+                      style: textStyles.teacherInfoClassCard,
                       softWrap: true,
                     ),
                   ],
@@ -70,11 +52,11 @@ Widget classCard(
               ),
               Row(
                 children: [
-                  Text(type, style: const TextStyle(color: Color(0xFF505050))),
+                  Text(type, style: textStyles.typeOfLessonClassCard),
                   IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.expand_more,
-                      color: Color(0xFF244029),
+                      color: context.appTheme.secondaryColor,
                     ),
                     onPressed: () {},
                   ),

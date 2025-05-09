@@ -1,12 +1,14 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:poly_scheduler/core/date_formater.dart';
-import 'package:poly_scheduler/data/models/schedule/week.dart';
-import 'package:poly_scheduler/domain/entities/schedule/week.dart';
 
-import '../../core/mocked_data/mocked_week_json.dart';
+import '../../data/models/schedule/week.dart';
 import '../../domain/entities/schedule/day.dart';
+import '../../domain/entities/schedule/week.dart';
+import '../../core/date_formater.dart';
+import '../../core/mocked_data/mocked_week_json.dart';
+import '../../core/presentation/app_text_styles.dart';
+import '../../core/presentation/app_strings.dart';
+import '../../core/presentation/theme_extension.dart';
 import '../widgets/day_section.dart';
 
 class ScheduleScreen extends StatelessWidget {
@@ -18,6 +20,8 @@ class ScheduleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     final Map<DateTime, Day> daysWithSchedule = {
       for (var e in week.days) e.date: e,
     };
@@ -27,34 +31,29 @@ class ScheduleScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFEFEFEF),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF4FA24E),
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: Icon(Icons.arrow_back_ios, color: context.appTheme.iconColor),
           onPressed: () {},
         ),
         title: Column(
           children: [
             Text(
               '${DateFormater.showShortDateToUser(week.dateStart)} - ${DateFormater.showShortDateToUser(week.dateEnd)}',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 19,
-                fontWeight: FontWeight.bold,
-              ),
+              style: textStyles.titleAppbar,
             ),
             Text(
-              week.isOdd ? 'четная' : 'нечетная',
-              style: TextStyle(color: Colors.white, fontSize: 14),
+              week.isOdd ? AppStrings.oddWeek : AppStrings.evenWeek,
+              style: textStyles.subtitleAppbar,
             ),
           ],
         ),
-        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+            icon: Icon(
+              Icons.arrow_forward_ios,
+              color: context.appTheme.iconColor,
+            ),
             onPressed: () {},
           ),
         ],
@@ -66,6 +65,7 @@ class ScheduleScreen extends StatelessWidget {
             DateFormater.showDateToUser(date),
             DateFormater.showWeekdayToUser(date),
             daysWithSchedule[date]?.lessons,
+            context,
           );
         },
         itemCount: daysToShow.length,
@@ -73,28 +73,23 @@ class ScheduleScreen extends StatelessWidget {
         separatorBuilder: (context, index) => SizedBox(height: 16),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: const Color(0xFF4FA24E),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             IconButton(
-              icon: const Icon(Icons.settings_outlined, color: Colors.white),
+              icon: Icon(
+                Icons.settings_outlined,
+                color: context.appTheme.iconColor,
+              ),
               iconSize: 28,
               onPressed: () {},
             ),
-            const Text(
-              '5130903/30003',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
+            Text('5130903/30003', style: textStyles.titleBottomAppBar),
             IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.star_outline_outlined,
-                color: Colors.white,
+                color: context.appTheme.iconColor,
               ),
               iconSize: 28,
               onPressed: () {},
