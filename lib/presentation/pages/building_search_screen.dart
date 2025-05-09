@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:poly_scheduler/core/presentation/app_text_styles.dart';
+import 'package:poly_scheduler/core/presentation/constants.dart';
+import 'package:poly_scheduler/core/presentation/theme_extension.dart';
 import 'class_search_screen.dart';
 import '../widgets/featured_card.dart';
 
@@ -56,33 +59,23 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
       body: Padding(
         padding: const EdgeInsets.only(top: 100, left: 16, right: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 40),
-            Text(
-              'Поиск здания',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 30,
-                color: Color(0xFF244029),
-              ),
-            ),
+            Text(AppStrings.buildingSearchTitle, style: textStyles.title),
             const SizedBox(height: 65),
             Expanded(child: _buildSearchResults(context)),
             Padding(
               padding: EdgeInsets.only(top: 88, bottom: 112),
               child: Text(
-                '1/2',
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 24,
-                  color: Color(0xFF244029),
-                ),
+                AppStrings.firstPage,
+                style: textStyles.noInfoMessage,
               ),
             ),
           ],
@@ -98,12 +91,9 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
                         builder: (context) => ClassSearchScreen(),
                       ),
                     ),
-                backgroundColor: const Color(0xFF4FA24E),
-                shape: const CircleBorder(),
-                elevation: 0,
-                child: const Icon(
+                child: Icon(
                   Icons.arrow_right_alt,
-                  color: Colors.white,
+                  color: context.appTheme.iconColor,
                   size: 40,
                 ),
               )
