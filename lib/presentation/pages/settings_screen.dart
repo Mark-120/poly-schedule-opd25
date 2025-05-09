@@ -12,9 +12,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _selectedTheme = AppThemeMode.system.displayName;
-
-  final List<String> _themeOptions = ['Светлая', 'Темная', 'Системная'];
+  AppThemeMode _selectedTheme = AppThemeMode.system;
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +31,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               context,
               title: AppStrings.themeOption,
               value: _selectedTheme,
-              valueList: _themeOptions,
-              onTap: (String? newValue) {
+              valueList: AppThemeMode.values,
+              onTap: (AppThemeMode? newValue) {
                 if (newValue != null) {
                   setState(() {
                     _selectedTheme = newValue;
@@ -80,9 +78,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildSettingItem(
     BuildContext context, {
     required String title,
-    required String value,
-    required List<String> valueList,
-    required void Function(String?)? onTap,
+    required AppThemeMode value,
+    required List<AppThemeMode> valueList,
+    required void Function(AppThemeMode?)? onTap,
   }) {
     return Row(
       children: [
@@ -95,9 +93,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildThemeDropdown(
     BuildContext context,
-    String value,
-    List<String> valueList,
-    void Function(String?)? onTap,
+    AppThemeMode value,
+    List<AppThemeMode> valueList,
+    void Function(AppThemeMode?)? onTap,
   ) {
     return Container(
       height: 40,
@@ -105,7 +103,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         color: context.appTheme.firstLayerCardBackgroundColor,
         borderRadius: BorderRadius.circular(15),
       ),
-      child: DropdownButton<String>(
+      child: DropdownButton<AppThemeMode>(
         alignment: AlignmentDirectional.topCenter,
         value: value,
         isExpanded: true,
@@ -121,13 +119,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         borderRadius: BorderRadius.circular(15),
         onChanged: onTap,
         items:
-            valueList.map((String value) {
-              return DropdownMenuItem<String>(
+            valueList.map((AppThemeMode value) {
+              return DropdownMenuItem<AppThemeMode>(
                 value: value,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    value,
+                    value.displayName,
                     style: AppTextStylesProvider.of(context).itemText,
                   ),
                 ),
@@ -138,14 +136,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 }
 
-enum AppThemeMode  {
+enum AppThemeMode {
   light('Светлая'),
   dark('Темная'),
   system('Системная');
 
   final String displayName;
 
-  const AppThemeMode (this.displayName);
+  const AppThemeMode(this.displayName);
 
   static AppThemeMode fromDisplayName(String displayName) {
     return values.firstWhere(

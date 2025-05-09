@@ -18,7 +18,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       home: Builder(
         builder: (context) {
           return AppTextStylesProvider(
