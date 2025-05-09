@@ -67,8 +67,6 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textStyles = AppTextStylesProvider.of(context);
-
     return Scaffold(
       body: Column(
         children: [

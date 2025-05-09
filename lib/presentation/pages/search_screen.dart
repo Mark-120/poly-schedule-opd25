@@ -150,6 +150,7 @@ class _SearchScreenState extends State<SearchScreen> {
       itemBuilder: (context, index) {
         return featuredCard(
           _searchResults[index],
+          context,
           isChosen: index == _chosenIndex && _isChosen,
           onTap: () {
             setState(() {

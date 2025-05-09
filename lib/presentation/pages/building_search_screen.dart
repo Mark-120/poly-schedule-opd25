@@ -73,7 +73,7 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
               ),
             ),
             const SizedBox(height: 65),
-            Expanded(child: _buildSearchResults()),
+            Expanded(child: _buildSearchResults(context)),
             Padding(
               padding: EdgeInsets.only(top: 88, bottom: 112),
               child: Text(
@@ -111,7 +111,7 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
     );
   }
 
-  Widget _buildSearchResults() {
+  Widget _buildSearchResults(BuildContext context) {
     return ListView.builder(
       physics: ClampingScrollPhysics(),
       padding: EdgeInsets.zero,
@@ -119,6 +119,7 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
       itemBuilder: (context, index) {
         return featuredCard(
           _allBuildings[index],
+          context,
           isChosen: index == _chosenIndex && _isChosen,
           onTap: () {
             setState(() {

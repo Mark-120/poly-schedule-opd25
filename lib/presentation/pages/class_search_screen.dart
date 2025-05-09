@@ -52,7 +52,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
               ),
             ),
             const SizedBox(height: 65),
-            Expanded(child: _buildSearchResults()),
+            Expanded(child: _buildSearchResults(context)),
             Padding(
               padding: EdgeInsets.only(top: 88, bottom: 112),
               child: Text(
@@ -80,7 +80,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
     );
   }
 
-  Widget _buildSearchResults() {
+  Widget _buildSearchResults(BuildContext context) {
     return GridView.count(
       crossAxisCount: 3,
       childAspectRatio: 3,
@@ -88,7 +88,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
       padding: EdgeInsets.zero,
       children: List.generate(_allClasses.length, (index) {
         return featuredCard(
-          _allClasses[index],
+          _allClasses[index], context,
           isChosen: index == _chosenIndex && _isChosen,
           isCenterText: true,
           onTap: () {
