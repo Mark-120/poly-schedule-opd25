@@ -10,6 +10,9 @@ class AppStrings {
   static const String errorReportButton = 'Сообщить об ошибке';
 
   //Search Screen
+  static const String groupSearchTitle = 'Поиск группы';
+  static const String teacherSearchTitle = 'Поиск преподавателя';
+
   static const String searchGroupHint = 'Введите номер группы...';
   static const String searchTeacherHint = 'Введите ФИО преподавателя...';
 

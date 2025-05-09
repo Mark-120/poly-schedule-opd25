@@ -104,6 +104,12 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
   );
 
+  TextStyle get searchField => TextStyle(
+    color: _lessonTypeColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+  );
+
   //Стили для экранов добавления Избранного
   TextStyle get subtitleChangeMode => const TextStyle(
     fontSize: 16,

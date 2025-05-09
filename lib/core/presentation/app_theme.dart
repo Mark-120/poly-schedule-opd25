@@ -31,6 +31,7 @@ class AppTheme {
           firstLayerCardBackgroundColor: AppColors.lightGreenColor,
           secondLayerCardBackgroundColor: AppColors.lightGrayGreenColor,
           iconColor: AppColors.white,
+          searchFieldBackgroundColor: AppColors.white,
         ),
       ],
     );
@@ -52,6 +53,7 @@ class AppTheme {
           firstLayerCardBackgroundColor: AppColors.secondaryColor,
           secondLayerCardBackgroundColor: AppColors.darkGrayGreenColor,
           iconColor: AppColors.white,
+          searchFieldBackgroundColor: AppColors.darkGrayColor,
         ),
       ],
     );

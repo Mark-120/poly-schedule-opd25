@@ -7,7 +7,7 @@ import '../../domain/entities/schedule/week.dart';
 import '../../core/date_formater.dart';
 import '../../core/mocked_data/mocked_week_json.dart';
 import '../../core/presentation/app_text_styles.dart';
-import '../../core/presentation/constants.dart';
+import '../../core/presentation/app_strings.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../widgets/day_section.dart';
 

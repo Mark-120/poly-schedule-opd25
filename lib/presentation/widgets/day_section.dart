@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/presentation/app_text_styles.dart';
-import '../../core/presentation/constants.dart';
+import '../../core/presentation/app_strings.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../../domain/entities/schedule/lesson.dart';
 import '../../presentation/widgets/class_card.dart';

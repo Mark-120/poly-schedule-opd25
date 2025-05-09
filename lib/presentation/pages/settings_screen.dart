@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/presentation/app_text_styles.dart';
-import '../../core/presentation/constants.dart';
+import '../../core/presentation/app_strings.dart';
 import '../../core/presentation/theme_extension.dart';
 
 class SettingsScreen extends StatefulWidget {

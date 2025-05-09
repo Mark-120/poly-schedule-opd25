@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/theme_extension.dart';
-import '../../core/presentation/constants.dart';
+import '../../core/presentation/app_strings.dart';
 import '../widgets/featured_card.dart';
 
 class FeaturedScreen extends StatefulWidget {

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../core/presentation/app_text_styles.dart';
+import '../../core/presentation/theme_extension.dart';
+import '../../core/presentation/app_strings.dart';
 import '../../presentation/widgets/featured_card.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -44,8 +47,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
       body: Padding(
         padding: const EdgeInsets.only(top: 100.0, left: 16, right: 16),
         child: Column(
@@ -55,19 +59,15 @@ class _SearchScreenState extends State<SearchScreen> {
             Text(
               _getStringByType(
                 widget.searchScreenType,
-                groupString: 'Поиск группы',
-                teacherString: 'Поиск преподавателя',
+                groupString: AppStrings.groupSearchTitle,
+                teacherString: AppStrings.teacherSearchTitle,
               ),
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 30,
-                color: Color(0xFF244029),
-              ),
+              style: textStyles.title,
             ),
             const SizedBox(height: 65),
-            _buildSearchField(),
+            _buildSearchField(context),
             const SizedBox(height: 20),
-            Expanded(child: _buildSearchResults()),
+            Expanded(child: _buildSearchResults(context)),
           ],
         ),
       ),
@@ -75,21 +75,24 @@ class _SearchScreenState extends State<SearchScreen> {
           _isChosen
               ? FloatingActionButton(
                 onPressed: () {},
-                backgroundColor: const Color(0xFF4FA24E),
-                shape: const CircleBorder(),
-                elevation: 0,
-                child: const Icon(Icons.done, color: Colors.white, size: 40),
+                child: Icon(
+                  Icons.done,
+                  color: context.appTheme.iconColor,
+                  size: 40,
+                ),
               )
               : null,
     );
   }
 
-  Widget _buildSearchField() {
+  Widget _buildSearchField(BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.appTheme.searchFieldBackgroundColor,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Color(0xFF244029), width: 2),
+        border: Border.all(color: context.appTheme.secondaryColor, width: 2),
       ),
       child: SizedBox(
         height: 40,
@@ -97,39 +100,44 @@ class _SearchScreenState extends State<SearchScreen> {
           textAlignVertical: TextAlignVertical.center,
           controller: _searchController,
           onChanged: _performSearch,
-          cursorColor: Color(0xFF244029),
+          cursorColor: context.appTheme.secondaryColor,
           selectionControls: materialTextSelectionHandleControls,
           decoration: InputDecoration(
             hintText: _getStringByType(
               widget.searchScreenType,
-              groupString: 'Введите номер группы...',
-              teacherString: 'Введите ФИО преподавателя...',
+              groupString: AppStrings.searchGroupHint,
+              teacherString: AppStrings.searchTeacherHint,
             ),
-            hintStyle: TextStyle(color: Color(0xFF5F5F5F)),
+            hintStyle: textStyles.searchField,
             isDense: true,
             border: InputBorder.none,
             contentPadding: EdgeInsets.zero,
             prefixIcon: IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.search,
-                color: Color(0xFF244029),
+                color: context.appTheme.secondaryColor,
                 size: 24,
               ),
               onPressed: () => _performSearch(_searchController.text),
             ),
           ),
-          style: const TextStyle(color: Color(0xFF336633)),
+          style: textStyles.searchField.copyWith(
+            color: context.appTheme.secondaryColor,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSearchResults() {
+  Widget _buildSearchResults(BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     if (_searchController.text.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
-          'Введите запрос для поиска',
-          style: TextStyle(color: Colors.grey),
+          AppStrings.searchCenterHint,
+          style: textStyles.noInfoMessage,
+          textAlign: TextAlign.center,
         ),
       );
     }
@@ -137,8 +145,9 @@ class _SearchScreenState extends State<SearchScreen> {
     if (_searchResults.isEmpty) {
       return Center(
         child: Text(
-          'По запросу "${_searchController.text}" ничего не найдено',
-          style: const TextStyle(color: Colors.grey),
+          AppStrings.emptyResultCenterHint(_searchController.text),
+          style: textStyles.noInfoMessage,
+          textAlign: TextAlign.center,
         ),
       );
     }

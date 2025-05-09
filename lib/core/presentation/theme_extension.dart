@@ -6,6 +6,7 @@ class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
   final Color firstLayerCardBackgroundColor;
   final Color secondLayerCardBackgroundColor;
   final Color iconColor;
+  final Color searchFieldBackgroundColor;
 
   CustomThemeExtension({
     required this.primaryColor,
@@ -13,6 +14,7 @@ class CustomThemeExtension extends ThemeExtension<CustomThemeExtension> {
     required this.firstLayerCardBackgroundColor,
     required this.secondLayerCardBackgroundColor,
     required this.iconColor,
+    required this.searchFieldBackgroundColor,
   });
 
   @override
