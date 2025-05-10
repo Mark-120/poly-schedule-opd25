@@ -1,7 +1,5 @@
 import "package:hive/hive.dart";
 import '../../domain/entities/room.dart';
-import '../../domain/entities/teacher.dart';
-import '../../domain/entities/group.dart';
 import '../../domain/entities/schedule/week.dart';
 import 'base.dart';
 
@@ -37,54 +35,15 @@ class HiveCache<T, K> {
 }
 
 class CacheDataSource extends PassThroughSource {
-  HiveCache<Group, int> groupCache;
-  HiveCache<Room, RoomId> roomCache;
-  HiveCache<Teacher, int> teacherCache;
   HiveCache<Week, (int, DateTime)> groupScheduleCache;
   HiveCache<Week, (RoomId, DateTime)> roomScheduleCache;
   HiveCache<Week, (int, DateTime)> teacherScheduleCache;
   CacheDataSource({
     required super.prevDataSource,
-    required this.roomCache,
-    required this.groupCache,
-    required this.teacherCache,
     required this.groupScheduleCache,
     required this.roomScheduleCache,
     required this.teacherScheduleCache,
   });
-
-  @override
-  Future<Group> getGroup(int groupId) async {
-    var val = groupCache.getValue(groupId);
-    if (val == null) {
-      var newVal = await prevDataSource.getGroup(groupId);
-      groupCache.addValue(groupId, newVal);
-      return newVal;
-    }
-    return val;
-  }
-
-  @override
-  Future<Room> getRoom(RoomId roomId) async {
-    var val = roomCache.getValue(roomId);
-    if (val == null) {
-      var newVal = await prevDataSource.getRoom(roomId);
-      roomCache.addValue(roomId, newVal);
-      return newVal;
-    }
-    return val;
-  }
-
-  @override
-  Future<Teacher> getTeacher(int teacherId) async {
-    var val = teacherCache.getValue(teacherId);
-    if (val == null) {
-      var newVal = await prevDataSource.getTeacher(teacherId);
-      teacherCache.addValue(teacherId, newVal);
-      return newVal;
-    }
-    return val;
-  }
 
   @override
   Future<Week> getScheduleByGroup(int groupId, DateTime dayTime) async {
@@ -120,5 +79,32 @@ class CacheDataSource extends PassThroughSource {
       return newVal;
     }
     return val;
+  }
+
+  @override
+  Future<void> invalidateScheduleByGroup(int groupId, DateTime dayTime) async {
+    var newVal = await prevDataSource.getScheduleByGroup(groupId, dayTime);
+    if (newVal != groupScheduleCache.getValue((groupId, dayTime))) {
+      await groupScheduleCache.addValue((groupId, dayTime), newVal);
+    }
+  }
+
+  @override
+  Future<void> invalidateScheduleByRoom(RoomId roomId, DateTime dayTime) async {
+    var newVal = await prevDataSource.getScheduleByRoom(roomId, dayTime);
+    if (newVal != roomScheduleCache.getValue((roomId, dayTime))) {
+      await roomScheduleCache.addValue((roomId, dayTime), newVal);
+    }
+  }
+
+  @override
+  Future<void> invalidateScheduleByTeacher(
+    int teacherId,
+    DateTime dayTime,
+  ) async {
+    var newVal = await prevDataSource.getScheduleByTeacher(teacherId, dayTime);
+    if (newVal != teacherScheduleCache.getValue((teacherId, dayTime))) {
+      await teacherScheduleCache.addValue((teacherId, dayTime), newVal);
+    }
   }
 }

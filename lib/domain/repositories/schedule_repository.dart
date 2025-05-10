@@ -14,4 +14,8 @@ abstract class ScheduleRepository {
   Future<Week> getScheduleByTeacher(int teacherId, DateTime dayTime);
   Future<Week> getScheduleByGroup(int groupId, DateTime dayTime);
   Future<Week> getScheduleByRoom(RoomId roomId, DateTime dayTime);
+
+  Future<void> invalidateScheduleByTeacher(int teacherId, DateTime dayTime);
+  Future<void> invalidateScheduleByGroup(int groupId, DateTime dayTime);
+  Future<void> invalidateScheduleByRoom(RoomId roomId, DateTime dayTime);
 }

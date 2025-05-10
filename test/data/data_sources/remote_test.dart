@@ -157,35 +157,6 @@ void main() {
         RoomModel(id: 2, name: '2', building: building),
       ]);
     });
-
-    test('getGroup', () async {
-      final source = RemoteDataSourceImpl(
-        client: MockClient((request) async {
-          return http.Response("""{
-            "id": 1,
-            "name": "Group1"
-            }""", 200);
-        }),
-      );
-
-      var group = await source.getGroup(1);
-      expect(group, GroupModel(id: 1, name: 'Group1'));
-    });
-
-    test('getTeacher', () async {
-      final source = RemoteDataSourceImpl(
-        client: MockClient((request) async {
-          return http.Response("""{
-          "id": 1,
-          "full_name": "South"
-         }""", 200);
-        }),
-      );
-
-      var teacher = await source.getTeacher(1);
-      expect(teacher, TeacherModel(id: 1, fullName: 'South'));
-    });
-
     test('getScheduleByGroup', () async {
       final source = RemoteDataSourceImpl(
         client: MockClient((request) async {
