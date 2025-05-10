@@ -4,6 +4,7 @@ import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../../core/presentation/app_strings.dart';
 import '../widgets/featured_card.dart';
+import 'schedule_screen.dart';
 
 class ClassSearchScreen extends StatefulWidget {
   const ClassSearchScreen({super.key});
@@ -63,7 +64,10 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
       floatingActionButton:
           _isChosen
               ? FloatingActionButton(
-                onPressed: () {},
+                onPressed:
+                    () => Navigator.of(
+                      context,
+                    ).push(MaterialPageRoute(builder: (e) => ScheduleScreen())),
                 child: Icon(
                   Icons.done,
                   color: context.appTheme.iconColor,

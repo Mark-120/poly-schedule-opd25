@@ -6,6 +6,7 @@ import 'app_colors.dart';
 class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
+      canvasColor: Colors.transparent,
       primaryColor: AppColors.primaryColor,
       scaffoldBackgroundColor: AppColors.backgroundLightColor,
       appBarTheme: AppBarTheme(

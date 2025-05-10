@@ -19,14 +19,13 @@ class MainApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.dark,
-      home: Builder(
-        builder: (context) {
-          return AppTextStylesProvider(
-            styles: AppTextStyles(context),
-            child: ScheduleScreen(),
-          );
-        },
-      ),
+      builder: (context, child) {
+        return AppTextStylesProvider(
+          styles: AppTextStyles(context),
+          child: child!,
+        );
+      },
+      home: ScheduleScreen(),
     );
   }
 }
