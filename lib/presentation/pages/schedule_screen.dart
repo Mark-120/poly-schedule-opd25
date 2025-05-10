@@ -15,8 +15,8 @@ import 'featured_screen.dart';
 import 'settings_screen.dart';
 
 class ScheduleScreen extends StatelessWidget {
-  final int? groupId; // Принимаем ID группы как параметр
-  final DateTime? dayTime; // И дату для загрузки расписания
+  final int? groupId;
+  final DateTime? dayTime;
 
   const ScheduleScreen({super.key, this.groupId, this.dayTime});
 
@@ -101,10 +101,6 @@ class _ScheduleView extends StatelessWidget {
 }
 
 class _LoadedScheduleBody extends StatelessWidget {
-  // final Week week = WeekModel.fromJson(
-  //   jsonDecode(MockedWeekEntity.mockedWeekJson),
-  // );
-
   final Week week;
 
   const _LoadedScheduleBody({required this.week});
