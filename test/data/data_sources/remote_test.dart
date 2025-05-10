@@ -21,8 +21,8 @@ void main() {
       final buildings = await source.getAllBuildings();
 
       expect(
-        buildings.firstWhere((x) => x.id == 55),
-        BuildingModel(id: 55, name: 'Гидробашня', address: ''),
+        buildings.firstWhere((x) => x.id == 11),
+        BuildingModel(id: 11, name: 'Главное здание', abbr: "ГЗ", address: ''),
       );
     });
   });
@@ -52,8 +52,8 @@ void main() {
       final buildings = await source.getAllBuildings();
 
       expect(buildings, [
-        BuildingModel(id: 1, name: 'Building 1', address: 'k1'),
-        BuildingModel(id: 2, name: 'Building 2', address: 'k2'),
+        BuildingModel(id: 1, name: 'Building 1', abbr: "b 1", address: 'k1'),
+        BuildingModel(id: 2, name: 'Building 2', abbr: "b 2", address: 'k2'),
       ]);
     });
 
@@ -117,6 +117,7 @@ void main() {
       BuildingModel building = BuildingModel(
         id: 938,
         name: "build",
+        abbr: "bld",
         address: "none",
       );
 
@@ -135,14 +136,14 @@ void main() {
   {
    "id": 2,
    "name": "2"
-  }]},
+  }],
   "building": {
     
   "id": 938,
   "name": "build",
   "abbr": "bld",
   "address": "none"
-  }"""),
+  }}"""),
             200,
             headers: {'content-type': 'text/plain; charset=utf-8'},
           );
@@ -155,30 +156,6 @@ void main() {
         RoomModel(id: 1, name: 'А', building: building),
         RoomModel(id: 2, name: '2', building: building),
       ]);
-    });
-
-    test('getRoom', () async {
-      final source = RemoteDataSourceImpl(
-        client: MockClient((request) async {
-          return http.Response("""{
-        "rooms": [
-          {
-          "id": 1612,
-          "name": "24"
-          }
-        ],
-        "building": {
-          "id": 12,
-          "name": "Химический корпус",
-          "abbr": "Хим. к.",
-          "address": ""
-        }
-        }""", 200);
-        }),
-      );
-
-      var group = await source.getGroup(1);
-      expect(group, GroupModel(id: 1, name: 'Group1'));
     });
 
     test('getGroup', () async {
@@ -298,8 +275,8 @@ void main() {
               lessons: [
                 LessonModel(
                   subject: "Зельеварение",
-                  abbr: "Зельеварение",
                   type: "Лекции",
+                  typeAbbr: "Лек",
                   start: "10:00",
                   end: "11:40",
                   groups: [
@@ -312,6 +289,7 @@ void main() {
                       building: BuildingModel(
                         id: 25,
                         name: "Школа Чародейства и волшебства Хогвартс",
+                        abbr: "Хогвартс",
                         address: "Великобритания",
                       ),
                       name: "Кабинет Зельеварения",
