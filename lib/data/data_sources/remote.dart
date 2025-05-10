@@ -11,12 +11,11 @@ import '../../domain/entities/teacher.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/building.dart';
 import '../../domain/entities/schedule/week.dart';
+import '../../domain/repositories/schedule_repository.dart';
 import '../../core/date_formater.dart';
 import '../../core/exception/remote_exception.dart';
 
-import 'base.dart';
-
-class RemoteDataSourceImpl implements DataSource {
+class RemoteDataSourceImpl implements ScheduleRepository {
   final Client client;
   RemoteDataSourceImpl({required this.client});
 
@@ -35,7 +34,9 @@ class RemoteDataSourceImpl implements DataSource {
           .map((teacher) => TeacherModel.fromJson(teacher))
           .toList();
     } else {
-      throw RemoteException('Failed to load teachers from server query is $query');
+      throw RemoteException(
+        'Failed to load teachers from server query is $query',
+      );
     }
   }
 
@@ -49,7 +50,9 @@ class RemoteDataSourceImpl implements DataSource {
           .map((group) => GroupModel.fromJson(group))
           .toList();
     } else {
-      throw RemoteException('Failed to load groups from server, query is $query');
+      throw RemoteException(
+        'Failed to load groups from server, query is $query',
+      );
     }
   }
 
@@ -138,37 +141,20 @@ class RemoteDataSourceImpl implements DataSource {
   }
 
   @override
-  Future<Group> getGroup(int groupId) async {
-    final response = await client.get(
-      Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/groups/$groupId'),
-    );
-    if (response.statusCode == 200) {
-      return GroupModel.fromJson(_decodeToJson(response));
-    } else {
-      throw RemoteException(
-        'Failed to load teacher info from server from teacher $groupId',
-      );
-    }
+  Future<void> invalidateScheduleByGroup(int groupId, DateTime dayTime) async {
+    // Do nothing
   }
 
   @override
-  Future<Room> getRoom(RoomId roomId) async {
-    return (await getAllRoomsOfBuilding(
-      roomId.buildingId,
-    )).firstWhere((x) => x.id == roomId.roomId);
+  Future<void> invalidateScheduleByRoom(RoomId roomId, DateTime dayTime) async {
+    // Do nothing
   }
 
   @override
-  Future<Teacher> getTeacher(int teacherId) async {
-    final response = await client.get(
-      Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/teachers/$teacherId'),
-    );
-    if (response.statusCode == 200) {
-      return TeacherModel.fromJson(_decodeToJson(response));
-    } else {
-      throw RemoteException(
-        'Failed to load teacher info from server from teacher $teacherId',
-      );
-    }
+  Future<void> invalidateScheduleByTeacher(
+    int teacherId,
+    DateTime dayTime,
+  ) async {
+    // Do nothing
   }
 }
