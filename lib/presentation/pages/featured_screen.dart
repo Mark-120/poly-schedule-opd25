@@ -4,6 +4,8 @@ import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../../core/presentation/app_strings.dart';
 import '../widgets/featured_card.dart';
+import 'building_search_screen.dart';
+import 'search_screen.dart';
 
 class FeaturedScreen extends StatefulWidget {
   const FeaturedScreen({super.key});
@@ -14,15 +16,13 @@ class FeaturedScreen extends StatefulWidget {
 
 class _FeaturedScreenState extends State<FeaturedScreen> {
   final PageController _pageController = PageController();
-  int _currentPage = 0;
+  FeaturedSubpages _currentPage = FeaturedSubpages.values.first;
+
   bool _editMode = false;
   final List<List<String>> _featuredData;
 
-  final List<String> _pageTitles = [
-    AppStrings.groupsFeaturedPageTitle,
-    AppStrings.lecturersFeaturedPageTitle,
-    AppStrings.classesFeaturedPageTitle,
-  ];
+  final List<String> _pageTitles =
+      FeaturedSubpages.values.map((e) => e.title).toList();
 
   _FeaturedScreenState()
     : _featuredData = [
@@ -79,7 +79,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
               controller: _pageController,
               onPageChanged: (index) {
                 setState(() {
-                  _currentPage = index;
+                  _currentPage = FeaturedSubpages.values[index];
                 });
               },
               children: List.generate(
@@ -96,7 +96,8 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                       key: ValueKey('add_button'),
                       padding: const EdgeInsets.only(top: 57),
                       child: FloatingActionButton(
-                        onPressed: () {},
+                        heroTag: UniqueKey(),
+                        onPressed: _openSearchScreen,
                         child: Icon(
                           Icons.add,
                           color: context.appTheme.iconColor,
@@ -262,7 +263,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color:
-                    _currentPage == index
+                    _currentPage.index == index
                         ? context.appTheme.primaryColor
                         : context.appTheme.secondLayerCardBackgroundColor,
               ),
@@ -272,4 +273,42 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
       ),
     );
   }
+
+  void _openSearchScreen() {
+    switch (_currentPage) {
+      case FeaturedSubpages.groups:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder:
+                (context) =>
+                    SearchScreen(searchScreenType: SearchScreenType.groups),
+          ),
+        );
+        break;
+      case FeaturedSubpages.teachers:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder:
+                (context) =>
+                    SearchScreen(searchScreenType: SearchScreenType.teachers),
+          ),
+        );
+        break;
+      case FeaturedSubpages.classes:
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => BuildingSearchScreen()));
+        break;
+    }
+  }
+}
+
+enum FeaturedSubpages {
+  groups(AppStrings.groupsFeaturedPageTitle),
+  teachers(AppStrings.lecturersFeaturedPageTitle),
+  classes(AppStrings.classesFeaturedPageTitle);
+
+  final String title;
+
+  const FeaturedSubpages(this.title);
 }

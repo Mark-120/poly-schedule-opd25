@@ -10,6 +10,8 @@ import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/app_strings.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../widgets/day_section.dart';
+import 'featured_screen.dart';
+import 'settings_screen.dart';
 
 class ScheduleScreen extends StatelessWidget {
   final Week week = WeekModel.fromJson(
@@ -83,7 +85,11 @@ class ScheduleScreen extends StatelessWidget {
                 color: context.appTheme.iconColor,
               ),
               iconSize: 28,
-              onPressed: () {},
+              onPressed:
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsScreen()),
+                  ),
             ),
             Text('5130903/30003', style: textStyles.titleBottomAppBar),
             IconButton(
@@ -92,7 +98,11 @@ class ScheduleScreen extends StatelessWidget {
                 color: context.appTheme.iconColor,
               ),
               iconSize: 28,
-              onPressed: () {},
+              onPressed:
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FeaturedScreen()),
+                  ),
             ),
           ],
         ),
