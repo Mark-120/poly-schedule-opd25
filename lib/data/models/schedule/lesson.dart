@@ -30,7 +30,7 @@ class LessonModel extends Lesson {
               .map((lesson) => GroupModel.fromJson(lesson))
               .toList(),
       teachers:
-          (json['teachers'] as List<dynamic>)
+          ((json['teachers'] ?? []) as List<dynamic>)
               .map((lesson) => TeacherModel.fromJson(lesson))
               .toList(),
       auditories:
