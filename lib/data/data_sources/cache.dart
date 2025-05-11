@@ -1,3 +1,4 @@
+import 'dart:math';
 import "package:hive/hive.dart";
 import '../../domain/entities/room.dart';
 import '../../domain/entities/schedule/week.dart';
@@ -10,11 +11,11 @@ class HiveCache<T, K> {
   HiveCache({required this.box, this.entriesCount = 30});
 
   T? getValue(K key) {
-    return box.get(key)?.$1;
+    return box.get(key.toString())?.$1;
   }
 
   Future<void> addValue(K key, T value) async {
-    await box.put(key, (value, DateTime.now()));
+    await box.put(key.toString(), (value, DateTime.now()));
     await _removeExtra();
   }
 
@@ -27,17 +28,28 @@ class HiveCache<T, K> {
 
     // Delete oldest
     final keysToRemove = entries
-        .take(box.length - entriesCount)
+        .take(max(0, box.length - entriesCount))
         .map((e) => e.key);
     await box.deleteAll(keysToRemove);
     return;
   }
 }
 
+class KeySchedule<Id> {
+  final Id originalKey;
+  final DateTime dateTime;
+  KeySchedule(this.originalKey, this.dateTime);
+
+  @override
+  String toString() {
+    return "${originalKey.toString()}_${dateTime.toString()}";
+  }
+}
+
 class CacheDataSource extends PassThroughSource {
-  HiveCache<Week, (int, DateTime)> groupScheduleCache;
-  HiveCache<Week, (RoomId, DateTime)> roomScheduleCache;
-  HiveCache<Week, (int, DateTime)> teacherScheduleCache;
+  HiveCache<Week, KeySchedule<int>> groupScheduleCache;
+  HiveCache<Week, KeySchedule<RoomId>> roomScheduleCache;
+  HiveCache<Week, KeySchedule<int>> teacherScheduleCache;
   CacheDataSource({
     required super.prevDataSource,
     required this.groupScheduleCache,
@@ -47,10 +59,10 @@ class CacheDataSource extends PassThroughSource {
 
   @override
   Future<Week> getScheduleByGroup(int groupId, DateTime dayTime) async {
-    var val = groupScheduleCache.getValue((groupId, dayTime));
+    var val = groupScheduleCache.getValue(KeySchedule(groupId, dayTime));
     if (val == null) {
       var newVal = await prevDataSource.getScheduleByGroup(groupId, dayTime);
-      groupScheduleCache.addValue((groupId, dayTime), newVal);
+      groupScheduleCache.addValue(KeySchedule(groupId, dayTime), newVal);
       return newVal;
     }
     return val;
@@ -58,10 +70,10 @@ class CacheDataSource extends PassThroughSource {
 
   @override
   Future<Week> getScheduleByRoom(RoomId roomId, DateTime dayTime) async {
-    var val = roomScheduleCache.getValue((roomId, dayTime));
+    var val = roomScheduleCache.getValue(KeySchedule(roomId, dayTime));
     if (val == null) {
       var newVal = await prevDataSource.getScheduleByRoom(roomId, dayTime);
-      roomScheduleCache.addValue((roomId, dayTime), newVal);
+      roomScheduleCache.addValue(KeySchedule(roomId, dayTime), newVal);
       return newVal;
     }
     return val;
@@ -69,13 +81,13 @@ class CacheDataSource extends PassThroughSource {
 
   @override
   Future<Week> getScheduleByTeacher(int teacherId, DateTime dayTime) async {
-    var val = teacherScheduleCache.getValue((teacherId, dayTime));
+    var val = teacherScheduleCache.getValue(KeySchedule(teacherId, dayTime));
     if (val == null) {
       var newVal = await prevDataSource.getScheduleByTeacher(
         teacherId,
         dayTime,
       );
-      teacherScheduleCache.addValue((teacherId, dayTime), newVal);
+      teacherScheduleCache.addValue(KeySchedule(teacherId, dayTime), newVal);
       return newVal;
     }
     return val;
@@ -84,16 +96,16 @@ class CacheDataSource extends PassThroughSource {
   @override
   Future<void> invalidateScheduleByGroup(int groupId, DateTime dayTime) async {
     var newVal = await prevDataSource.getScheduleByGroup(groupId, dayTime);
-    if (newVal != groupScheduleCache.getValue((groupId, dayTime))) {
-      await groupScheduleCache.addValue((groupId, dayTime), newVal);
+    if (newVal != groupScheduleCache.getValue(KeySchedule(groupId, dayTime))) {
+      await groupScheduleCache.addValue(KeySchedule(groupId, dayTime), newVal);
     }
   }
 
   @override
   Future<void> invalidateScheduleByRoom(RoomId roomId, DateTime dayTime) async {
     var newVal = await prevDataSource.getScheduleByRoom(roomId, dayTime);
-    if (newVal != roomScheduleCache.getValue((roomId, dayTime))) {
-      await roomScheduleCache.addValue((roomId, dayTime), newVal);
+    if (newVal != roomScheduleCache.getValue(KeySchedule(roomId, dayTime))) {
+      await roomScheduleCache.addValue(KeySchedule(roomId, dayTime), newVal);
     }
   }
 
@@ -103,8 +115,12 @@ class CacheDataSource extends PassThroughSource {
     DateTime dayTime,
   ) async {
     var newVal = await prevDataSource.getScheduleByTeacher(teacherId, dayTime);
-    if (newVal != teacherScheduleCache.getValue((teacherId, dayTime))) {
-      await teacherScheduleCache.addValue((teacherId, dayTime), newVal);
+    if (newVal !=
+        teacherScheduleCache.getValue(KeySchedule(teacherId, dayTime))) {
+      await teacherScheduleCache.addValue(
+        KeySchedule(teacherId, dayTime),
+        newVal,
+      );
     }
   }
 }

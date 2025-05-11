@@ -22,7 +22,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
 
   @override
   Future<void> addFeaturedRoom(Room newRoom) async {
-    await featuredRooms.put(newRoom.getId(), newRoom);
+    await featuredRooms.put(newRoom.getId().toString(), newRoom);
   }
 
   @override
@@ -57,7 +57,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
   Future<void> setFeaturedRooms(List<Room> newRooms) async {
     featuredRooms.clear();
     featuredRooms.putAll(
-      Map.fromIterables(newRooms.map((x) => x.getId()), newRooms),
+      Map.fromIterables(newRooms.map((x) => x.getId().toString()), newRooms),
     );
   }
 
