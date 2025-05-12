@@ -24,7 +24,11 @@ final sl = GetIt.instance;
 Future<void> init() async {
   //State managers
   sl.registerFactory(
-    () => ScheduleBloc(getScheduleByGroup: sl<GetScheduleByGroup>()),
+    () => ScheduleBloc(
+      getScheduleByGroup: sl<GetScheduleByGroup>(),
+      getScheduleByTeacher: sl<GetScheduleByTeacher>(),
+      getScheduleByRoom: sl<GetScheduleByRoom>(),
+    ),
   );
 
   // UseCases
