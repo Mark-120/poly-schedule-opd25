@@ -32,7 +32,7 @@ class MainApp extends StatelessWidget {
             child: child!,
           );
         },
-        home: ScheduleScreen(groupId: 40461, dayTime: DateTime.now()),
+        home: ScheduleScreen.group(groupId: 40461, dayTime: DateTime.now()),
       ),
     );
   }

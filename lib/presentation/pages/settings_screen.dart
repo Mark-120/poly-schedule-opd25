@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/app_strings.dart';
 import '../../core/presentation/theme_extension.dart';
-import 'schedule_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -70,10 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed:
-            () => Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (e) => ScheduleScreen())),
+        onPressed: () => Navigator.of(context).pop(),
         child: Icon(Icons.done, color: context.appTheme.iconColor, size: 40),
       ),
     );

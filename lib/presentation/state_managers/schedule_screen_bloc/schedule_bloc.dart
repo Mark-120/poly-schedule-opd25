@@ -7,17 +7,17 @@ import 'package:poly_scheduler/presentation/state_managers/schedule_screen_bloc/
 
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final GetScheduleByGroup getScheduleByGroup;
-  // final GetScheduleByTeacher getScheduleByTeacher;
-  // final GetScheduleByRoom getScheduleByRoom;
+  final GetScheduleByTeacher getScheduleByTeacher;
+  final GetScheduleByRoom getScheduleByRoom;
 
   ScheduleBloc({
     required this.getScheduleByGroup,
-    // required this.getScheduleByTeacher,
-    // required this.getScheduleByRoom,
+    required this.getScheduleByTeacher,
+    required this.getScheduleByRoom,
   }) : super(const ScheduleLoading()) {
     on<LoadScheduleByGroup>(_onLoadScheduleByGroup);
-    // on<LoadScheduleByTeacher>(_onLoadScheduleByTeacher);
-    // on<LoadScheduleByRoom>(_onLoadScheduleByRoom);
+    on<LoadScheduleByTeacher>(_onLoadScheduleByTeacher);
+    on<LoadScheduleByRoom>(_onLoadScheduleByRoom);
   }
 
   Future<void> _onLoadScheduleByGroup(
@@ -31,6 +31,39 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
           groupId: event.groupId,
           dayTime: event.dayTime,
         ),
+      );
+      emit(ScheduleLoaded(week));
+    } catch (e) {
+      emit(ScheduleError(e.toString()));
+    }
+  }
+
+  Future<void> _onLoadScheduleByTeacher(
+    LoadScheduleByTeacher event,
+    Emitter<ScheduleState> emit,
+  ) async {
+    emit(const ScheduleLoading());
+    try {
+      final week = await getScheduleByTeacher(
+        GetScheduleByTeacherParams(
+          teacherId: event.teacherId,
+          dayTime: event.dayTime,
+        ),
+      );
+      emit(ScheduleLoaded(week));
+    } catch (e) {
+      emit(ScheduleError(e.toString()));
+    }
+  }
+
+  Future<void> _onLoadScheduleByRoom(
+    LoadScheduleByRoom event,
+    Emitter<ScheduleState> emit,
+  ) async {
+    emit(const ScheduleLoading());
+    try {
+      final week = await getScheduleByRoom(
+        GetScheduleByRoomParams(roomId: event.roomId, dayTime: event.dayTime),
       );
       emit(ScheduleLoaded(week));
     } catch (e) {

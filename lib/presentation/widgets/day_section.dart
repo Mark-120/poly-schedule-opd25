@@ -52,12 +52,14 @@ Widget daySection(
                   final auditories = lesson.auditories
                       .map((room) => '${room.name} ауд., ${room.building.abbr}')
                       .join(';');
+                  final type =
+                      lesson.type.length < 10 ? lesson.type : lesson.typeAbbr;
                   return classCard(
                     lesson.start,
                     lesson.end,
                     lesson.subject,
                     teachers,
-                    lesson.type,
+                    type,
                     auditories,
                     context,
                   );

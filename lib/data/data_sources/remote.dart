@@ -128,7 +128,7 @@ class RemoteDataSourceImpl implements ScheduleRepository {
   Future<Week> getScheduleByRoom(RoomId roomId, DateTime dayTime) async {
     final response = await client.get(
       Uri.parse(
-        'ttps://ruz.spbstu.ru/api/v1/ruz/buildings/${roomId.buildingId}/rooms/${roomId.roomId}/scheduler?date=${DateFormater.getStringFromDayTime(dayTime)}',
+        'https://ruz.spbstu.ru/api/v1/ruz/buildings/${roomId.buildingId}/rooms/${roomId.roomId}/scheduler?date=${DateFormater.getStringFromDayTime(dayTime)}',
       ),
     );
     if (response.statusCode == 200) {

@@ -77,9 +77,22 @@ class _SearchScreenState extends State<SearchScreen> {
               ? FloatingActionButton(
                 heroTag: UniqueKey(),
                 onPressed:
-                    () => Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (e) => ScheduleScreen())),
+                    () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (e) =>
+                                widget.searchScreenType ==
+                                        SearchScreenType.groups
+                                    ? ScheduleScreen.group(
+                                      groupId: 40461,
+                                      dayTime: DateTime.now(),
+                                    )
+                                    : ScheduleScreen.teacher(
+                                      teacherId: 13445,
+                                      dayTime: DateTime.now(),
+                                    ),
+                      ),
+                    ),
                 child: Icon(
                   Icons.done,
                   color: context.appTheme.iconColor,

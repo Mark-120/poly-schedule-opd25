@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../domain/entities/room.dart';
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../../core/presentation/app_strings.dart';
@@ -65,9 +66,15 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
           _isChosen
               ? FloatingActionButton(
                 onPressed:
-                    () => Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (e) => ScheduleScreen())),
+                    () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (e) => ScheduleScreen.room(
+                              roomId: RoomId(roomId: 669, buildingId: 25),
+                              dayTime: DateTime.now(),
+                            ),
+                      ),
+                    ),
                 child: Icon(
                   Icons.done,
                   color: context.appTheme.iconColor,

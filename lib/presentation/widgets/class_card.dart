@@ -7,7 +7,7 @@ Widget classCard(
   String timeStart,
   String timeEnd,
   String title,
-  String teacher,
+  String? teacher,
   String type,
   String location,
   BuildContext context,
@@ -33,22 +33,34 @@ Widget classCard(
           child: Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: textStyles.mainInfoClassCard,
-                      softWrap: true,
-                    ),
-                    SizedBox(height: 6),
-                    Text(
-                      teacher,
-                      style: textStyles.teacherInfoClassCard,
-                      softWrap: true,
-                    ),
-                  ],
-                ),
+                child:
+                    teacher != null
+                        ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title,
+                              style: textStyles.mainInfoClassCard,
+                              softWrap: true,
+                            ),
+                            SizedBox(height: 6),
+                            Text(
+                              teacher,
+                              style: textStyles.teacherInfoClassCard,
+                              softWrap: true,
+                            ),
+                          ],
+                        )
+                        : Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              title,
+                              style: textStyles.mainInfoClassCard,
+                              softWrap: true,
+                            ),
+                          ],
+                        ),
               ),
               Row(
                 children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../domain/entities/room.dart';
 import '../../domain/entities/schedule/day.dart';
 import '../../domain/entities/schedule/week.dart';
 import '../../core/date_formater.dart';
@@ -15,19 +16,81 @@ import 'featured_screen.dart';
 import 'settings_screen.dart';
 
 class ScheduleScreen extends StatelessWidget {
+  final ScheduleType type;
   final int? groupId;
-  final DateTime? dayTime;
+  final int? teacherId;
+  final RoomId? roomId;
+  final DateTime dayTime;
 
-  const ScheduleScreen({super.key, this.groupId, this.dayTime});
+  const ScheduleScreen._({
+    super.key,
+    required this.type,
+    this.groupId,
+    this.teacherId,
+    this.roomId,
+    required this.dayTime,
+  }) : assert(
+         (type == ScheduleType.group && groupId != null) ||
+             (type == ScheduleType.teacher && teacherId != null) ||
+             (type == ScheduleType.classroom && roomId != null),
+         'Invalid combination of type and IDs',
+       );
+
+  factory ScheduleScreen.group({
+    Key? key,
+    required int groupId,
+    required DateTime dayTime,
+  }) {
+    return ScheduleScreen._(
+      key: key,
+      type: ScheduleType.group,
+      groupId: groupId,
+      dayTime: dayTime,
+    );
+  }
+
+  factory ScheduleScreen.teacher({
+    Key? key,
+    required int teacherId,
+    required DateTime dayTime,
+  }) {
+    return ScheduleScreen._(
+      key: key,
+      type: ScheduleType.teacher,
+      teacherId: teacherId,
+      dayTime: dayTime,
+    );
+  }
+
+  factory ScheduleScreen.room({
+    Key? key,
+    required RoomId roomId,
+    required DateTime dayTime,
+  }) {
+    return ScheduleScreen._(
+      key: key,
+      type: ScheduleType.classroom,
+      roomId: roomId,
+      dayTime: dayTime,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<ScheduleBloc>(context).add(
-      LoadScheduleByGroup(
-        groupId: groupId ?? 40461,
-        dayTime: dayTime ?? DateTime.now(),
-      ),
-    );
+    switch (type) {
+      case ScheduleType.group:
+        BlocProvider.of<ScheduleBloc>(
+          context,
+        ).add(LoadScheduleByGroup(groupId: groupId!, dayTime: dayTime));
+      case ScheduleType.teacher:
+        BlocProvider.of<ScheduleBloc>(
+          context,
+        ).add(LoadScheduleByTeacher(teacherId: teacherId!, dayTime: dayTime));
+      case ScheduleType.classroom:
+        BlocProvider.of<ScheduleBloc>(
+          context,
+        ).add(LoadScheduleByRoom(roomId: roomId!, dayTime: dayTime));
+    }
     return const _ScheduleView();
   }
 }
@@ -168,3 +231,5 @@ Widget _bottomAppBar(BuildContext context) {
     ),
   );
 }
+
+enum ScheduleType { group, teacher, classroom }
