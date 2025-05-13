@@ -15,10 +15,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.0' # or your preferred version
+          flutter-version:  3.29.2  # Можно указать конкретную версию
 
       - name: Install dependencies
         run: flutter pub get
