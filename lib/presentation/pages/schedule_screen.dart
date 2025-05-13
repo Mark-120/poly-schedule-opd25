@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:poly_scheduler/domain/usecases/get_schedule_usecases.dart';
 
 import '../../domain/entities/room.dart';
 import '../../domain/entities/schedule/day.dart';
@@ -8,6 +9,7 @@ import '../../core/date_formater.dart';
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/app_strings.dart';
 import '../../core/presentation/theme_extension.dart';
+import '../../service_locator.dart';
 import '../state_managers/schedule_screen_bloc/schedule_bloc.dart';
 import '../state_managers/schedule_screen_bloc/schedule_event.dart';
 import '../state_managers/schedule_screen_bloc/schedule_state.dart';
@@ -15,12 +17,12 @@ import '../widgets/day_section.dart';
 import 'featured_screen.dart';
 import 'settings_screen.dart';
 
-class ScheduleScreen extends StatelessWidget {
+class ScheduleScreen extends StatefulWidget {
   final ScheduleType type;
   final int? groupId;
   final int? teacherId;
   final RoomId? roomId;
-  final DateTime dayTime;
+  final DateTime initialDayTime;
 
   const ScheduleScreen._({
     super.key,
@@ -28,7 +30,7 @@ class ScheduleScreen extends StatelessWidget {
     this.groupId,
     this.teacherId,
     this.roomId,
-    required this.dayTime,
+    required this.initialDayTime,
   }) : assert(
          (type == ScheduleType.group && groupId != null) ||
              (type == ScheduleType.teacher && teacherId != null) ||
@@ -45,7 +47,7 @@ class ScheduleScreen extends StatelessWidget {
       key: key,
       type: ScheduleType.group,
       groupId: groupId,
-      dayTime: dayTime,
+      initialDayTime: dayTime,
     );
   }
 
@@ -58,7 +60,7 @@ class ScheduleScreen extends StatelessWidget {
       key: key,
       type: ScheduleType.teacher,
       teacherId: teacherId,
-      dayTime: dayTime,
+      initialDayTime: dayTime,
     );
   }
 
@@ -71,32 +73,144 @@ class ScheduleScreen extends StatelessWidget {
       key: key,
       type: ScheduleType.classroom,
       roomId: roomId,
-      dayTime: dayTime,
+      initialDayTime: dayTime,
     );
   }
 
   @override
+  State<ScheduleScreen> createState() => _ScheduleScreenState();
+}
+
+class _ScheduleScreenState extends State<ScheduleScreen> {
+  void _onSwipeLeft() {
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _onSwipeRight() {
+    _pageController.previousPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  final PageController _pageController = PageController(initialPage: 1);
+  final List<DateTime> _weekDates = [];
+  final List<GlobalKey> _pageKeys = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _weekDates.addAll([
+      widget.initialDayTime.subtract(const Duration(days: 7)),
+      widget.initialDayTime,
+      widget.initialDayTime.add(const Duration(days: 7)),
+    ]);
+    _pageKeys.addAll([GlobalKey(), GlobalKey(), GlobalKey()]);
+    _pageController.addListener(_onPageChanged);
+  }
+
+  void _onPageChanged() {
+    final currentPage = _pageController.page!.round();
+    if (currentPage == 0) {
+      setState(() {
+        _weekDates.insert(
+          0,
+          _weekDates.first.subtract(const Duration(days: 7)),
+        );
+        _pageKeys.insert(0, GlobalKey());
+      });
+      _pageController.jumpToPage(1);
+    } else if (currentPage == _weekDates.length - 1) {
+      setState(() {
+        _weekDates.add(_weekDates.last.add(const Duration(days: 7)));
+        _pageKeys.add(GlobalKey());
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    return PageView.builder(
+      controller: _pageController,
+      itemCount: _weekDates.length,
+      itemBuilder: (context, index) {
+        return _SchedulePage(
+          key: _pageKeys[index],
+          type: widget.type,
+          groupId: widget.groupId,
+          teacherId: widget.teacherId,
+          roomId: widget.roomId,
+          dayTime: _weekDates[index],
+          onSwipeLeft: _onSwipeLeft,
+          onSwipeRight: _onSwipeRight,
+        );
+      },
+    );
+  }
+}
+
+class _SchedulePage extends StatelessWidget {
+  final ScheduleType type;
+  final int? groupId;
+  final int? teacherId;
+  final RoomId? roomId;
+  final DateTime dayTime;
+  final VoidCallback onSwipeLeft;
+  final VoidCallback onSwipeRight;
+
+  const _SchedulePage({
+    required Key key,
+    required this.type,
+    this.groupId,
+    this.teacherId,
+    this.roomId,
+    required this.dayTime,
+    required this.onSwipeLeft,
+    required this.onSwipeRight,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create:
+          (context) => ScheduleBloc(
+            getScheduleByGroup: sl<GetScheduleByGroup>(),
+            getScheduleByTeacher: sl<GetScheduleByTeacher>(),
+            getScheduleByRoom: sl<GetScheduleByRoom>(),
+          )..add(_createEvent()),
+      child: _ScheduleView(
+        dayTime: dayTime,
+        onSwipeLeft: onSwipeLeft,
+        onSwipeRight: onSwipeRight,
+      ),
+    );
+  }
+
+  ScheduleEvent _createEvent() {
     switch (type) {
       case ScheduleType.group:
-        BlocProvider.of<ScheduleBloc>(
-          context,
-        ).add(LoadScheduleByGroup(groupId: groupId!, dayTime: dayTime));
+        return LoadScheduleByGroup(groupId: groupId!, dayTime: dayTime);
       case ScheduleType.teacher:
-        BlocProvider.of<ScheduleBloc>(
-          context,
-        ).add(LoadScheduleByTeacher(teacherId: teacherId!, dayTime: dayTime));
+        return LoadScheduleByTeacher(teacherId: teacherId!, dayTime: dayTime);
       case ScheduleType.classroom:
-        BlocProvider.of<ScheduleBloc>(
-          context,
-        ).add(LoadScheduleByRoom(roomId: roomId!, dayTime: dayTime));
+        return LoadScheduleByRoom(roomId: roomId!, dayTime: dayTime);
     }
-    return const _ScheduleView();
   }
 }
 
 class _ScheduleView extends StatelessWidget {
-  const _ScheduleView();
+  final DateTime dayTime;
+  final VoidCallback onSwipeLeft;
+  final VoidCallback onSwipeRight;
+
+  const _ScheduleView({
+    required this.dayTime,
+    required this.onSwipeLeft,
+    required this.onSwipeRight,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +218,7 @@ class _ScheduleView extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: context.appTheme.iconColor),
-          onPressed: () {},
+          onPressed: onSwipeRight,
         ),
         title: BlocBuilder<ScheduleBloc, ScheduleState>(
           builder: (context, state) {
@@ -117,22 +231,28 @@ class _ScheduleView extends StatelessWidget {
               Icons.arrow_forward_ios,
               color: context.appTheme.iconColor,
             ),
-            onPressed: () {},
+            onPressed: onSwipeLeft,
           ),
         ],
       ),
-      body: BlocBuilder<ScheduleBloc, ScheduleState>(
-        builder: (context, state) {
-          if (state is ScheduleLoading) {
-            return Center(child: CircularProgressIndicator());
-          } else if (state is ScheduleError) {
-            return ErrorWidget(state.message);
-          } else if (state is ScheduleLoaded) {
-            return _LoadedScheduleBody(week: state.week);
-          } else {
-            return ErrorWidget('Что-то непонятное');
-          }
+      body: GestureDetector(
+        onHorizontalDragEnd: (details) {
+          if (details.primaryVelocity! > 0) onSwipeRight();
+          if (details.primaryVelocity! < 0) onSwipeLeft();
         },
+        child: BlocBuilder<ScheduleBloc, ScheduleState>(
+          builder: (context, state) {
+            if (state is ScheduleLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is ScheduleError) {
+              return Center(child: Text(state.message));
+            } else if (state is ScheduleLoaded) {
+              return _LoadedScheduleBody(week: state.week);
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
       ),
       bottomNavigationBar: _bottomAppBar(context),
     );
