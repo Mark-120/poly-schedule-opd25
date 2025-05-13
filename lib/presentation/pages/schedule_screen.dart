@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:poly_scheduler/domain/usecases/get_schedule_usecases.dart';
 
+import '../../domain/usecases/get_schedule_usecases.dart';
 import '../../domain/entities/room.dart';
 import '../../domain/entities/schedule/day.dart';
 import '../../domain/entities/schedule/week.dart';
@@ -19,24 +19,15 @@ import 'settings_screen.dart';
 
 class ScheduleScreen extends StatefulWidget {
   final ScheduleType type;
-  final int? groupId;
-  final int? teacherId;
-  final RoomId? roomId;
+  final dynamic id;
   final DateTime initialDayTime;
 
   const ScheduleScreen._({
     super.key,
     required this.type,
-    this.groupId,
-    this.teacherId,
-    this.roomId,
+    this.id,
     required this.initialDayTime,
-  }) : assert(
-         (type == ScheduleType.group && groupId != null) ||
-             (type == ScheduleType.teacher && teacherId != null) ||
-             (type == ScheduleType.classroom && roomId != null),
-         'Invalid combination of type and IDs',
-       );
+  });
 
   factory ScheduleScreen.group({
     Key? key,
@@ -46,7 +37,7 @@ class ScheduleScreen extends StatefulWidget {
     return ScheduleScreen._(
       key: key,
       type: ScheduleType.group,
-      groupId: groupId,
+      id: groupId,
       initialDayTime: dayTime,
     );
   }
@@ -59,7 +50,7 @@ class ScheduleScreen extends StatefulWidget {
     return ScheduleScreen._(
       key: key,
       type: ScheduleType.teacher,
-      teacherId: teacherId,
+      id: teacherId,
       initialDayTime: dayTime,
     );
   }
@@ -72,7 +63,7 @@ class ScheduleScreen extends StatefulWidget {
     return ScheduleScreen._(
       key: key,
       type: ScheduleType.classroom,
-      roomId: roomId,
+      id: roomId,
       initialDayTime: dayTime,
     );
   }
@@ -140,9 +131,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         return _SchedulePage(
           key: _pageKeys[index],
           type: widget.type,
-          groupId: widget.groupId,
-          teacherId: widget.teacherId,
-          roomId: widget.roomId,
+          id: widget.id,
           dayTime: _weekDates[index],
           onSwipeLeft: _onSwipeLeft,
           onSwipeRight: _onSwipeRight,
@@ -154,9 +143,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
 class _SchedulePage extends StatelessWidget {
   final ScheduleType type;
-  final int? groupId;
-  final int? teacherId;
-  final RoomId? roomId;
+  final dynamic id;
   final DateTime dayTime;
   final VoidCallback onSwipeLeft;
   final VoidCallback onSwipeRight;
@@ -164,9 +151,7 @@ class _SchedulePage extends StatelessWidget {
   const _SchedulePage({
     required Key key,
     required this.type,
-    this.groupId,
-    this.teacherId,
-    this.roomId,
+    this.id,
     required this.dayTime,
     required this.onSwipeLeft,
     required this.onSwipeRight,
@@ -192,11 +177,11 @@ class _SchedulePage extends StatelessWidget {
   ScheduleEvent _createEvent() {
     switch (type) {
       case ScheduleType.group:
-        return LoadScheduleByGroup(groupId: groupId!, dayTime: dayTime);
+        return LoadScheduleByGroup(groupId: id, dayTime: dayTime);
       case ScheduleType.teacher:
-        return LoadScheduleByTeacher(teacherId: teacherId!, dayTime: dayTime);
+        return LoadScheduleByTeacher(teacherId: id, dayTime: dayTime);
       case ScheduleType.classroom:
-        return LoadScheduleByRoom(roomId: roomId!, dayTime: dayTime);
+        return LoadScheduleByRoom(roomId: id, dayTime: dayTime);
     }
   }
 }
