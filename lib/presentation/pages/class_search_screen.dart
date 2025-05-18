@@ -72,6 +72,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
                             (e) => ScheduleScreen.room(
                               roomId: RoomId(roomId: 669, buildingId: 25),
                               dayTime: DateTime.now(),
+                              bottomTitle: 'Здание',
                             ),
                       ),
                     ),

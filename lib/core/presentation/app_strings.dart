@@ -3,6 +3,10 @@ class AppStrings {
   static const String evenWeek = 'четная';
   static const String oddWeek = 'нечетная';
   static const String noLessonInfoMessage = 'Информация о парах отсутствует';
+  static String fullNameToAbbreviation(String fullName) {
+    final list = fullName.split(' ').toList();
+    return '${list[0]} ${list[1][0]}. ${list[2][0]}.';
+  }
 
   //Settings Screen
   static const String settingsTitle = 'Настройки';

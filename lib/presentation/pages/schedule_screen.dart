@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../domain/usecases/get_schedule_usecases.dart';
+import '../../domain/usecases/schedule_usecases/get_schedule_usecases.dart';
 import '../../domain/entities/room.dart';
 import '../../domain/entities/schedule/day.dart';
 import '../../domain/entities/schedule/week.dart';
@@ -21,24 +21,28 @@ class ScheduleScreen extends StatefulWidget {
   final ScheduleType type;
   final dynamic id;
   final DateTime initialDayTime;
+  final String bottomTitle;
 
   const ScheduleScreen._({
     super.key,
     required this.type,
     this.id,
     required this.initialDayTime,
+    required this.bottomTitle,
   });
 
   factory ScheduleScreen.group({
     Key? key,
     required int groupId,
     required DateTime dayTime,
+    required String bottomTitle,
   }) {
     return ScheduleScreen._(
       key: key,
       type: ScheduleType.group,
       id: groupId,
       initialDayTime: dayTime,
+      bottomTitle: bottomTitle,
     );
   }
 
@@ -46,12 +50,14 @@ class ScheduleScreen extends StatefulWidget {
     Key? key,
     required int teacherId,
     required DateTime dayTime,
+    required String bottomTitle,
   }) {
     return ScheduleScreen._(
       key: key,
       type: ScheduleType.teacher,
       id: teacherId,
       initialDayTime: dayTime,
+      bottomTitle: bottomTitle,
     );
   }
 
@@ -59,12 +65,14 @@ class ScheduleScreen extends StatefulWidget {
     Key? key,
     required RoomId roomId,
     required DateTime dayTime,
+    required String bottomTitle,
   }) {
     return ScheduleScreen._(
       key: key,
       type: ScheduleType.classroom,
       id: roomId,
       initialDayTime: dayTime,
+      bottomTitle: bottomTitle,
     );
   }
 
@@ -135,6 +143,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           dayTime: _weekDates[index],
           onSwipeLeft: _onSwipeLeft,
           onSwipeRight: _onSwipeRight,
+          bottomTitle: widget.bottomTitle,
         );
       },
     );
@@ -147,6 +156,7 @@ class _SchedulePage extends StatelessWidget {
   final DateTime dayTime;
   final VoidCallback onSwipeLeft;
   final VoidCallback onSwipeRight;
+  final String bottomTitle;
 
   const _SchedulePage({
     required Key key,
@@ -155,6 +165,7 @@ class _SchedulePage extends StatelessWidget {
     required this.dayTime,
     required this.onSwipeLeft,
     required this.onSwipeRight,
+    required this.bottomTitle,
   }) : super(key: key);
 
   @override
@@ -170,6 +181,7 @@ class _SchedulePage extends StatelessWidget {
         dayTime: dayTime,
         onSwipeLeft: onSwipeLeft,
         onSwipeRight: onSwipeRight,
+        bottomTitle: bottomTitle,
       ),
     );
   }
@@ -190,11 +202,13 @@ class _ScheduleView extends StatelessWidget {
   final DateTime dayTime;
   final VoidCallback onSwipeLeft;
   final VoidCallback onSwipeRight;
+  final String bottomTitle;
 
   const _ScheduleView({
     required this.dayTime,
     required this.onSwipeLeft,
     required this.onSwipeRight,
+    required this.bottomTitle,
   });
 
   @override
@@ -239,7 +253,7 @@ class _ScheduleView extends StatelessWidget {
           },
         ),
       ),
-      bottomNavigationBar: _bottomAppBar(context),
+      bottomNavigationBar: _bottomAppBar(context, bottomTitle),
     );
   }
 
@@ -300,7 +314,7 @@ class _LoadedScheduleBody extends StatelessWidget {
   }
 }
 
-Widget _bottomAppBar(BuildContext context) {
+Widget _bottomAppBar(BuildContext context, String title) {
   final textStyles = AppTextStylesProvider.of(context);
   return BottomAppBar(
     child: Row(
@@ -319,7 +333,7 @@ Widget _bottomAppBar(BuildContext context) {
                 MaterialPageRoute(builder: (context) => SettingsScreen()),
               ),
         ),
-        Text('5130903/30003', style: textStyles.titleBottomAppBar),
+        Text(title, style: textStyles.titleBottomAppBar),
         IconButton(
           icon: Icon(
             Icons.star_outline_outlined,
