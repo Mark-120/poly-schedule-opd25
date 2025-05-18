@@ -1,3 +1,5 @@
+import '../../domain/entities/room.dart';
+
 class AppStrings {
   //Schedule Screen
   static const String evenWeek = 'четная';
@@ -7,6 +9,9 @@ class AppStrings {
     final list = fullName.split(' ').toList();
     return '${list[0]} ${list[1][0]}. ${list[2][0]}.';
   }
+
+  static String fullNameOfRoom(Room room) =>
+      '${room.name} ауд., ${room.building.abbr}';
 
   //Settings Screen
   static const String settingsTitle = 'Настройки';
