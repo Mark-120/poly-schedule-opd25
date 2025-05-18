@@ -16,19 +16,24 @@ import 'data/repository/schedule_repository.dart';
 import 'domain/entities/group.dart';
 import 'domain/entities/teacher.dart';
 import 'domain/repositories/schedule_repository.dart';
-import 'domain/usecases/featured_groups/get_featured_groups.dart';
-import 'domain/usecases/featured_groups/set_featured_groups.dart';
-import 'domain/usecases/featured_rooms/get_featured_rooms.dart';
-import 'domain/usecases/featured_rooms/set_featured_rooms.dart';
-import 'domain/usecases/featured_teachers/get_featured_teachers.dart';
-import 'domain/usecases/featured_teachers/set_featured_teachers.dart';
-import 'domain/usecases/get_schedule_usecases.dart';
+import 'domain/usecases/featured_usecases/featured_groups/add_featured_group.dart';
+import 'domain/usecases/featured_usecases/featured_teachers/add_featured_teacher.dart';
+import 'domain/usecases/featured_usecases/featured_groups/get_featured_groups.dart';
+import 'domain/usecases/featured_usecases/featured_groups/set_featured_groups.dart';
+import 'domain/usecases/featured_usecases/featured_rooms/get_featured_rooms.dart';
+import 'domain/usecases/featured_usecases/featured_rooms/set_featured_rooms.dart';
+import 'domain/usecases/featured_usecases/featured_teachers/get_featured_teachers.dart';
+import 'domain/usecases/featured_usecases/featured_teachers/set_featured_teachers.dart';
+import 'domain/usecases/schedule_usecases/find_groups.dart';
+import 'domain/usecases/schedule_usecases/find_teachers.dart';
+import 'domain/usecases/schedule_usecases/get_schedule_usecases.dart';
 import 'presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
 import 'presentation/state_managers/schedule_screen_bloc/schedule_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'domain/entities/room.dart';
 import 'domain/entities/schedule/week.dart';
+import 'presentation/state_managers/search_screen_bloc/search_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -53,15 +58,28 @@ Future<void> init() async {
     ),
   );
 
+  sl.registerFactory(
+    () => SearchBloc(
+      findGroups: sl<FindGroups>(),
+      findTeachers: sl<FindTeachers>(),
+      addFeaturedGroup: sl<AddFeaturedGroup>(),
+      addFeaturedTeacher: sl<AddFeaturedTeacher>(),
+    ),
+  );
+
   // UseCases
   sl.registerLazySingleton(() => GetScheduleByGroup(sl()));
   sl.registerLazySingleton(() => GetScheduleByTeacher(sl()));
   sl.registerLazySingleton(() => GetScheduleByRoom(sl()));
+  sl.registerLazySingleton(() => FindGroups(sl()));
+  sl.registerLazySingleton(() => FindTeachers(sl()));
 
   sl.registerLazySingleton(() => GetFeaturedGroups(sl()));
   sl.registerLazySingleton(() => SetFeaturedGroups(sl()));
+  sl.registerLazySingleton(() => AddFeaturedGroup(sl()));
   sl.registerLazySingleton(() => GetFeaturedTeachers(sl()));
   sl.registerLazySingleton(() => SetFeaturedTeachers(sl()));
+  sl.registerLazySingleton(() => AddFeaturedTeacher(sl()));
   sl.registerLazySingleton(() => GetFeaturedRooms(sl()));
   sl.registerLazySingleton(() => SetFeaturedRooms(sl()));
 
