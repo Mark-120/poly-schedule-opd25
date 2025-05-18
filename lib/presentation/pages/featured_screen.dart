@@ -100,9 +100,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                       items:
                           state is FeaturedLoaded
                               ? state.rooms
-                                  .map(
-                                    (r) => '${r.name} ауд., ${r.building.abbr}',
-                                  )
+                                  .map((r) => AppStrings.fullNameOfRoom(r))
                                   .toList()
                               : [],
                       onReorder: (oldIndex, newIndex) {
@@ -223,7 +221,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                         ? ReorderableListView.builder(
                           key: ValueKey('reorder_list'),
                           physics: const ClampingScrollPhysics(),
-                          itemCount: items[pageIndex].length,
+                          itemCount: items.length,
                           onReorder:
                               (oldIndex, newIndex) =>
                                   onReorder(oldIndex, newIndex),

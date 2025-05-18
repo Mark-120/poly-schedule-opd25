@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:poly_scheduler/presentation/state_managers/search_screen_bloc/search_bloc.dart';
 
+import 'presentation/state_managers/class_search_screen_bloc/class_search_bloc.dart';
+import 'presentation/state_managers/search_screen_bloc/search_bloc.dart';
+import 'presentation/state_managers/building_search_screen_bloc/building_search_bloc.dart';
 import 'core/presentation/app_theme.dart';
 import 'core/presentation/app_text_styles.dart';
 import 'presentation/pages/schedule_screen.dart';
@@ -25,6 +27,8 @@ class MainApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => sl<FeaturedBloc>()),
         BlocProvider(create: (context) => sl<SearchBloc>()),
+        BlocProvider(create: (context) => sl<BuildingSearchBloc>()),
+        BlocProvider(create: (context) => sl<ClassSearchBloc>()),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme,

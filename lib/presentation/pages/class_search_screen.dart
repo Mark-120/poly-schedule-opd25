@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:poly_scheduler/presentation/state_managers/class_search_screen_bloc/class_search_bloc.dart';
 
-import '../../domain/entities/room.dart';
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../../core/presentation/app_strings.dart';
@@ -8,34 +9,21 @@ import '../widgets/featured_card.dart';
 import 'schedule_screen.dart';
 
 class ClassSearchScreen extends StatefulWidget {
-  const ClassSearchScreen({super.key});
+  final int buildingId;
+
+  const ClassSearchScreen({super.key, required this.buildingId});
 
   @override
   State<ClassSearchScreen> createState() => _ClassSearchScreenState();
 }
 
 class _ClassSearchScreenState extends State<ClassSearchScreen> {
-  late final List<String> _allClasses;
-  int _chosenIndex = 0;
-  bool _isChosen = false;
-
   @override
   void initState() {
     super.initState();
-    _allClasses =
-        List.generate(40, (i) => '1$i') +
-        [
-          'Белый зал',
-          'Практическая',
-          'Спорт. зал',
-          '1202 ГПН, лекционная',
-          'ЛБиБ ВШБСиТ',
-        ];
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    context.read<ClassSearchBloc>().add(
+      LoadRoomsForBuilding(widget.buildingId),
+    );
   }
 
   @override
@@ -62,50 +50,68 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
           ],
         ),
       ),
-      floatingActionButton:
-          _isChosen
+      floatingActionButton: BlocBuilder<ClassSearchBloc, ClassSearchState>(
+        builder: (context, state) {
+          return state is ClassSearchLoaded && state.selectedRoom != null
               ? FloatingActionButton(
-                onPressed:
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder:
-                            (e) => ScheduleScreen.room(
-                              roomId: RoomId(roomId: 669, buildingId: 25),
-                              dayTime: DateTime.now(),
-                              bottomTitle: 'Здание',
+                onPressed: () {
+                  context.read<ClassSearchBloc>().add(
+                    SaveSelectedRoomToFeatured(),
+                  );
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder:
+                          (e) => ScheduleScreen.room(
+                            roomId: state.selectedRoom!.getId(),
+                            dayTime: DateTime.now(),
+                            bottomTitle: AppStrings.fullNameOfRoom(
+                              state.selectedRoom!,
                             ),
-                      ),
+                          ),
                     ),
+                  );
+                },
                 child: Icon(
                   Icons.done,
                   color: context.appTheme.iconColor,
                   size: 40,
                 ),
               )
-              : null,
+              : const SizedBox.shrink();
+        },
+      ),
     );
   }
 
   Widget _buildSearchResults(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 3,
-      childAspectRatio: 3,
-      physics: ClampingScrollPhysics(),
-      padding: EdgeInsets.zero,
-      children: List.generate(_allClasses.length, (index) {
-        return featuredCard(
-          context,
-          _allClasses[index],
-          isChosen: index == _chosenIndex && _isChosen,
-          isCenterText: true,
-          onTap: () {
-            setState(() {
-              _chosenIndex = index;
-              _isChosen = true;
-            });
-          },
-        );
-      }),
+    return BlocBuilder<ClassSearchBloc, ClassSearchState>(
+      builder: (context, state) {
+        if (state is ClassSearchInitial) {
+          return const SizedBox.shrink();
+        } else if (state is ClassSearchLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is ClassSearchError) {
+          return Center(child: Text(state.message));
+        } else if (state is ClassSearchLoaded) {
+          return ListView(
+            physics: const ClampingScrollPhysics(),
+            padding: EdgeInsets.zero,
+            children:
+                state.rooms.map((room) {
+                  return featuredCard(
+                    context,
+                    room.name,
+                    isChosen: room == state.selectedRoom,
+                    isCenterText: true,
+                    onTap: () {
+                      context.read<ClassSearchBloc>().add(RoomSelected(room));
+                    },
+                  );
+                }).toList(),
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 }

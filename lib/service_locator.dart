@@ -1,7 +1,8 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
-import 'package:poly_scheduler/data/repository/featured_repository.dart';
-import 'package:poly_scheduler/domain/repositories/featured_repository.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+import 'data/repository/featured_repository.dart';
 import 'data/adapters/building.dart';
 import 'data/adapters/date.dart';
 import 'data/adapters/group.dart';
@@ -13,9 +14,12 @@ import 'data/adapters/teacher.dart';
 import 'data/data_sources/cache.dart';
 import 'data/data_sources/remote.dart';
 import 'data/repository/schedule_repository.dart';
+import 'domain/usecases/schedule_usecases/get_all_buildings.dart';
+import 'domain/repositories/featured_repository.dart';
 import 'domain/entities/group.dart';
 import 'domain/entities/teacher.dart';
 import 'domain/repositories/schedule_repository.dart';
+import 'domain/usecases/featured_usecases/featured_rooms/add_featured_room.dart';
 import 'domain/usecases/featured_usecases/featured_groups/add_featured_group.dart';
 import 'domain/usecases/featured_usecases/featured_teachers/add_featured_teacher.dart';
 import 'domain/usecases/featured_usecases/featured_groups/get_featured_groups.dart';
@@ -26,10 +30,12 @@ import 'domain/usecases/featured_usecases/featured_teachers/get_featured_teacher
 import 'domain/usecases/featured_usecases/featured_teachers/set_featured_teachers.dart';
 import 'domain/usecases/schedule_usecases/find_groups.dart';
 import 'domain/usecases/schedule_usecases/find_teachers.dart';
+import 'domain/usecases/schedule_usecases/get_rooms_of_building.dart';
 import 'domain/usecases/schedule_usecases/get_schedule_usecases.dart';
+import 'presentation/state_managers/building_search_screen_bloc/building_search_bloc.dart';
+import 'presentation/state_managers/class_search_screen_bloc/class_search_bloc.dart';
 import 'presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
 import 'presentation/state_managers/schedule_screen_bloc/schedule_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 import 'domain/entities/room.dart';
 import 'domain/entities/schedule/week.dart';
@@ -67,12 +73,25 @@ Future<void> init() async {
     ),
   );
 
+  sl.registerFactory(
+    () => ClassSearchBloc(
+      getRoomsOfBuilding: sl<GetRoomsOfBuilding>(),
+      addFeaturedRoom: sl<AddFeaturedRoom>(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => BuildingSearchBloc(getAllBuildings: sl<GetAllBuildings>()),
+  );
+
   // UseCases
   sl.registerLazySingleton(() => GetScheduleByGroup(sl()));
   sl.registerLazySingleton(() => GetScheduleByTeacher(sl()));
   sl.registerLazySingleton(() => GetScheduleByRoom(sl()));
   sl.registerLazySingleton(() => FindGroups(sl()));
   sl.registerLazySingleton(() => FindTeachers(sl()));
+  sl.registerLazySingleton(() => GetAllBuildings(sl()));
+  sl.registerLazySingleton(() => GetRoomsOfBuilding(sl()));
 
   sl.registerLazySingleton(() => GetFeaturedGroups(sl()));
   sl.registerLazySingleton(() => SetFeaturedGroups(sl()));
@@ -82,6 +101,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => AddFeaturedTeacher(sl()));
   sl.registerLazySingleton(() => GetFeaturedRooms(sl()));
   sl.registerLazySingleton(() => SetFeaturedRooms(sl()));
+  sl.registerLazySingleton(() => AddFeaturedRoom(sl()));
 
   // Repository
   sl.registerLazySingleton<ScheduleRepository>(

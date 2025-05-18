@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:poly_scheduler/presentation/state_managers/building_search_screen_bloc/building_search_bloc.dart';
 
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/app_strings.dart';
@@ -14,48 +16,10 @@ class BuildingSearchScreen extends StatefulWidget {
 }
 
 class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
-  late final List<String> _allBuildings;
-  int _chosenIndex = 0;
-  bool _isChosen = false;
-
   @override
   void initState() {
     super.initState();
-    _allBuildings = [
-      'Завод «Силовые Машины»',
-      '2-й учебный корпус',
-      'Институт высокомолекулярных соединений',
-      'Научно-исследовательский корпус',
-      'Институт ядерной энергетики (филиал ФГАОУ ВО СПбПУ) г. Сосновый Бор',
-      'Корпус "Башня"',
-      'Спорткомплекс',
-      'Завод «Силовые Машины»',
-      '2-й учебный корпус',
-      'Институт высокомолекулярных соединений',
-      'Научно-исследовательский корпус',
-      'Институт ядерной энергетики (филиал ФГАОУ ВО СПбПУ) г. Сосновый Бор',
-      'Корпус "Башня"',
-      'Спорткомплекс',
-      'Завод «Силовые Машины»',
-      '2-й учебный корпус',
-      'Институт высокомолекулярных соединений',
-      'Научно-исследовательский корпус',
-      'Институт ядерной энергетики (филиал ФГАОУ ВО СПбПУ) г. Сосновый Бор',
-      'Корпус "Башня"',
-      'Спорткомплекс',
-      'Завод «Силовые Машины»',
-      '2-й учебный корпус',
-      'Институт высокомолекулярных соединений',
-      'Научно-исследовательский корпус',
-      'Институт ядерной энергетики (филиал ФГАОУ ВО СПбПУ) г. Сосновый Бор',
-      'Корпус "Башня"',
-      'Спорткомплекс',
-    ];
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    context.read<BuildingSearchBloc>().add(LoadBuildings());
   }
 
   @override
@@ -71,7 +35,7 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
             const SizedBox(height: 40),
             Text(AppStrings.buildingSearchTitle, style: textStyles.title),
             const SizedBox(height: 65),
-            Expanded(child: _buildSearchResults(context)),
+            Expanded(child: _buildSearchResults()),
             Padding(
               padding: EdgeInsets.only(top: 88, bottom: 112),
               child: Text(
@@ -83,42 +47,65 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
         ),
       ),
       floatingActionButton:
-          _isChosen
-              ? FloatingActionButton(
-                onPressed:
-                    () => Navigator.push(
+          BlocBuilder<BuildingSearchBloc, BuildingSearchState>(
+            builder: (context, state) {
+              if (state is BuildingSearchLoaded &&
+                  state.selectedBuilding != null) {
+                return FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ClassSearchScreen(),
+                        builder:
+                            (context) => ClassSearchScreen(
+                              buildingId: state.selectedBuilding!.id,
+                            ),
                       ),
-                    ),
-                child: Icon(
-                  Icons.arrow_right_alt,
-                  color: context.appTheme.iconColor,
-                  size: 40,
-                ),
-              )
-              : null,
+                    );
+                  },
+                  child: Icon(
+                    Icons.arrow_right_alt,
+                    color: context.appTheme.iconColor,
+                    size: 40,
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
     );
   }
 
-  Widget _buildSearchResults(BuildContext context) {
-    return ListView.builder(
-      physics: ClampingScrollPhysics(),
-      padding: EdgeInsets.zero,
-      itemCount: _allBuildings.length,
-      itemBuilder: (context, index) {
-        return featuredCard(
-          context,
-          _allBuildings[index],
-          isChosen: index == _chosenIndex && _isChosen,
-          onTap: () {
-            setState(() {
-              _chosenIndex = index;
-              _isChosen = true;
-            });
-          },
-        );
+  Widget _buildSearchResults() {
+    return BlocBuilder<BuildingSearchBloc, BuildingSearchState>(
+      builder: (context, state) {
+        if (state is BuildingSearchInitial) {
+          return const SizedBox.shrink();
+        } else if (state is BuildingSearchLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is BuildingSearchError) {
+          return Center(child: Text(state.message));
+        } else if (state is BuildingSearchLoaded) {
+          return ListView.builder(
+            physics: const ClampingScrollPhysics(),
+            padding: EdgeInsets.zero,
+            itemCount: state.buildings.length,
+            itemBuilder: (context, index) {
+              final building = state.buildings[index];
+              return featuredCard(
+                context,
+                building.name,
+                isChosen: building == state.selectedBuilding,
+                onTap: () {
+                  context.read<BuildingSearchBloc>().add(
+                    BuildingSelected(building),
+                  );
+                },
+              );
+            },
+          );
+        }
+        return const SizedBox.shrink();
       },
     );
   }
