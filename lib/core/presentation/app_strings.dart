@@ -33,4 +33,7 @@ class AppStrings {
   static const String groupsFeaturedPageTitle = 'Группы';
   static const String lecturersFeaturedPageTitle = 'Преподаватели';
   static const String classesFeaturedPageTitle = 'Аудитории';
+
+  static const String emptyFeaturedHint =
+      'Нажмите кнопку "Редактировать" и затем "Добавить", чтобы добавить расписание в Избранное';
 }
