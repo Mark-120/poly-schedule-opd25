@@ -1,5 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:poly_scheduler/data/repository/featured_repository.dart';
+import 'package:poly_scheduler/domain/repositories/featured_repository.dart';
 import 'data/adapters/building.dart';
 import 'data/adapters/date.dart';
 import 'data/adapters/group.dart';
@@ -12,7 +14,14 @@ import 'data/data_sources/cache.dart';
 import 'data/data_sources/remote.dart';
 import 'data/repository/schedule_repository.dart';
 import 'domain/repositories/schedule_repository.dart';
+import 'domain/usecases/featured_group/get_featured_groups.dart';
+import 'domain/usecases/featured_group/set_featured_groups.dart';
+import 'domain/usecases/featured_rooms/get_featured_rooms.dart';
+import 'domain/usecases/featured_rooms/set_featured_rooms.dart';
+import 'domain/usecases/featured_teachers/get_featured_teachers.dart';
+import 'domain/usecases/featured_teachers/set_featured_teachers.dart';
 import 'domain/usecases/get_schedule_usecases.dart';
+import 'presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
 import 'presentation/state_managers/schedule_screen_bloc/schedule_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -31,7 +40,25 @@ Future<void> init() async {
     ),
   );
 
+  sl.registerFactory(
+    () => FeaturedBloc(
+      getFeaturedGroups: sl<GetFeaturedGroups>(),
+      getFeaturedTeachers: sl<GetFeaturedTeachers>(),
+      getFeaturedRooms: sl<GetFeaturedRooms>(),
+      setFeaturedGroups: sl<SetFeaturedGroups>(),
+      setFeaturedTeachers: sl<SetFeaturedTeachers>(),
+      setFeaturedRooms: sl<SetFeaturedRooms>(),
+    ),
+  );
+
   // UseCases
+  sl.registerLazySingleton(() => GetScheduleByGroup(sl()));
+  sl.registerLazySingleton(() => GetScheduleByTeacher(sl()));
+  sl.registerLazySingleton(() => GetScheduleByRoom(sl()));
+
+  sl.registerLazySingleton(() => GetScheduleByGroup(sl()));
+  sl.registerLazySingleton(() => GetScheduleByTeacher(sl()));
+  sl.registerLazySingleton(() => GetScheduleByRoom(sl()));
   sl.registerLazySingleton(() => GetScheduleByGroup(sl()));
   sl.registerLazySingleton(() => GetScheduleByTeacher(sl()));
   sl.registerLazySingleton(() => GetScheduleByRoom(sl()));
