@@ -92,6 +92,18 @@ class AppTextStyles {
   TextStyle get teacherInfoClassCard =>
       TextStyle(color: _secondaryColor, fontSize: 12, height: 1);
 
+  TextStyle get additionalInfoLabel => TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    color: _primaryColor,
+  );
+
+  TextStyle get additionalInfoText => TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    color: _primaryColor,
+  );
+
   TextStyle get typeOfLessonClassCard => TextStyle(
     color: _lessonTypeColor,
     fontSize: 14,

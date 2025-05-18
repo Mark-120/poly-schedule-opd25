@@ -4,7 +4,7 @@ import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/app_strings.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../../domain/entities/schedule/lesson.dart';
-import '../../presentation/widgets/class_card.dart';
+import 'expandable_class_card.dart';
 
 Widget daySection(
   String date,
@@ -54,14 +54,16 @@ Widget daySection(
                       .join(';');
                   final type =
                       lesson.type.length < 10 ? lesson.type : lesson.typeAbbr;
-                  return classCard(
-                    lesson.start,
-                    lesson.end,
-                    lesson.subject,
-                    teachers,
-                    type,
-                    auditories,
-                    context,
+                  final groups = lesson.groups.map((e) => e.name).toList();
+                  return ExpandableClassCard(
+                    timeStart: lesson.start,
+                    timeEnd: lesson.end,
+                    title: lesson.subject,
+                    teacher: teachers,
+                    type: type,
+                    location: auditories,
+                    groups: groups,
+                    sdoLink: lesson.lmsUrl,
                   );
                 }),
               ),
