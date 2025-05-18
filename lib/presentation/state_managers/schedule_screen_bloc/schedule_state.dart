@@ -30,3 +30,7 @@ class ScheduleError extends ScheduleState {
   @override
   List<Object> get props => [message];
 }
+
+class ScheduleEmpty extends ScheduleState {
+  const ScheduleEmpty();
+}

@@ -2,6 +2,8 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'data/adapters/last_schedule.dart';
+import 'data/models/last_schedule.dart';
 import 'data/repository/featured_repository.dart';
 import 'data/adapters/building.dart';
 import 'data/adapters/date.dart';
@@ -13,7 +15,10 @@ import 'data/adapters/schedule/day.dart';
 import 'data/adapters/teacher.dart';
 import 'data/data_sources/cache.dart';
 import 'data/data_sources/remote.dart';
+import 'data/repository/last_schedule_repository.dart';
 import 'data/repository/schedule_repository.dart';
+import 'domain/repositories/last_schedule_repository.dart';
+import 'domain/usecases/last_schedule_usecases/save_last_schedule.dart';
 import 'domain/usecases/schedule_usecases/get_all_buildings.dart';
 import 'domain/repositories/featured_repository.dart';
 import 'domain/entities/group.dart';
@@ -61,6 +66,7 @@ Future<void> init() async {
       setFeaturedGroups: sl<SetFeaturedGroups>(),
       setFeaturedTeachers: sl<SetFeaturedTeachers>(),
       setFeaturedRooms: sl<SetFeaturedRooms>(),
+      saveLastSchedule: sl<SaveLastSchedule>(),
     ),
   );
 
@@ -103,6 +109,9 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SetFeaturedRooms(sl()));
   sl.registerLazySingleton(() => AddFeaturedRoom(sl()));
 
+  sl.registerLazySingleton(() => SaveLastSchedule(sl()));
+  sl.registerLazySingleton(() => GetLastSchedule(sl()));
+
   // Repository
   sl.registerLazySingleton<ScheduleRepository>(
     () => ScheduleRepositoryImpl(prevDataSource: sl<CacheDataSource>()),
@@ -114,6 +123,10 @@ Future<void> init() async {
       featuredTeachers: Hive.box<Teacher>('featured_teachers'),
       featuredRooms: Hive.box<Room>('featured_rooms'),
     ),
+  );
+
+  sl.registerLazySingleton<LastScheduleRepository>(
+    () => LastScheduleRepositoryImpl(Hive.box<LastSchedule>('last_schedule')),
   );
 
   // Hive
@@ -129,6 +142,9 @@ Future<void> init() async {
   Hive.registerAdapter(DayAdapter());
   Hive.registerAdapter(WeekAdapter());
   Hive.registerAdapter(WeekDateAdapter());
+  Hive.registerAdapter(LastScheduleAdapter());
+
+  await Hive.openBox<LastSchedule>('last_schedule');
 
   await Hive.openBox<(Week, DateTime)>('group_schedule_cache');
   await Hive.openBox<(Week, DateTime)>('room_schedule_cache');

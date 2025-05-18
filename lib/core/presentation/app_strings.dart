@@ -5,6 +5,9 @@ class AppStrings {
   static const String evenWeek = 'четная';
   static const String oddWeek = 'нечетная';
   static const String noLessonInfoMessage = 'Информация о парах отсутствует';
+  static const String noFeaturedInfoMessage =
+      'У вас пока еще нет расписания в избранном, добавьте его в настройках';
+
   static String fullNameToAbbreviation(String fullName) {
     final list = fullName.split(' ').toList();
     return '${list[0]} ${list[1][0]}. ${list[2][0]}.';

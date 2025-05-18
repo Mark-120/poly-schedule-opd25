@@ -363,7 +363,8 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
   }
 
   void _openSelectedSchedule(int index) {
-    final state = context.read<FeaturedBloc>().state;
+    final bloc = context.read<FeaturedBloc>();
+    final state = bloc.state;
 
     if (state is! FeaturedLoaded) return;
 
@@ -371,6 +372,14 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
       case FeaturedSubpages.groups:
         if (index < state.groups.length) {
           final group = state.groups[index];
+          bloc.add(
+            SaveLastOpenedSchedule(
+              type: 'group',
+              id: group.id,
+              title: group.name,
+            ),
+          );
+
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -387,6 +396,14 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
       case FeaturedSubpages.teachers:
         if (index < state.teachers.length) {
           final teacher = state.teachers[index];
+          bloc.add(
+            SaveLastOpenedSchedule(
+              type: 'teacher',
+              id: teacher.id,
+              title: teacher.fullName,
+            ),
+          );
+
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -405,6 +422,13 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
       case FeaturedSubpages.classes:
         if (index < state.rooms.length) {
           final room = state.rooms[index];
+          bloc.add(
+            SaveLastOpenedSchedule(
+              type: 'room',
+              id: room.getId().roomId,
+              title: AppStrings.fullNameOfRoom(room),
+            ),
+          );
           Navigator.push(
             context,
             MaterialPageRoute(
