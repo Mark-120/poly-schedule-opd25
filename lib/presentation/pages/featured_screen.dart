@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../../core/presentation/app_strings.dart';
+import '../../presentation/pages/schedule_screen.dart';
 import '../state_managers/featured_screen_bloc/featured_bloc.dart';
 import '../widgets/featured_card.dart';
 import 'building_search_screen.dart';
@@ -241,7 +242,11 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                           physics: const ClampingScrollPhysics(),
                           itemCount: items.length,
                           itemBuilder:
-                              (_, index) => featuredCard(context, items[index]),
+                              (_, index) => featuredCard(
+                                context,
+                                items[index],
+                                onTap: () => _openSelectedSchedule(index),
+                              ),
                         );
                   } else if (state is FeaturedError) {
                     return Center(child: Text(state.message));
@@ -353,6 +358,65 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
         Navigator.of(
           context,
         ).push(MaterialPageRoute(builder: (context) => BuildingSearchScreen()));
+        break;
+    }
+  }
+
+  void _openSelectedSchedule(int index) {
+    final state = context.read<FeaturedBloc>().state;
+
+    if (state is! FeaturedLoaded) return;
+
+    switch (_currentPage) {
+      case FeaturedSubpages.groups:
+        if (index < state.groups.length) {
+          final group = state.groups[index];
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => ScheduleScreen.group(
+                    groupId: group.id,
+                    dayTime: DateTime.now(),
+                    bottomTitle: group.name,
+                  ),
+            ),
+          );
+        }
+        break;
+      case FeaturedSubpages.teachers:
+        if (index < state.teachers.length) {
+          final teacher = state.teachers[index];
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => ScheduleScreen.teacher(
+                    teacherId: teacher.id,
+                    dayTime: DateTime.now(),
+                    bottomTitle: AppStrings.fullNameToAbbreviation(
+                      teacher.fullName,
+                    ),
+                  ),
+            ),
+          );
+        }
+        break;
+      case FeaturedSubpages.classes:
+        if (index < state.rooms.length) {
+          final room = state.rooms[index];
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => ScheduleScreen.room(
+                    roomId: room.getId(),
+                    dayTime: DateTime.now(),
+                    bottomTitle: AppStrings.fullNameOfRoom(room),
+                  ),
+            ),
+          );
+        }
         break;
     }
   }
