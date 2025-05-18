@@ -13,9 +13,11 @@ import 'data/adapters/teacher.dart';
 import 'data/data_sources/cache.dart';
 import 'data/data_sources/remote.dart';
 import 'data/repository/schedule_repository.dart';
+import 'domain/entities/group.dart';
+import 'domain/entities/teacher.dart';
 import 'domain/repositories/schedule_repository.dart';
-import 'domain/usecases/featured_group/get_featured_groups.dart';
-import 'domain/usecases/featured_group/set_featured_groups.dart';
+import 'domain/usecases/featured_groups/get_featured_groups.dart';
+import 'domain/usecases/featured_groups/set_featured_groups.dart';
 import 'domain/usecases/featured_rooms/get_featured_rooms.dart';
 import 'domain/usecases/featured_rooms/set_featured_rooms.dart';
 import 'domain/usecases/featured_teachers/get_featured_teachers.dart';
@@ -56,16 +58,24 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetScheduleByTeacher(sl()));
   sl.registerLazySingleton(() => GetScheduleByRoom(sl()));
 
-  sl.registerLazySingleton(() => GetScheduleByGroup(sl()));
-  sl.registerLazySingleton(() => GetScheduleByTeacher(sl()));
-  sl.registerLazySingleton(() => GetScheduleByRoom(sl()));
-  sl.registerLazySingleton(() => GetScheduleByGroup(sl()));
-  sl.registerLazySingleton(() => GetScheduleByTeacher(sl()));
-  sl.registerLazySingleton(() => GetScheduleByRoom(sl()));
+  sl.registerLazySingleton(() => GetFeaturedGroups(sl()));
+  sl.registerLazySingleton(() => SetFeaturedGroups(sl()));
+  sl.registerLazySingleton(() => GetFeaturedTeachers(sl()));
+  sl.registerLazySingleton(() => SetFeaturedTeachers(sl()));
+  sl.registerLazySingleton(() => GetFeaturedRooms(sl()));
+  sl.registerLazySingleton(() => SetFeaturedRooms(sl()));
 
   // Repository
   sl.registerLazySingleton<ScheduleRepository>(
     () => ScheduleRepositoryImpl(prevDataSource: sl<CacheDataSource>()),
+  );
+
+  sl.registerLazySingleton<FeaturedRepository>(
+    () => FeaturedRepositorySourceImpl(
+      featuredGroups: Hive.box<Group>('featured_groups'),
+      featuredTeachers: Hive.box<Teacher>('featured_teachers'),
+      featuredRooms: Hive.box<Room>('featured_rooms'),
+    ),
   );
 
   // Hive
@@ -85,6 +95,10 @@ Future<void> init() async {
   await Hive.openBox<(Week, DateTime)>('group_schedule_cache');
   await Hive.openBox<(Week, DateTime)>('room_schedule_cache');
   await Hive.openBox<(Week, DateTime)>('teacher_schedule_cache');
+
+  await Hive.openBox<Group>('featured_groups');
+  await Hive.openBox<Teacher>('featured_teachers');
+  await Hive.openBox<Room>('featured_rooms');
 
   sl.registerSingleton<HiveCache<Week, KeySchedule<int>>>(
     HiveCache<Week, KeySchedule<int>>(

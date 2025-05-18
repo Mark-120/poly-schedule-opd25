@@ -1,5 +1,5 @@
-import '../repositories/featured_repository.dart';
-import '../entities/room.dart';
+import '../../repositories/featured_repository.dart';
+import '../../entities/room.dart';
 
 class GetFeaturedRooms {
   final FeaturedRepository repository;
