@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:poly_scheduler/presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
 
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/theme_extension.dart';
@@ -61,8 +62,16 @@ class _SearchScreenState extends State<SearchScreen> {
               heroTag: UniqueKey(),
               onPressed: () {
                 context.read<SearchBloc>().add(const SaveToFeatured());
+
                 if (state.searchType == SearchScreenType.groups) {
                   final group = state.selectedItem as Group;
+                  context.read<FeaturedBloc>().add(
+                    SaveLastOpenedSchedule(
+                      type: 'group',
+                      id: group.id.toString(),
+                      title: group.name,
+                    ),
+                  );
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -76,6 +85,13 @@ class _SearchScreenState extends State<SearchScreen> {
                   );
                 } else {
                   final teacher = state.selectedItem as Teacher;
+                  context.read<FeaturedBloc>().add(
+                    SaveLastOpenedSchedule(
+                      type: 'teacher',
+                      id: teacher.id.toString(),
+                      title: teacher.fullName,
+                    ),
+                  );
                   Navigator.push(
                     context,
                     MaterialPageRoute(

@@ -5,6 +5,7 @@ import 'package:poly_scheduler/presentation/state_managers/class_search_screen_b
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../../core/presentation/app_strings.dart';
+import '../state_managers/featured_screen_bloc/featured_bloc.dart';
 import '../widgets/featured_card.dart';
 import 'schedule_screen.dart';
 
@@ -57,6 +58,13 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
                 onPressed: () {
                   context.read<ClassSearchBloc>().add(
                     SaveSelectedRoomToFeatured(),
+                  );
+                  context.read<FeaturedBloc>().add(
+                    SaveLastOpenedSchedule(
+                      type: 'room',
+                      id: state.selectedRoom!.getId().toString(),
+                      title: AppStrings.fullNameOfRoom(state.selectedRoom!),
+                    ),
                   );
                   Navigator.of(context).push(
                     MaterialPageRoute(

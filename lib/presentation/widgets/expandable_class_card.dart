@@ -9,6 +9,7 @@ class ExpandableClassCard extends StatefulWidget {
   final String timeEnd;
   final String title;
   final String? teacher;
+  final String abbrType;
   final String type;
   final String location;
   final List<String> groups;
@@ -23,6 +24,7 @@ class ExpandableClassCard extends StatefulWidget {
     required this.type,
     required this.location,
     required this.groups,
+    required this.abbrType,
     this.sdoLink,
   });
 
@@ -76,7 +78,7 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
         children: [
           Expanded(
             child:
-                widget.teacher != null
+                widget.teacher != ''
                     ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -94,6 +96,7 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
                       ],
                     )
                     : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -106,7 +109,7 @@ class _ExpandableClassCardState extends State<ExpandableClassCard> {
           ),
           Row(
             children: [
-              Text(widget.type, style: textStyles.typeOfLessonClassCard),
+              Text(widget.abbrType, style: textStyles.typeOfLessonClassCard),
               IconButton(
                 icon: Icon(
                   Icons.expand_more,

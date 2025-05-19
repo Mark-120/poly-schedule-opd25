@@ -52,14 +52,16 @@ Widget daySection(
                   final auditories = lesson.auditories
                       .map((room) => '${room.name} ауд., ${room.building.abbr}')
                       .join(';');
-                  final type =
+                  final abbrType =
                       lesson.type.length < 10 ? lesson.type : lesson.typeAbbr;
+                  final type = lesson.type;
                   final groups = lesson.groups.map((e) => e.name).toList();
                   return ExpandableClassCard(
                     timeStart: lesson.start,
                     timeEnd: lesson.end,
                     title: lesson.subject,
                     teacher: teachers,
+                    abbrType: abbrType,
                     type: type,
                     location: auditories,
                     groups: groups,
