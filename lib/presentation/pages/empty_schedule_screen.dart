@@ -4,7 +4,6 @@ import 'package:poly_scheduler/core/presentation/theme_extension.dart';
 import '../../core/presentation/app_strings.dart';
 import '../../core/presentation/app_text_styles.dart';
 import 'featured_screen.dart';
-import 'settings_screen.dart';
 
 class EmptyScheduleScreen extends StatelessWidget {
   const EmptyScheduleScreen({super.key});
@@ -44,21 +43,10 @@ class EmptyScheduleScreen extends StatelessWidget {
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           children: [
-            IconButton(
-              icon: Icon(
-                Icons.settings_outlined,
-                color: context.appTheme.iconColor,
-              ),
-              iconSize: 28,
-              onPressed:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingsScreen()),
-                  ),
-            ),
             IconButton(
               icon: Icon(
                 Icons.star_outline_outlined,

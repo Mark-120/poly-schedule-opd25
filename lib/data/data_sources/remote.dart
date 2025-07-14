@@ -62,9 +62,16 @@ class RemoteDataSourceImpl implements ScheduleRepository {
       Uri.parse('https://ruz.spbstu.ru/api/v1/ruz/buildings'),
     );
     if (response.statusCode == 200) {
-      return (_decodeToJson(response)['buildings'] as List<dynamic>)
-          .map((group) => BuildingModel.fromJson(group))
-          .toList();
+      final buildings =
+          (_decodeToJson(response)['buildings'] as List<dynamic>)
+              .map((group) => BuildingModel.fromJson(group))
+              .toList();
+
+      buildings.sort((a, b) {
+        return a.name.compareTo(b.name);
+      });
+
+      return buildings;
     } else {
       throw RemoteException('Failed to load buildings from server');
     }
@@ -77,14 +84,21 @@ class RemoteDataSourceImpl implements ScheduleRepository {
     );
     if (response.statusCode == 200) {
       var json = _decodeToJson(response);
-      return (json['rooms'] as List<dynamic>)
-          .map(
-            (room) => RoomModel.fromJsonAndBuilding(
-              room,
-              BuildingModel.fromJson(json['building']),
-            ),
-          )
-          .toList();
+      final rooms =
+          (json['rooms'] as List<dynamic>)
+              .map(
+                (room) => RoomModel.fromJsonAndBuilding(
+                  room,
+                  BuildingModel.fromJson(json['building']),
+                ),
+              )
+              .toList();
+
+      rooms.sort((a, b) {
+        return a.name.compareTo(b.name);
+      });
+
+      return rooms;
     } else {
       throw RemoteException(
         'Failed to load rooms from server from building $building',

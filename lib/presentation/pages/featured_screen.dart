@@ -375,7 +375,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
           bloc.add(
             SaveLastOpenedSchedule(
               type: 'group',
-              id: group.id,
+              id: group.id.toString(),
               title: group.name,
             ),
           );
@@ -399,7 +399,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
           bloc.add(
             SaveLastOpenedSchedule(
               type: 'teacher',
-              id: teacher.id,
+              id: teacher.id.toString(),
               title: teacher.fullName,
             ),
           );
@@ -425,7 +425,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
           bloc.add(
             SaveLastOpenedSchedule(
               type: 'room',
-              id: room.getId().roomId,
+              id: room.getId().toString(),
               title: AppStrings.fullNameOfRoom(room),
             ),
           );

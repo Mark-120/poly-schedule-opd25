@@ -15,7 +15,6 @@ import '../state_managers/schedule_screen_bloc/schedule_event.dart';
 import '../state_managers/schedule_screen_bloc/schedule_state.dart';
 import '../widgets/day_section.dart';
 import 'featured_screen.dart';
-import 'settings_screen.dart';
 
 class ScheduleScreen extends StatefulWidget {
   final ScheduleType type;
@@ -321,18 +320,7 @@ Widget _bottomAppBar(BuildContext context, String title) {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        IconButton(
-          icon: Icon(
-            Icons.settings_outlined,
-            color: context.appTheme.iconColor,
-          ),
-          iconSize: 28,
-          onPressed:
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsScreen()),
-              ),
-        ),
+        SizedBox(width: 48),
         Text(title, style: textStyles.titleBottomAppBar),
         IconButton(
           icon: Icon(

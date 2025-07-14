@@ -153,8 +153,8 @@ void main() {
       final groups = await source.getAllRoomsOfBuilding(building.id);
 
       expect(groups, [
-        RoomModel(id: 1, name: 'А', building: building),
         RoomModel(id: 2, name: '2', building: building),
+        RoomModel(id: 1, name: 'А', building: building),
       ]);
     });
     test('getScheduleByGroup', () async {
