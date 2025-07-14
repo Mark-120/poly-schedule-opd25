@@ -1,6 +1,7 @@
 ---
 name: "Bug Report"
 about: "Сообщить об ошибке"
+labels: "Bug"
 ---
 
 **Описание:**  
