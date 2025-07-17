@@ -1,3 +1,4 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -13,7 +14,7 @@ class BuildingSearchBloc
 
   BuildingSearchBloc({required this.getAllBuildings})
     : super(BuildingSearchInitial()) {
-    on<LoadBuildings>(_onLoadBuildings);
+    on<LoadBuildings>(_onLoadBuildings, transformer: restartable());
     on<BuildingSelected>(_onBuildingSelected);
   }
 
