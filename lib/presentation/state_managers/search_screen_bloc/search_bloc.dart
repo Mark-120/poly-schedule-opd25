@@ -1,4 +1,5 @@
 // search_bloc.dart
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -25,7 +26,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     required this.addFeaturedGroup,
     required this.addFeaturedTeacher,
   }) : super(SearchInitial()) {
-    on<SearchQueryChanged>(_onSearchQueryChanged);
+    on<SearchQueryChanged>(_onSearchQueryChanged, transformer: restartable());
     on<SearchItemSelected>(_onSearchItemSelected);
     on<SaveToFeatured>(_onSaveToFeatured);
   }

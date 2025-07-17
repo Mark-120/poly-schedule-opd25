@@ -1,3 +1,4 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -16,7 +17,10 @@ class ClassSearchBloc extends Bloc<ClassSearchEvent, ClassSearchState> {
     required this.getRoomsOfBuilding,
     required this.addFeaturedRoom,
   }) : super(ClassSearchInitial()) {
-    on<LoadRoomsForBuilding>(_onLoadRoomsForBuilding);
+    on<LoadRoomsForBuilding>(
+      _onLoadRoomsForBuilding,
+      transformer: restartable(),
+    );
     on<RoomSelected>(_onRoomSelected);
     on<SaveSelectedRoomToFeatured>(_onSaveSelectedRoomToFeatured);
   }
