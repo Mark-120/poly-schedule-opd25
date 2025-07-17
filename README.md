@@ -19,5 +19,10 @@
 + BLoC для state-management
 + Get_it для service locator
 
-## Flutter and Dart FVM versions of the project
+## Flutter и Dart FVM версии проекта
 Flutter: 3.29.2 / Dart SDK: 3.7.2
+
+## Демонстрация функционала приложения
+
+> [!IMPORTANT]
+> Добавить сюда функционал приложения после исправления багов, после - убрать алёрт
