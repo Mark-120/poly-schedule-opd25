@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:poly_scheduler/core/presentation/app_strings.dart';
 import 'package:poly_scheduler/data/models/last_schedule.dart';
 import 'package:poly_scheduler/domain/entities/room.dart';
 
@@ -69,7 +70,7 @@ class MainApp extends StatelessWidget {
         return ScheduleScreen.teacher(
           teacherId: int.parse(lastSchedule!.id),
           dayTime: DateTime.now(),
-          bottomTitle: lastSchedule!.title,
+          bottomTitle: AppStrings.fullNameToAbbreviation(lastSchedule!.title),
         );
       case 'room':
         return ScheduleScreen.room(

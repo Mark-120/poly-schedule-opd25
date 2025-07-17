@@ -321,7 +321,7 @@ Widget _bottomAppBar(BuildContext context, String title) {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(width: 48),
-        Text(title, style: textStyles.titleBottomAppBar),
+        Expanded(child: Center(child: Text(title, style: textStyles.titleBottomAppBar, softWrap: true, overflow: TextOverflow.ellipsis,))),
         IconButton(
           icon: Icon(
             Icons.star_outline_outlined,
