@@ -13,3 +13,11 @@
 - **Domain**: Бизнес-логика и entities
 - **Presentation**: BLoC + UI
 
+## Основные используемые технологии
++ Hive для хранения данных
++ Http для взаимодействия с сетью
++ BLoC для state-management
++ Get_it для service locator
+
+## Flutter and Dart FVM versions of the project
+Flutter: 3.29.2 / Dart SDK: 3.7.2
