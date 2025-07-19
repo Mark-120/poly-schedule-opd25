@@ -37,59 +37,12 @@ import 'domain/usecases/schedule_usecases/find_groups.dart';
 import 'domain/usecases/schedule_usecases/find_teachers.dart';
 import 'domain/usecases/schedule_usecases/get_rooms_of_building.dart';
 import 'domain/usecases/schedule_usecases/get_schedule_usecases.dart';
-import 'presentation/state_managers/building_search_screen_bloc/building_search_bloc.dart';
-import 'presentation/state_managers/class_search_screen_bloc/class_search_bloc.dart';
-import 'presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
-import 'presentation/state_managers/schedule_screen_bloc/schedule_bloc.dart';
-
 import 'domain/entities/room.dart';
 import 'domain/entities/schedule/week.dart';
-import 'presentation/state_managers/search_screen_bloc/search_bloc.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
-  //State managers
-  sl.registerFactory(
-    () => ScheduleBloc(
-      getScheduleByGroup: sl<GetScheduleByGroup>(),
-      getScheduleByTeacher: sl<GetScheduleByTeacher>(),
-      getScheduleByRoom: sl<GetScheduleByRoom>(),
-    ),
-  );
-
-  sl.registerFactory(
-    () => FeaturedBloc(
-      getFeaturedGroups: sl<GetFeaturedGroups>(),
-      getFeaturedTeachers: sl<GetFeaturedTeachers>(),
-      getFeaturedRooms: sl<GetFeaturedRooms>(),
-      setFeaturedGroups: sl<SetFeaturedGroups>(),
-      setFeaturedTeachers: sl<SetFeaturedTeachers>(),
-      setFeaturedRooms: sl<SetFeaturedRooms>(),
-      saveLastSchedule: sl<SaveLastSchedule>(),
-    ),
-  );
-
-  sl.registerFactory(
-    () => SearchBloc(
-      findGroups: sl<FindGroups>(),
-      findTeachers: sl<FindTeachers>(),
-      addFeaturedGroup: sl<AddFeaturedGroup>(),
-      addFeaturedTeacher: sl<AddFeaturedTeacher>(),
-    ),
-  );
-
-  sl.registerFactory(
-    () => ClassSearchBloc(
-      getRoomsOfBuilding: sl<GetRoomsOfBuilding>(),
-      addFeaturedRoom: sl<AddFeaturedRoom>(),
-    ),
-  );
-
-  sl.registerFactory(
-    () => BuildingSearchBloc(getAllBuildings: sl<GetAllBuildings>()),
-  );
-
   // UseCases
   sl.registerLazySingleton(() => GetScheduleByGroup(sl()));
   sl.registerLazySingleton(() => GetScheduleByTeacher(sl()));

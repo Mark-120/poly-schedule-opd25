@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../../core/presentation/app_strings.dart';
+import '../../domain/entities/group.dart';
+import '../../domain/entities/room.dart';
+import '../../domain/entities/teacher.dart';
 import '../../presentation/pages/schedule_screen.dart';
 import '../state_managers/featured_screen_bloc/featured_bloc.dart';
 import '../widgets/featured_card.dart';
@@ -27,8 +30,8 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
 
   @override
   void initState() {
-    super.initState();
     context.read<FeaturedBloc>().add(LoadFeaturedData());
+    super.initState();
   }
 
   @override
@@ -125,7 +128,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                           padding: const EdgeInsets.only(top: 57),
                           child: FloatingActionButton(
                             heroTag: UniqueKey(),
-                            onPressed: _openSearchScreen,
+                            onPressed: () => _openSearchScreen(),
                             child: Icon(
                               Icons.add,
                               color: context.appTheme.iconColor,
@@ -339,9 +342,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
       case FeaturedSubpages.groups:
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder:
-                (context) =>
-                    SearchScreen(searchScreenType: SearchScreenType.groups),
+            builder: (context) => SearchScreen.groups(onSaveGroup: onSaveGroup),
           ),
         );
         break;
@@ -350,14 +351,16 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
           MaterialPageRoute(
             builder:
                 (context) =>
-                    SearchScreen(searchScreenType: SearchScreenType.teachers),
+                    SearchScreen.teachers(onSaveTeacher: onSaveTeacher),
           ),
         );
         break;
       case FeaturedSubpages.classes:
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (context) => BuildingSearchScreen()));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => BuildingSearchScreen(onSaveRoom: onSaveRoom),
+          ),
+        );
         break;
     }
   }
@@ -372,14 +375,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
       case FeaturedSubpages.groups:
         if (index < state.groups.length) {
           final group = state.groups[index];
-          bloc.add(
-            SaveLastOpenedSchedule(
-              type: 'group',
-              id: group.id.toString(),
-              title: group.name,
-            ),
-          );
-
+          onSaveGroup(group);
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -396,14 +392,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
       case FeaturedSubpages.teachers:
         if (index < state.teachers.length) {
           final teacher = state.teachers[index];
-          bloc.add(
-            SaveLastOpenedSchedule(
-              type: 'teacher',
-              id: teacher.id.toString(),
-              title: teacher.fullName,
-            ),
-          );
-
+          onSaveTeacher(teacher);
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -422,13 +411,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
       case FeaturedSubpages.classes:
         if (index < state.rooms.length) {
           final room = state.rooms[index];
-          bloc.add(
-            SaveLastOpenedSchedule(
-              type: 'room',
-              id: room.getId().toString(),
-              title: AppStrings.fullNameOfRoom(room),
-            ),
-          );
+          onSaveRoom(room);
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -443,6 +426,36 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
         }
         break;
     }
+  }
+
+  void onSaveRoom(Room room) {
+    context.read<FeaturedBloc>().add(
+      SaveLastOpenedSchedule(
+        type: 'room',
+        id: room.getId().toString(),
+        title: AppStrings.fullNameOfRoom(room),
+      ),
+    );
+  }
+
+  void onSaveGroup(Group group) {
+    context.read<FeaturedBloc>().add(
+      SaveLastOpenedSchedule(
+        type: 'group',
+        id: group.id.toString(),
+        title: group.name,
+      ),
+    );
+  }
+
+  void onSaveTeacher(Teacher teacher) {
+    context.read<FeaturedBloc>().add(
+      SaveLastOpenedSchedule(
+        type: 'teacher',
+        id: teacher.id.toString(),
+        title: teacher.fullName,
+      ),
+    );
   }
 }
 

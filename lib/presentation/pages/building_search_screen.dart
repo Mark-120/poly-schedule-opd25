@@ -5,11 +5,14 @@ import 'package:poly_scheduler/presentation/state_managers/building_search_scree
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/app_strings.dart';
 import '../../core/presentation/theme_extension.dart';
+import '../../domain/entities/room.dart';
+import '../../service_locator.dart';
 import '../widgets/featured_card.dart';
 import 'class_search_screen.dart';
 
 class BuildingSearchScreen extends StatefulWidget {
-  const BuildingSearchScreen({super.key});
+  final Function(Room) onSaveRoom;
+  const BuildingSearchScreen({super.key, required this.onSaveRoom});
 
   @override
   State<BuildingSearchScreen> createState() => _BuildingSearchScreenState();
@@ -17,62 +20,62 @@ class BuildingSearchScreen extends StatefulWidget {
 
 class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
   @override
-  void initState() {
-    super.initState();
-    context.read<BuildingSearchBloc>().add(LoadBuildings());
-  }
-
-  @override
   Widget build(BuildContext context) {
     final textStyles = AppTextStylesProvider.of(context);
 
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(top: 100, left: 16, right: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 40),
-            Text(AppStrings.buildingSearchTitle, style: textStyles.title),
-            const SizedBox(height: 65),
-            Expanded(child: _buildSearchResults()),
-            Padding(
-              padding: EdgeInsets.only(top: 88, bottom: 112),
-              child: Text(
-                AppStrings.firstPage,
-                style: textStyles.noInfoMessage,
+    return BlocProvider(
+      create:
+          (context) =>
+              BuildingSearchBloc(getAllBuildings: sl())..add(LoadBuildings()),
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.only(top: 100, left: 16, right: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 40),
+              Text(AppStrings.buildingSearchTitle, style: textStyles.title),
+              const SizedBox(height: 65),
+              Expanded(child: _buildSearchResults()),
+              Padding(
+                padding: EdgeInsets.only(top: 88, bottom: 112),
+                child: Text(
+                  AppStrings.firstPage,
+                  style: textStyles.noInfoMessage,
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton:
-          BlocBuilder<BuildingSearchBloc, BuildingSearchState>(
-            builder: (context, state) {
-              if (state is BuildingSearchLoaded &&
-                  state.selectedBuilding != null) {
-                return FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => ClassSearchScreen(
-                              buildingId: state.selectedBuilding!.id,
-                            ),
-                      ),
-                    );
-                  },
-                  child: Icon(
-                    Icons.arrow_right_alt,
-                    color: context.appTheme.iconColor,
-                    size: 40,
-                  ),
-                );
-              }
-              return const SizedBox.shrink();
-            },
+            ],
           ),
+        ),
+        floatingActionButton:
+            BlocBuilder<BuildingSearchBloc, BuildingSearchState>(
+              builder: (context, state) {
+                if (state is BuildingSearchLoaded &&
+                    state.selectedBuilding != null) {
+                  return FloatingActionButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => ClassSearchScreen(
+                                buildingId: state.selectedBuilding!.id,
+                                onSaveRoom: widget.onSaveRoom,
+                              ),
+                        ),
+                      );
+                    },
+                    child: Icon(
+                      Icons.arrow_right_alt,
+                      color: context.appTheme.iconColor,
+                      size: 40,
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+      ),
     );
   }
 
