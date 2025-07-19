@@ -23,7 +23,6 @@ class DateFormater {
     return DateFormat('dd.MM', 'ru').format(dateTime);
   }
 
-
   static String showDateToUser(DateTime dateTime) {
     return DateFormat('d MMMM', 'ru').format(dateTime);
   }
@@ -32,4 +31,15 @@ class DateFormater {
     final weekday = DateFormat('EEEE', 'ru').format(dateTime);
     return weekday[0].toUpperCase() + weekday.substring(1);
   }
+}
+
+extension WeekNumber on DateTime {
+  int get weekNumber {
+    final firstDayOfYear = DateFormater.truncDate(DateTime(year, 1, 1));
+    final differenceInDays = difference(firstDayOfYear).inDays;
+    final weekNumber = (differenceInDays / 7).floor() + 1;
+    return weekNumber;
+  }
+
+  bool get isOdd => (weekNumber % 2) == 1;
 }
