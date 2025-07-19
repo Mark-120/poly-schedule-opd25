@@ -128,7 +128,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                           padding: const EdgeInsets.only(top: 57),
                           child: FloatingActionButton(
                             heroTag: UniqueKey(),
-                            onPressed: () => _openSearchScreen(),
+                            onPressed: _openSearchScreen,
                             child: Icon(
                               Icons.add,
                               color: context.appTheme.iconColor,
