@@ -10,6 +10,7 @@ import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/app_strings.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../../service_locator.dart';
+import '../state_managers/featured_screen_bloc/featured_bloc.dart';
 import '../state_managers/schedule_screen_bloc/schedule_bloc.dart';
 import '../state_managers/schedule_screen_bloc/schedule_event.dart';
 import '../state_managers/schedule_screen_bloc/schedule_state.dart';
@@ -321,7 +322,16 @@ Widget _bottomAppBar(BuildContext context, String title) {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(width: 48),
-        Expanded(child: Center(child: Text(title, style: textStyles.titleBottomAppBar, softWrap: true, overflow: TextOverflow.ellipsis,))),
+        Expanded(
+          child: Center(
+            child: Text(
+              title,
+              style: textStyles.titleBottomAppBar,
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
         IconButton(
           icon: Icon(
             Icons.star_outline_outlined,
@@ -331,7 +341,23 @@ Widget _bottomAppBar(BuildContext context, String title) {
           onPressed:
               () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FeaturedScreen()),
+                MaterialPageRoute(
+                  builder:
+                      (context) => BlocProvider(
+                        lazy: false,
+                        create:
+                            (context) => FeaturedBloc(
+                              getFeaturedGroups: sl(),
+                              getFeaturedTeachers: sl(),
+                              getFeaturedRooms: sl(),
+                              setFeaturedGroups: sl(),
+                              setFeaturedTeachers: sl(),
+                              setFeaturedRooms: sl(),
+                              saveLastSchedule: sl(),
+                            ),
+                        child: FeaturedScreen(),
+                      ),
+                ),
               ),
         ),
       ],

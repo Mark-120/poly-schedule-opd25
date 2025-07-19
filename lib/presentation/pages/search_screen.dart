@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:poly_scheduler/presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
 
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/theme_extension.dart';
@@ -8,12 +7,34 @@ import '../../core/presentation/app_strings.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/teacher.dart';
 import '../../presentation/widgets/featured_card.dart';
+import '../../service_locator.dart';
 import '../state_managers/search_screen_bloc/search_bloc.dart';
 import 'schedule_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   final SearchScreenType searchScreenType;
-  const SearchScreen({super.key, required this.searchScreenType});
+  final Function(Group)? onSaveGroup;
+  final Function(Teacher)? onSaveTeacher;
+
+  const SearchScreen._({
+    required this.searchScreenType,
+    this.onSaveGroup,
+    this.onSaveTeacher,
+  });
+
+  factory SearchScreen.groups({required Function(Group) onSaveGroup}) {
+    return SearchScreen._(
+      searchScreenType: SearchScreenType.groups,
+      onSaveGroup: onSaveGroup,
+    );
+  }
+
+  factory SearchScreen.teachers({required Function(Teacher) onSaveTeacher}) {
+    return SearchScreen._(
+      searchScreenType: SearchScreenType.teachers,
+      onSaveTeacher: onSaveTeacher,
+    );
+  }
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -32,90 +53,87 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     final textStyles = AppTextStylesProvider.of(context);
 
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(top: 100.0, left: 16, right: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 40),
-            Text(
-              _getStringByType(
-                widget.searchScreenType,
-                groupString: AppStrings.groupSearchTitle,
-                teacherString: AppStrings.teacherSearchTitle,
+    return BlocProvider(
+      create:
+          (context) => SearchBloc(
+            findGroups: sl(),
+            findTeachers: sl(),
+            addFeaturedGroup: sl(),
+            addFeaturedTeacher: sl(),
+          ),
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.only(top: 100.0, left: 16, right: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 40),
+              Text(
+                _getStringByType(
+                  widget.searchScreenType,
+                  groupString: AppStrings.groupSearchTitle,
+                  teacherString: AppStrings.teacherSearchTitle,
+                ),
+                style: textStyles.title,
               ),
-              style: textStyles.title,
-            ),
-            const SizedBox(height: 65),
-            _buildSearchField(context),
-            const SizedBox(height: 20),
-            Expanded(child: _buildSearchResults(context)),
-            const SizedBox(height: 100),
-          ],
+              const SizedBox(height: 65),
+              _buildSearchField(context),
+              const SizedBox(height: 20),
+              Expanded(child: _buildSearchResults(context)),
+              const SizedBox(height: 100),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: BlocBuilder<SearchBloc, SearchState>(
-        builder: (context, state) {
-          if (state is SearchResultsLoaded && state.selectedItem != null) {
-            return FloatingActionButton(
-              heroTag: UniqueKey(),
-              onPressed: () {
-                context.read<SearchBloc>().add(const SaveToFeatured());
+        floatingActionButton: BlocBuilder<SearchBloc, SearchState>(
+          builder: (context, state) {
+            if (state is SearchResultsLoaded && state.selectedItem != null) {
+              return FloatingActionButton(
+                heroTag: UniqueKey(),
+                onPressed: () {
+                  context.read<SearchBloc>().add(const SaveToFeatured());
 
-                if (state.searchType == SearchScreenType.groups) {
-                  final group = state.selectedItem as Group;
-                  context.read<FeaturedBloc>().add(
-                    SaveLastOpenedSchedule(
-                      type: 'group',
-                      id: group.id.toString(),
-                      title: group.name,
-                    ),
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (e) => ScheduleScreen.group(
-                            groupId: group.id,
-                            dayTime: DateTime.now(),
-                            bottomTitle: group.name,
-                          ),
-                    ),
-                  );
-                } else {
-                  final teacher = state.selectedItem as Teacher;
-                  context.read<FeaturedBloc>().add(
-                    SaveLastOpenedSchedule(
-                      type: 'teacher',
-                      id: teacher.id.toString(),
-                      title: teacher.fullName,
-                    ),
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (e) => ScheduleScreen.teacher(
-                            teacherId: teacher.id,
-                            dayTime: DateTime.now(),
-                            bottomTitle: AppStrings.fullNameToAbbreviation(
-                              teacher.fullName,
+                  if (state.searchType == SearchScreenType.groups) {
+                    final group = state.selectedItem as Group;
+                    widget.onSaveGroup!(group);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (e) => ScheduleScreen.group(
+                              groupId: group.id,
+                              dayTime: DateTime.now(),
+                              bottomTitle: group.name,
                             ),
-                          ),
-                    ),
-                  );
-                }
-              },
-              child: Icon(
-                Icons.done,
-                color: context.appTheme.iconColor,
-                size: 40,
-              ),
-            );
-          }
-          return const SizedBox.shrink();
-        },
+                      ),
+                    );
+                  } else {
+                    final teacher = state.selectedItem as Teacher;
+                    widget.onSaveTeacher!(teacher);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (e) => ScheduleScreen.teacher(
+                              teacherId: teacher.id,
+                              dayTime: DateTime.now(),
+                              bottomTitle: AppStrings.fullNameToAbbreviation(
+                                teacher.fullName,
+                              ),
+                            ),
+                      ),
+                    );
+                  }
+                },
+                child: Icon(
+                  Icons.done,
+                  color: context.appTheme.iconColor,
+                  size: 40,
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
@@ -131,46 +149,49 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       child: SizedBox(
         height: 40,
-        child: TextField(
-          textAlignVertical: TextAlignVertical.center,
-          controller: _searchController,
-          onChanged: (query) {
-            context.read<SearchBloc>().add(
-              SearchQueryChanged(query, widget.searchScreenType),
-            );
-          },
-          cursorColor: context.appTheme.secondaryColor,
-          selectionControls: materialTextSelectionHandleControls,
-          decoration: InputDecoration(
-            hintText: _getStringByType(
-              widget.searchScreenType,
-              groupString: AppStrings.searchGroupHint,
-              teacherString: AppStrings.searchTeacherHint,
-            ),
-            hintStyle: textStyles.searchField,
-            isDense: true,
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.zero,
-            prefixIcon: IconButton(
-              icon: Icon(
-                Icons.search,
-                color: context.appTheme.secondaryColor,
-                size: 24,
+        child: BlocBuilder<SearchBloc, SearchState>(
+          builder:
+              (context, state) => TextField(
+                textAlignVertical: TextAlignVertical.center,
+                controller: _searchController,
+                onChanged: (query) {
+                  context.read<SearchBloc>().add(
+                    SearchQueryChanged(query, widget.searchScreenType),
+                  );
+                },
+                cursorColor: context.appTheme.secondaryColor,
+                selectionControls: materialTextSelectionHandleControls,
+                decoration: InputDecoration(
+                  hintText: _getStringByType(
+                    widget.searchScreenType,
+                    groupString: AppStrings.searchGroupHint,
+                    teacherString: AppStrings.searchTeacherHint,
+                  ),
+                  hintStyle: textStyles.searchField,
+                  isDense: true,
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.zero,
+                  prefixIcon: IconButton(
+                    icon: Icon(
+                      Icons.search,
+                      color: context.appTheme.secondaryColor,
+                      size: 24,
+                    ),
+                    onPressed:
+                        () => () {
+                          context.read<SearchBloc>().add(
+                            SearchQueryChanged(
+                              _searchController.text,
+                              widget.searchScreenType,
+                            ),
+                          );
+                        },
+                  ),
+                ),
+                style: textStyles.searchField.copyWith(
+                  color: context.appTheme.secondaryColor,
+                ),
               ),
-              onPressed:
-                  () => () {
-                    context.read<SearchBloc>().add(
-                      SearchQueryChanged(
-                        _searchController.text,
-                        widget.searchScreenType,
-                      ),
-                    );
-                  },
-            ),
-          ),
-          style: textStyles.searchField.copyWith(
-            color: context.appTheme.secondaryColor,
-          ),
         ),
       ),
     );

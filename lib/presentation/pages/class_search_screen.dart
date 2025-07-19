@@ -5,14 +5,20 @@ import 'package:poly_scheduler/presentation/state_managers/class_search_screen_b
 import '../../core/presentation/app_text_styles.dart';
 import '../../core/presentation/theme_extension.dart';
 import '../../core/presentation/app_strings.dart';
-import '../state_managers/featured_screen_bloc/featured_bloc.dart';
+import '../../domain/entities/room.dart';
+import '../../service_locator.dart';
 import '../widgets/featured_card.dart';
 import 'schedule_screen.dart';
 
 class ClassSearchScreen extends StatefulWidget {
   final int buildingId;
+  final Function(Room) onSaveRoom;
 
-  const ClassSearchScreen({super.key, required this.buildingId});
+  const ClassSearchScreen({
+    super.key,
+    required this.buildingId,
+    required this.onSaveRoom,
+  });
 
   @override
   State<ClassSearchScreen> createState() => _ClassSearchScreenState();
@@ -20,73 +26,65 @@ class ClassSearchScreen extends StatefulWidget {
 
 class _ClassSearchScreenState extends State<ClassSearchScreen> {
   @override
-  void initState() {
-    super.initState();
-    context.read<ClassSearchBloc>().add(
-      LoadRoomsForBuilding(widget.buildingId),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
     final textStyles = AppTextStylesProvider.of(context);
 
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(top: 100, left: 16, right: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 40),
-            Text(AppStrings.classSearchTitle, style: textStyles.title),
-            const SizedBox(height: 65),
-            Expanded(child: _buildSearchResults(context)),
-            Padding(
-              padding: EdgeInsets.only(top: 88, bottom: 112),
-              child: Text(
-                AppStrings.secondPage,
-                style: textStyles.noInfoMessage,
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: BlocBuilder<ClassSearchBloc, ClassSearchState>(
-        builder: (context, state) {
-          return state is ClassSearchLoaded && state.selectedRoom != null
-              ? FloatingActionButton(
-                onPressed: () {
-                  context.read<ClassSearchBloc>().add(
-                    SaveSelectedRoomToFeatured(),
-                  );
-                  context.read<FeaturedBloc>().add(
-                    SaveLastOpenedSchedule(
-                      type: 'room',
-                      id: state.selectedRoom!.getId().toString(),
-                      title: AppStrings.fullNameOfRoom(state.selectedRoom!),
-                    ),
-                  );
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder:
-                          (e) => ScheduleScreen.room(
-                            roomId: state.selectedRoom!.getId(),
-                            dayTime: DateTime.now(),
-                            bottomTitle: AppStrings.fullNameOfRoom(
-                              state.selectedRoom!,
-                            ),
-                          ),
-                    ),
-                  );
-                },
-                child: Icon(
-                  Icons.done,
-                  color: context.appTheme.iconColor,
-                  size: 40,
+    return BlocProvider(
+      create:
+          (context) =>
+              ClassSearchBloc(getRoomsOfBuilding: sl(), addFeaturedRoom: sl())
+                ..add(LoadRoomsForBuilding(widget.buildingId)),
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.only(top: 100, left: 16, right: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 40),
+              Text(AppStrings.classSearchTitle, style: textStyles.title),
+              const SizedBox(height: 65),
+              Expanded(child: _buildSearchResults(context)),
+              Padding(
+                padding: EdgeInsets.only(top: 88, bottom: 112),
+                child: Text(
+                  AppStrings.secondPage,
+                  style: textStyles.noInfoMessage,
                 ),
-              )
-              : const SizedBox.shrink();
-        },
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: BlocBuilder<ClassSearchBloc, ClassSearchState>(
+          builder: (context, state) {
+            return state is ClassSearchLoaded && state.selectedRoom != null
+                ? FloatingActionButton(
+                  onPressed: () {
+                    context.read<ClassSearchBloc>().add(
+                      SaveSelectedRoomToFeatured(),
+                    );
+                    widget.onSaveRoom(state.selectedRoom!);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (e) => ScheduleScreen.room(
+                              roomId: state.selectedRoom!.getId(),
+                              dayTime: DateTime.now(),
+                              bottomTitle: AppStrings.fullNameOfRoom(
+                                state.selectedRoom!,
+                              ),
+                            ),
+                      ),
+                    );
+                  },
+                  child: Icon(
+                    Icons.done,
+                    color: context.appTheme.iconColor,
+                    size: 40,
+                  ),
+                )
+                : const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
