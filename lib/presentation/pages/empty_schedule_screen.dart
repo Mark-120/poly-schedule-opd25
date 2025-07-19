@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:poly_scheduler/core/presentation/theme_extension.dart';
 
+import '../../core/date_formater.dart';
 import '../../core/presentation/app_strings.dart';
 import '../../core/presentation/app_text_styles.dart';
 import 'featured_screen.dart';
@@ -11,12 +12,26 @@ class EmptyScheduleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textStyles = AppTextStylesProvider.of(context);
+    final weekStart = DateFormater.truncDate(DateTime.now());
+    final weekEnd = weekStart.add(Duration(days: 6));
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: context.appTheme.iconColor),
           onPressed: () {},
+        ),
+        title: Column(
+          children: [
+            Text(
+              '${DateFormater.showShortDateToUser(weekStart)} - ${DateFormater.showShortDateToUser(weekEnd)}',
+              style: textStyles.titleAppbar,
+            ),
+            Text(
+              weekStart.isOdd ? AppStrings.oddWeek : AppStrings.evenWeek,
+              style: textStyles.subtitleAppbar,
+            ),
+          ],
         ),
         actions: [
           IconButton(
