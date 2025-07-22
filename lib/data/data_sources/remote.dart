@@ -181,7 +181,10 @@ class RemoteDataSourceImpl implements ScheduleRepository {
   }
 
   void _logEndpointCall(String endpoint) {
-    logger.debug(endpoint, stackTrace: StackTrace.current);
+    logger.debug(
+      'Called an endpoint: $endpoint',
+      stackTrace: StackTrace.current,
+    );
   }
 
   void _logEndpointResult(String endpoint, Response response) {
