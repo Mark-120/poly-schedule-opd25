@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:poly_scheduler/core/presentation/theme_extension.dart';
+import 'package:poly_scheduler/core/presentation/uikit/theme_extension.dart';
 
 import '../../core/date_formater.dart';
-import '../../core/presentation/app_strings.dart';
-import '../../core/presentation/app_text_styles.dart';
+import '../../core/presentation/uikit/app_strings.dart';
+import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../service_locator.dart';
 import '../state_managers/featured_screen_bloc/featured_bloc.dart';
 import 'featured_screen.dart';
