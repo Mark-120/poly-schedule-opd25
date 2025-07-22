@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poly_scheduler/core/presentation/theme_extension.dart';
 
 import '../../core/date_formater.dart';
 import '../../core/presentation/app_strings.dart';
 import '../../core/presentation/app_text_styles.dart';
+import '../../service_locator.dart';
+import '../state_managers/featured_screen_bloc/featured_bloc.dart';
 import 'featured_screen.dart';
 
 class EmptyScheduleScreen extends StatelessWidget {
@@ -71,7 +74,23 @@ class EmptyScheduleScreen extends StatelessWidget {
               onPressed:
                   () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => FeaturedScreen()),
+                    MaterialPageRoute(
+                      builder:
+                          (context) => BlocProvider(
+                            lazy: false,
+                            create:
+                                (context) => FeaturedBloc(
+                                  getFeaturedGroups: sl(),
+                                  getFeaturedTeachers: sl(),
+                                  getFeaturedRooms: sl(),
+                                  setFeaturedGroups: sl(),
+                                  setFeaturedTeachers: sl(),
+                                  setFeaturedRooms: sl(),
+                                  saveLastSchedule: sl(),
+                                ),
+                            child: FeaturedScreen(),
+                          ),
+                    ),
                   ),
             ),
           ],

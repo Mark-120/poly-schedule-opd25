@@ -17,6 +17,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   get_it: ^8.0.3
   bloc_concurrency: ^0.3.0
+  logger: ^2.6.1
 
 dev_dependencies:
   flutter_test:

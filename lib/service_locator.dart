@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'core/logger.dart';
 import 'data/adapters/last_schedule.dart';
 import 'data/models/last_schedule.dart';
 import 'data/repository/featured_repository.dart';
@@ -140,8 +142,14 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerLazySingleton(() => RemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton(
+    () => RemoteDataSourceImpl(client: sl(), logger: sl()),
+  );
 
   // External
   sl.registerLazySingleton(() => http.Client());
+  sl.registerLazySingleton<AppLogger>(
+    // () => kDebugMode ? DevLogger() : ProdLogger(),
+    () => ProdLogger(),
+  );
 }
