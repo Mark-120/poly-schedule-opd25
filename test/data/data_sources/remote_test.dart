@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:poly_scheduler/core/logger.dart';
 
+import '../../../lib/core/logger.dart';
 import '../../../lib/data/models/schedule/day.dart';
 import '../../../lib/data/models/schedule/lesson.dart';
 import '../../../lib/data/models/schedule/week.dart';
