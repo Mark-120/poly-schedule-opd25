@@ -24,5 +24,27 @@ Flutter: 3.29.2 / Dart SDK: 3.7.2
 
 ## Демонстрация функционала приложения
 
-> [!IMPORTANT]
-> Добавить сюда функционал приложения после исправления багов, после - убрать алёрт
+<table>
+    <tr>
+        <td>
+			<img src="https://github.com/Mark-120/poly-schedule-opd25/blob/804b06a7876753fa4d077e6f85d27132a77778fb/docs/gifs/look_schedule.gif" width="256"/>
+        </td>
+        <td>
+			<img src="https://github.com/Mark-120/poly-schedule-opd25/blob/804b06a7876753fa4d077e6f85d27132a77778fb/docs/gifs/different_saves.gif" width="256"/>
+        </td>
+        <td>
+			<img src="https://github.com/Mark-120/poly-schedule-opd25/blob/804b06a7876753fa4d077e6f85d27132a77778fb/docs/gifs/search_schedule.gif" width="256"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Просмотр учебного расписания
+        </td>
+        <td>
+            Сохранение расписаний
+        </td>
+        <td>
+            Поиск расписаний
+        </td>
+    </tr>
+</table>
