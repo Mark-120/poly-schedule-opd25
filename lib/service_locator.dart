@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'core/logger.dart';
 import 'data/adapters/last_schedule.dart';
 import 'data/models/last_schedule.dart';
 import 'data/repository/featured_repository.dart';
@@ -43,6 +45,12 @@ import 'domain/entities/schedule/week.dart';
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  // External
+  sl.registerLazySingleton(() => http.Client());
+  sl.registerLazySingleton<AppLogger>(
+    () => kDebugMode ? DevLogger() : ProdLogger(),
+  );
+
   // UseCases
   sl.registerLazySingleton(() => GetScheduleByGroup(sl()));
   sl.registerLazySingleton(() => GetScheduleByTeacher(sl()));
@@ -75,11 +83,15 @@ Future<void> init() async {
       featuredGroups: Hive.box<Group>('featured_groups'),
       featuredTeachers: Hive.box<Teacher>('featured_teachers'),
       featuredRooms: Hive.box<Room>('featured_rooms'),
+      logger: sl(),
     ),
   );
 
   sl.registerLazySingleton<LastScheduleRepository>(
-    () => LastScheduleRepositoryImpl(Hive.box<LastSchedule>('last_schedule')),
+    () => LastScheduleRepositoryImpl(
+      Hive.box<LastSchedule>('last_schedule'),
+      logger: sl(),
+    ),
   );
 
   // Hive
@@ -111,6 +123,7 @@ Future<void> init() async {
     HiveCache<Week, KeySchedule<int>>(
       box: Hive.box<(Week, DateTime)>('group_schedule_cache'),
       entriesCount: 30,
+      logger: sl(),
     ),
     instanceName: 'groupCache',
   );
@@ -119,6 +132,7 @@ Future<void> init() async {
     HiveCache<Week, KeySchedule<RoomId>>(
       box: Hive.box<(Week, DateTime)>('room_schedule_cache'),
       entriesCount: 30,
+      logger: sl(),
     ),
   );
 
@@ -126,6 +140,7 @@ Future<void> init() async {
     HiveCache<Week, KeySchedule<int>>(
       box: Hive.box<(Week, DateTime)>('teacher_schedule_cache'),
       entriesCount: 30,
+      logger: sl(),
     ),
     instanceName: 'teacherCache',
   );
@@ -137,11 +152,11 @@ Future<void> init() async {
       groupScheduleCache: sl(instanceName: 'groupCache'),
       roomScheduleCache: sl<HiveCache<Week, KeySchedule<RoomId>>>(),
       teacherScheduleCache: sl(instanceName: 'teacherCache'),
+      logger: sl(),
     ),
   );
 
-  sl.registerLazySingleton(() => RemoteDataSourceImpl(client: sl()));
-
-  // External
-  sl.registerLazySingleton(() => http.Client());
+  sl.registerLazySingleton(
+    () => RemoteDataSourceImpl(client: sl(), logger: sl()),
+  );
 }

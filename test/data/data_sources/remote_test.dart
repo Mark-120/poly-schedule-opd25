@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../../lib/core/logger.dart';
 import '../../../lib/data/models/schedule/day.dart';
 import '../../../lib/data/models/schedule/lesson.dart';
 import '../../../lib/data/models/schedule/week.dart';
@@ -16,7 +17,10 @@ import '../../../lib/data/models/room.dart';
 void main() {
   group('RemoteSourceTestsWithRealHTTP', () {
     test('getAllBuilding', () async {
-      final source = RemoteDataSourceImpl(client: http.Client());
+      final source = RemoteDataSourceImpl(
+        client: http.Client(),
+        logger: MockLogger(),
+      );
 
       final buildings = await source.getAllBuildings();
 
@@ -47,6 +51,7 @@ void main() {
   }
   ]}""", 200);
         }),
+        logger: MockLogger(),
       );
 
       final buildings = await source.getAllBuildings();
@@ -74,6 +79,7 @@ void main() {
    "full_name": "2"
   }]}""", 200);
         }),
+        logger: MockLogger(),
       );
 
       final teachers = await source.findTeachers('teacher');
@@ -103,6 +109,7 @@ void main() {
    "faculty": {"id": 2, "name": "Name2", "abbr": "N2"}
   }]}""", 200);
         }),
+        logger: MockLogger(),
       );
 
       final groups = await source.findGroups('group');
@@ -148,6 +155,7 @@ void main() {
             headers: {'content-type': 'text/plain; charset=utf-8'},
           );
         }),
+        logger: MockLogger(),
       );
 
       final groups = await source.getAllRoomsOfBuilding(building.id);
@@ -230,6 +238,7 @@ void main() {
             200,
           );
         }),
+        logger: MockLogger(),
       );
 
       final groups = await source.getScheduleByGroup(1, DateTime(2001, 1, 1));

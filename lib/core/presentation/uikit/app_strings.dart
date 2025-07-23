@@ -1,4 +1,4 @@
-import '../../domain/entities/room.dart';
+import '../../../domain/entities/room.dart';
 
 class AppStrings {
   //Schedule Screen

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../core/presentation/app_text_styles.dart';
-import '../../core/presentation/theme_extension.dart';
-import '../../core/presentation/app_colors.dart';
+import '../../core/presentation/uikit/app_text_styles.dart';
+import '../../core/presentation/uikit/theme_extension.dart';
+import '../../core/presentation/uikit/app_colors.dart';
 
 Widget featuredCard(
   BuildContext context,

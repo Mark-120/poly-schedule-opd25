@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poly_scheduler/presentation/state_managers/building_search_screen_bloc/building_search_bloc.dart';
 
-import '../../core/presentation/app_text_styles.dart';
-import '../../core/presentation/app_strings.dart';
-import '../../core/presentation/theme_extension.dart';
+import '../../core/presentation/uikit/app_text_styles.dart';
+import '../../core/presentation/uikit/app_strings.dart';
+import '../../core/presentation/uikit/theme_extension.dart';
 import '../../domain/entities/room.dart';
 import '../../service_locator.dart';
 import '../widgets/featured_card.dart';

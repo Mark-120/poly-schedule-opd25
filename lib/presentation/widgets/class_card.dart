@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../core/presentation/app_text_styles.dart';
-import '../../core/presentation/theme_extension.dart';
+import '../../core/presentation/uikit/app_text_styles.dart';
+import '../../core/presentation/uikit/theme_extension.dart';
 
 Widget classCard(
   String timeStart,
