@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:poly_scheduler/domain/entities/group.dart';
+import 'package:poly_scheduler/domain/entities/teacher.dart';
 
 import '../../../domain/entities/room.dart';
 
@@ -10,7 +12,7 @@ abstract class ScheduleEvent extends Equatable {
 }
 
 class LoadScheduleByGroup extends ScheduleEvent {
-  final int groupId;
+  final GroupId groupId;
   final DateTime dayTime;
 
   const LoadScheduleByGroup({required this.groupId, required this.dayTime});
@@ -20,7 +22,7 @@ class LoadScheduleByGroup extends ScheduleEvent {
 }
 
 class LoadScheduleByTeacher extends ScheduleEvent {
-  final int teacherId;
+  final TeacherId teacherId;
   final DateTime dayTime;
 
   const LoadScheduleByTeacher({required this.teacherId, required this.dayTime});

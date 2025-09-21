@@ -16,7 +16,8 @@ import 'data/adapters/schedule/week.dart';
 import 'data/adapters/schedule/day.dart';
 import 'data/adapters/teacher.dart';
 import 'data/data_sources/cache.dart';
-import 'data/data_sources/remote.dart';
+import 'data/data_sources/schedule_data_source.dart';
+import 'data/data_sources/fetch_data_source.dart';
 import 'data/repository/last_schedule_repository.dart';
 import 'data/repository/schedule_repository.dart';
 import 'domain/repositories/last_schedule_repository.dart';
@@ -75,7 +76,10 @@ Future<void> init() async {
 
   // Repository
   sl.registerLazySingleton<ScheduleRepository>(
-    () => ScheduleRepositoryImpl(prevDataSource: sl<CacheDataSource>()),
+    () => ScheduleRepositoryImpl(
+      fetchDataSource: sl<FetchRemoteDataSourceImpl>(),
+      scheduleDataSource: sl<CacheDataSource>(),
+    ),
   );
 
   sl.registerLazySingleton<FeaturedRepository>(
@@ -111,52 +115,33 @@ Future<void> init() async {
 
   await Hive.openBox<LastSchedule>('last_schedule');
 
-  await Hive.openBox<(Week, DateTime)>('group_schedule_cache');
-  await Hive.openBox<(Week, DateTime)>('room_schedule_cache');
-  await Hive.openBox<(Week, DateTime)>('teacher_schedule_cache');
+  await Hive.openBox<(Week, DateTime)>('schedule_cache');
 
   await Hive.openBox<Group>('featured_groups');
   await Hive.openBox<Teacher>('featured_teachers');
   await Hive.openBox<Room>('featured_rooms');
 
-  sl.registerSingleton<HiveCache<Week, KeySchedule<int>>>(
-    HiveCache<Week, KeySchedule<int>>(
-      box: Hive.box<(Week, DateTime)>('group_schedule_cache'),
+  sl.registerSingleton<HiveCache<Week, KeySchedule>>(
+    HiveCache<Week, KeySchedule>(
+      box: Hive.box<(Week, DateTime)>('schedule_cache'),
       entriesCount: 30,
       logger: sl(),
     ),
-    instanceName: 'groupCache',
-  );
-
-  sl.registerSingleton<HiveCache<Week, KeySchedule<RoomId>>>(
-    HiveCache<Week, KeySchedule<RoomId>>(
-      box: Hive.box<(Week, DateTime)>('room_schedule_cache'),
-      entriesCount: 30,
-      logger: sl(),
-    ),
-  );
-
-  sl.registerSingleton<HiveCache<Week, KeySchedule<int>>>(
-    HiveCache<Week, KeySchedule<int>>(
-      box: Hive.box<(Week, DateTime)>('teacher_schedule_cache'),
-      entriesCount: 30,
-      logger: sl(),
-    ),
-    instanceName: 'teacherCache',
   );
 
   // Data Sources
   sl.registerLazySingleton(
     () => CacheDataSource(
-      prevDataSource: sl<RemoteDataSourceImpl>(),
-      groupScheduleCache: sl(instanceName: 'groupCache'),
-      roomScheduleCache: sl<HiveCache<Week, KeySchedule<RoomId>>>(),
-      teacherScheduleCache: sl(instanceName: 'teacherCache'),
+      prevDataSource: sl<RemoteScheduleDataSourceImpl>(),
+      scheduleCache: sl(),
       logger: sl(),
     ),
   );
 
   sl.registerLazySingleton(
-    () => RemoteDataSourceImpl(client: sl(), logger: sl()),
+    () => RemoteScheduleDataSourceImpl(client: sl(), logger: sl()),
+  );
+  sl.registerLazySingleton<FetchRemoteDataSourceImpl>(
+    () => FetchRemoteDataSourceImpl(client: sl(), logger: sl()),
   );
 }

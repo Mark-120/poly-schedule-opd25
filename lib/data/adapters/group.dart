@@ -9,12 +9,12 @@ class GroupAdapter extends TypeAdapter<Group> {
   Group read(BinaryReader reader) {
     var id = reader.readInt();
     var name = reader.readString();
-    return GroupModel(id: id, name: name);
+    return GroupModel(id: GroupId(id), name: name);
   }
 
   @override
   void write(BinaryWriter writer, Group obj) {
-    writer.writeInt(obj.id);
+    writer.writeInt(obj.id.id);
     writer.writeString(obj.name);
   }
 }

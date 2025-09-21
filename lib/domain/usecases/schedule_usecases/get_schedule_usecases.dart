@@ -1,6 +1,9 @@
 // Для получения расписания группы
+
 import '../../../common/usecases/usecase.dart';
 import '../../entities/room.dart';
+import '../../entities/group.dart';
+import '../../entities/teacher.dart';
 import '../../entities/schedule/week.dart';
 import '../../repositories/schedule_repository.dart';
 
@@ -16,7 +19,7 @@ class GetScheduleByGroup implements UseCase<Week, GetScheduleByGroupParams> {
 }
 
 class GetScheduleByGroupParams {
-  final int groupId;
+  final GroupId groupId;
   final DateTime dayTime;
 
   GetScheduleByGroupParams({required this.groupId, required this.dayTime});
@@ -38,7 +41,7 @@ class GetScheduleByTeacher
 }
 
 class GetScheduleByTeacherParams {
-  final int teacherId;
+  final TeacherId teacherId;
   final DateTime dayTime;
 
   GetScheduleByTeacherParams({required this.teacherId, required this.dayTime});
