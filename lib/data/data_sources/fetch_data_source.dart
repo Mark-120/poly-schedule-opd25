@@ -1,7 +1,7 @@
 import 'package:http/http.dart';
-import 'package:poly_scheduler/data/data_sources/base.dart';
 import 'dart:convert';
 
+import 'base.dart';
 import '../models/teacher.dart';
 import '../models/group.dart';
 import '../models/room.dart';
