@@ -9,12 +9,12 @@ class TeacherAdapter extends TypeAdapter<Teacher> {
   Teacher read(BinaryReader reader) {
     var id = reader.readInt();
     var name = reader.readString();
-    return TeacherModel(id: id, fullName: name);
+    return TeacherModel(id: TeacherId(id), fullName: name);
   }
 
   @override
   void write(BinaryWriter writer, Teacher obj) {
-    writer.writeInt(obj.id);
+    writer.writeInt(obj.id.id);
     writer.writeString(obj.fullName);
   }
 }

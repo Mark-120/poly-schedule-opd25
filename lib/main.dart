@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:poly_scheduler/core/logger.dart';
-import 'package:poly_scheduler/core/presentation/bloc_observer.dart';
-import 'package:poly_scheduler/core/presentation/uikit/app_strings.dart';
-import 'package:poly_scheduler/data/models/last_schedule.dart';
-import 'package:poly_scheduler/domain/entities/room.dart';
+import 'core/logger.dart';
+import 'core/presentation/bloc_observer.dart';
+import 'core/presentation/uikit/app_strings.dart';
+import 'data/models/last_schedule.dart';
+import 'domain/entities/group.dart';
+import 'domain/entities/room.dart';
+import 'domain/entities/teacher.dart';
 
 import 'domain/repositories/last_schedule_repository.dart';
 import 'domain/usecases/last_schedule_usecases/save_last_schedule.dart';
@@ -53,13 +55,13 @@ class MainApp extends StatelessWidget {
     switch (lastSchedule!.type) {
       case 'group':
         return ScheduleScreen.group(
-          groupId: int.parse(lastSchedule!.id),
+          groupId: GroupId(int.parse(lastSchedule!.id)),
           dayTime: DateTime.now(),
           bottomTitle: lastSchedule!.title,
         );
       case 'teacher':
         return ScheduleScreen.teacher(
-          teacherId: int.parse(lastSchedule!.id),
+          teacherId: TeacherId(int.parse(lastSchedule!.id)),
           dayTime: DateTime.now(),
           bottomTitle: AppStrings.fullNameToAbbreviation(lastSchedule!.title),
         );

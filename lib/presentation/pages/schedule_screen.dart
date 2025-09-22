@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/usecases/schedule_usecases/get_schedule_usecases.dart';
+import '../../domain/entities/group.dart';
 import '../../domain/entities/room.dart';
+import '../../domain/entities/teacher.dart';
 import '../../domain/entities/schedule/day.dart';
 import '../../domain/entities/schedule/week.dart';
 import '../../core/date_formater.dart';
@@ -33,7 +35,7 @@ class ScheduleScreen extends StatefulWidget {
 
   factory ScheduleScreen.group({
     Key? key,
-    required int groupId,
+    required GroupId groupId,
     required DateTime dayTime,
     required String bottomTitle,
   }) {
@@ -48,7 +50,7 @@ class ScheduleScreen extends StatefulWidget {
 
   factory ScheduleScreen.teacher({
     Key? key,
-    required int teacherId,
+    required TeacherId teacherId,
     required DateTime dayTime,
     required String bottomTitle,
   }) {

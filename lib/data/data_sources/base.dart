@@ -2,49 +2,46 @@ import '../../domain/entities/room.dart';
 import '../../domain/entities/teacher.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/building.dart';
-import '../../domain/repositories/schedule_repository.dart';
 import '../../domain/entities/schedule/week.dart';
 
-class PassThroughSource extends ScheduleRepository {
-  final ScheduleRepository prevDataSource;
+class EntityId {
+  final Object value; // can be GroupId / TeacherId / RoomId
+
+  EntityId.group(GroupId group) : value = group;
+  EntityId.teacher(TeacherId teacher) : value = teacher;
+  EntityId.room(RoomId room) : value = room;
+
+  bool get isGroup => value is GroupId;
+  bool get isTeacher => value is TeacherId;
+  bool get isRoom => value is RoomId;
+
+  GroupId get asGroup => value as GroupId;
+  TeacherId get asTeacher => value as TeacherId;
+  RoomId get asRoom => value as RoomId;
+}
+
+abstract class ScheduleDataSource {
+  Future<Week> getSchedule(EntityId id, DateTime dayTime);
+  Future<void> invalidateSchedule(EntityId id, DateTime dayTime);
+}
+
+abstract class FetchDataSource {
+  Future<List<Teacher>> findTeachers(String query);
+  Future<List<Group>> findGroups(String query);
+
+  Future<List<Building>> getAllBuildings();
+  Future<List<Room>> getAllRoomsOfBuilding(int buildingId);
+}
+
+class PassThroughSource extends ScheduleDataSource {
+  final ScheduleDataSource prevDataSource;
   PassThroughSource({required this.prevDataSource});
 
   @override
-  Future<List<Group>> findGroups(String query) =>
-      prevDataSource.findGroups(query);
+  Future<Week> getSchedule(EntityId id, DateTime dayTime) =>
+      prevDataSource.getSchedule(id, dayTime);
 
   @override
-  Future<List<Teacher>> findTeachers(String query) =>
-      prevDataSource.findTeachers(query);
-
-  @override
-  Future<List<Building>> getAllBuildings() => prevDataSource.getAllBuildings();
-
-  @override
-  Future<List<Room>> getAllRoomsOfBuilding(int building) =>
-      prevDataSource.getAllRoomsOfBuilding(building);
-
-  @override
-  Future<Week> getScheduleByGroup(int groupId, DateTime dayTime) =>
-      prevDataSource.getScheduleByGroup(groupId, dayTime);
-
-  @override
-  Future<Week> getScheduleByRoom(RoomId roomId, DateTime dayTime) =>
-      prevDataSource.getScheduleByRoom(roomId, dayTime);
-
-  @override
-  Future<Week> getScheduleByTeacher(int teacherId, DateTime dayTime) =>
-      prevDataSource.getScheduleByTeacher(teacherId, dayTime);
-
-  @override
-  Future<void> invalidateScheduleByGroup(int groupId, DateTime dayTime) =>
-      prevDataSource.invalidateScheduleByGroup(groupId, dayTime);
-
-  @override
-  Future<void> invalidateScheduleByRoom(RoomId roomId, DateTime dayTime) =>
-      prevDataSource.invalidateScheduleByRoom(roomId, dayTime);
-
-  @override
-  Future<void> invalidateScheduleByTeacher(int teacherId, DateTime dayTime) =>
-      prevDataSource.invalidateScheduleByTeacher(teacherId, dayTime);
+  Future<void> invalidateSchedule(EntityId id, DateTime dayTime) =>
+      prevDataSource.invalidateSchedule(id, dayTime);
 }

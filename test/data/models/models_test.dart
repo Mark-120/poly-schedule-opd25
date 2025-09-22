@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../lib/data/models/teacher.dart';
+import '../../../lib/domain/entities/teacher.dart';
 
 void main() {
   group('Equality Check', () {
     test('teacher', () {
       expect(
-        TeacherModel(id: 1, fullName: '1'),
-        TeacherModel(id: 1, fullName: '1'),
+        TeacherModel(id: TeacherId(1), fullName: '1'),
+        TeacherModel(id: TeacherId(1), fullName: '1'),
       );
     });
 

@@ -46,3 +46,6 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+macos/Flutter/ephemeral/flutter_export_environment.sh
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/ephemeral/Flutter-Generated.xcconfig

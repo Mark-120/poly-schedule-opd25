@@ -8,16 +8,19 @@ import '../../../lib/core/logger.dart';
 import '../../../lib/data/models/schedule/day.dart';
 import '../../../lib/data/models/schedule/lesson.dart';
 import '../../../lib/data/models/schedule/week.dart';
-import '../../../lib/data/data_sources/remote.dart';
+import '../../../lib/data/data_sources/fetch_data_source.dart';
+import '../../../lib/data/data_sources/schedule_data_source.dart';
 import '../../../lib/data/models/building.dart';
 import '../../../lib/data/models/teacher.dart';
 import '../../../lib/data/models/group.dart';
 import '../../../lib/data/models/room.dart';
+import '../../../lib/domain/entities/teacher.dart';
+import '../../../lib/domain/entities/group.dart';
 
 void main() {
   group('RemoteSourceTestsWithRealHTTP', () {
     test('getAllBuilding', () async {
-      final source = RemoteDataSourceImpl(
+      final source = FetchRemoteDataSourceImpl(
         client: http.Client(),
         logger: MockLogger(),
       );
@@ -33,7 +36,7 @@ void main() {
 
   group('RemoteSourceTestsWithMockHTTP', () {
     test('getAllBuildings', () async {
-      final source = RemoteDataSourceImpl(
+      final source = FetchRemoteDataSourceImpl(
         client: MockClient((request) async {
           return http.Response("""{
  "buildings": [
@@ -63,7 +66,7 @@ void main() {
     });
 
     test('findTeachers', () async {
-      final source = RemoteDataSourceImpl(
+      final source = FetchRemoteDataSourceImpl(
         client: MockClient((request) async {
           if (!request.toString().endsWith('q=teacher')) {
             throw Exception('Wrong query, query is $request');
@@ -85,13 +88,13 @@ void main() {
       final teachers = await source.findTeachers('teacher');
 
       expect(teachers, [
-        TeacherModel(id: 1, fullName: '1'),
-        TeacherModel(id: 2, fullName: '2'),
+        TeacherModel(id: TeacherId(1), fullName: '1'),
+        TeacherModel(id: TeacherId(2), fullName: '2'),
       ]);
     });
 
     test('findGroup', () async {
-      final source = RemoteDataSourceImpl(
+      final source = FetchRemoteDataSourceImpl(
         client: MockClient((request) async {
           if (!request.toString().endsWith('q=group')) {
             throw Exception('Wrong query, query is $request');
@@ -115,8 +118,8 @@ void main() {
       final groups = await source.findGroups('group');
 
       expect(groups, [
-        GroupModel(id: 1, name: '1'),
-        GroupModel(id: 2, name: '2'),
+        GroupModel(id: GroupId(1), name: '1'),
+        GroupModel(id: GroupId(2), name: '2'),
       ]);
     });
 
@@ -128,7 +131,7 @@ void main() {
         address: "none",
       );
 
-      final source = RemoteDataSourceImpl(
+      final source = FetchRemoteDataSourceImpl(
         client: MockClient((request) async {
           if (!request.toString().contains('938')) {
             throw Exception('Wrong query, query is $request');
@@ -166,7 +169,7 @@ void main() {
       ]);
     });
     test('getScheduleByGroup', () async {
-      final source = RemoteDataSourceImpl(
+      final source = RemoteScheduleDataSourceImpl(
         client: MockClient((request) async {
           if (!request.toString().endsWith('1?date=2001-1-1')) {
             throw Exception('Wrong query, query is $request');
@@ -260,8 +263,8 @@ void main() {
                   start: "10:00",
                   end: "11:40",
                   groups: [
-                    GroupModel(id: 101, name: "10101"),
-                    GroupModel(id: 102, name: "10102"),
+                    GroupModel(id: GroupId(101), name: "10101"),
+                    GroupModel(id: GroupId(102), name: "10102"),
                   ],
                   auditories: [
                     RoomModel(
@@ -275,7 +278,9 @@ void main() {
                       name: "Кабинет Зельеварения",
                     ),
                   ],
-                  teachers: [TeacherModel(id: 201, fullName: "Северус Снегг")],
+                  teachers: [
+                    TeacherModel(id: TeacherId(201), fullName: "Северус Снегг"),
+                  ],
                   webinarUrl: "",
                   lmsUrl: "https://dl.spbstu.ru//course/view.php?id=-1",
                 ),
