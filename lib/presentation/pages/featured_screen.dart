@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:poly_scheduler/domain/entities/entity_id.dart';
 
 import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
@@ -380,8 +381,8 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
             context,
             MaterialPageRoute(
               builder:
-                  (context) => ScheduleScreen.group(
-                    groupId: group.id,
+                  (context) => ScheduleScreen(
+                    id: EntityId.group(group.id),
                     dayTime: DateTime.now(),
                     bottomTitle: group.name,
                   ),
@@ -397,8 +398,8 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
             context,
             MaterialPageRoute(
               builder:
-                  (context) => ScheduleScreen.teacher(
-                    teacherId: teacher.id,
+                  (context) => ScheduleScreen(
+                    id: EntityId.teacher(teacher.id),
                     dayTime: DateTime.now(),
                     bottomTitle: AppStrings.fullNameToAbbreviation(
                       teacher.fullName,
@@ -416,8 +417,8 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
             context,
             MaterialPageRoute(
               builder:
-                  (context) => ScheduleScreen.room(
-                    roomId: room.getId(),
+                  (context) => ScheduleScreen(
+                    id: EntityId.room(room.getId()),
                     dayTime: DateTime.now(),
                     bottomTitle: AppStrings.fullNameOfRoom(room),
                   ),
@@ -432,7 +433,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
     context.read<FeaturedBloc>().add(
       SaveLastOpenedSchedule(
         type: 'room',
-        id: room.getId().toString(),
+        id: EntityId.room(room.getId()),
         title: AppStrings.fullNameOfRoom(room),
       ),
     );
@@ -442,7 +443,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
     context.read<FeaturedBloc>().add(
       SaveLastOpenedSchedule(
         type: 'group',
-        id: group.id.toString(),
+        id: EntityId.group(group.id),
         title: group.name,
       ),
     );
@@ -452,7 +453,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
     context.read<FeaturedBloc>().add(
       SaveLastOpenedSchedule(
         type: 'teacher',
-        id: teacher.id.toString(),
+        id: EntityId.teacher(teacher.id),
         title: teacher.fullName,
       ),
     );

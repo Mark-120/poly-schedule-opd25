@@ -1,6 +1,7 @@
 import 'package:http/http.dart';
 import 'dart:convert';
 
+import '../../domain/entities/entity_id.dart';
 import 'base.dart';
 import '../models/schedule/week.dart';
 import '../../core/logger.dart';
