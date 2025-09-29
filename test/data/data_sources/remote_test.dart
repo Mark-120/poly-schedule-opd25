@@ -4,18 +4,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
-import '../../../lib/core/logger.dart';
-import '../../../lib/data/data_sources/fetch_data_source.dart';
-import '../../../lib/data/data_sources/schedule_data_source.dart';
-import '../../../lib/data/models/building.dart';
-import '../../../lib/data/models/group.dart';
-import '../../../lib/data/models/room.dart';
-import '../../../lib/data/models/schedule/day.dart';
-import '../../../lib/data/models/schedule/lesson.dart';
-import '../../../lib/data/models/schedule/week.dart';
-import '../../../lib/data/models/teacher.dart';
-import '../../../lib/domain/entities/group.dart';
-import '../../../lib/domain/entities/teacher.dart';
+import 'package:poly_scheduler/core/logger.dart';
+import 'package:poly_scheduler/data/data_sources/fetch_data_source.dart';
+import 'package:poly_scheduler/data/data_sources/schedule_data_source.dart';
+import 'package:poly_scheduler/data/models/building.dart';
+import 'package:poly_scheduler/data/models/group.dart';
+import 'package:poly_scheduler/data/models/room.dart';
+import 'package:poly_scheduler/data/models/schedule/day.dart';
+import 'package:poly_scheduler/data/models/schedule/lesson.dart';
+import 'package:poly_scheduler/data/models/schedule/week.dart';
+import 'package:poly_scheduler/data/models/teacher.dart';
+import 'package:poly_scheduler/domain/entities/group.dart';
+import 'package:poly_scheduler/domain/entities/teacher.dart';
 
 void main() {
   group('RemoteSourceTestsWithRealHTTP', () {

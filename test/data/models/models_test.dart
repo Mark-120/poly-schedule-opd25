@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../lib/data/models/teacher.dart';
-import '../../../lib/domain/entities/teacher.dart';
+import 'package:poly_scheduler/data/models/teacher.dart';
+import 'package:poly_scheduler/domain/entities/teacher.dart';
 
 void main() {
   group('Equality Check', () {
