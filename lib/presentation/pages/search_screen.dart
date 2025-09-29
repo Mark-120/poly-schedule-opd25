@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:poly_scheduler/domain/entities/entity_id.dart';
 
 import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
@@ -99,8 +100,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       context,
                       MaterialPageRoute(
                         builder:
-                            (e) => ScheduleScreen.group(
-                              groupId: group.id,
+                            (e) => ScheduleScreen(
+                              id: EntityId.group(group.id),
                               dayTime: DateTime.now(),
                               bottomTitle: group.name,
                             ),
@@ -113,8 +114,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       context,
                       MaterialPageRoute(
                         builder:
-                            (e) => ScheduleScreen.teacher(
-                              teacherId: teacher.id,
+                            (e) => ScheduleScreen(
+                              id: EntityId.teacher(teacher.id),
                               dayTime: DateTime.now(),
                               bottomTitle: AppStrings.fullNameToAbbreviation(
                                 teacher.fullName,

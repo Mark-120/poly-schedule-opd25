@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:poly_scheduler/domain/entities/entity_id.dart';
 import 'package:poly_scheduler/presentation/state_managers/class_search_screen_bloc/class_search_bloc.dart';
 
 import '../../core/presentation/uikit/app_text_styles.dart';
@@ -66,8 +67,8 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder:
-                            (e) => ScheduleScreen.room(
-                              roomId: state.selectedRoom!.getId(),
+                            (e) => ScheduleScreen(
+                              id: EntityId.room(state.selectedRoom!.getId()),
                               dayTime: DateTime.now(),
                               bottomTitle: AppStrings.fullNameOfRoom(
                                 state.selectedRoom!,

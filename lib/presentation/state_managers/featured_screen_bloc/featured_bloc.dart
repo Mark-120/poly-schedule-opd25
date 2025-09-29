@@ -2,6 +2,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/group.dart';
 import '../../../domain/entities/teacher.dart';
 import '../../../domain/entities/room.dart';
@@ -150,10 +151,6 @@ class FeaturedBloc extends Bloc<FeaturedEvent, FeaturedState> {
     SaveLastOpenedSchedule event,
     Emitter<FeaturedState> emit,
   ) async {
-    await saveLastSchedule(
-      type: event.type,
-      id: event.id.toString(),
-      title: event.title,
-    );
+    await saveLastSchedule(type: event.type, id: event.id, title: event.title);
   }
 }

@@ -8,6 +8,7 @@ import 'package:poly_scheduler/domain/entities/schedule/week.dart';
 
 import 'package:poly_scheduler/domain/entities/teacher.dart';
 
+import '../../domain/entities/entity_id.dart';
 import '../data_sources/base.dart';
 import '../../domain/repositories/schedule_repository.dart';
 

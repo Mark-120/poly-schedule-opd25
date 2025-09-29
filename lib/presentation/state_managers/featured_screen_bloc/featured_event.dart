@@ -69,7 +69,7 @@ class DeleteRoom extends FeaturedEvent {
 
 class SaveLastOpenedSchedule extends FeaturedEvent {
   final String type;
-  final String id;
+  final EntityId id;
   final String title;
 
   const SaveLastOpenedSchedule({

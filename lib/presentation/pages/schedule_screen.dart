@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:poly_scheduler/domain/entities/entity_id.dart';
 
 import '../../domain/usecases/schedule_usecases/get_schedule_usecases.dart';
-import '../../domain/entities/group.dart';
-import '../../domain/entities/room.dart';
-import '../../domain/entities/teacher.dart';
 import '../../domain/entities/schedule/day.dart';
 import '../../domain/entities/schedule/week.dart';
 import '../../core/date_formater.dart';
@@ -20,63 +18,16 @@ import '../widgets/day_section.dart';
 import 'featured_screen.dart';
 
 class ScheduleScreen extends StatefulWidget {
-  final ScheduleType type;
-  final dynamic id;
-  final DateTime initialDayTime;
+  final EntityId id;
+  final DateTime dayTime;
   final String bottomTitle;
 
-  const ScheduleScreen._({
+  const ScheduleScreen({
     super.key,
-    required this.type,
-    this.id,
-    required this.initialDayTime,
+    required this.id,
+    required this.dayTime,
     required this.bottomTitle,
   });
-
-  factory ScheduleScreen.group({
-    Key? key,
-    required GroupId groupId,
-    required DateTime dayTime,
-    required String bottomTitle,
-  }) {
-    return ScheduleScreen._(
-      key: key,
-      type: ScheduleType.group,
-      id: groupId,
-      initialDayTime: dayTime,
-      bottomTitle: bottomTitle,
-    );
-  }
-
-  factory ScheduleScreen.teacher({
-    Key? key,
-    required TeacherId teacherId,
-    required DateTime dayTime,
-    required String bottomTitle,
-  }) {
-    return ScheduleScreen._(
-      key: key,
-      type: ScheduleType.teacher,
-      id: teacherId,
-      initialDayTime: dayTime,
-      bottomTitle: bottomTitle,
-    );
-  }
-
-  factory ScheduleScreen.room({
-    Key? key,
-    required RoomId roomId,
-    required DateTime dayTime,
-    required String bottomTitle,
-  }) {
-    return ScheduleScreen._(
-      key: key,
-      type: ScheduleType.classroom,
-      id: roomId,
-      initialDayTime: dayTime,
-      bottomTitle: bottomTitle,
-    );
-  }
 
   @override
   State<ScheduleScreen> createState() => _ScheduleScreenState();
@@ -105,9 +56,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   void initState() {
     super.initState();
     _weekDates.addAll([
-      widget.initialDayTime.subtract(const Duration(days: 7)),
-      widget.initialDayTime,
-      widget.initialDayTime.add(const Duration(days: 7)),
+      widget.dayTime.subtract(const Duration(days: 7)),
+      widget.dayTime,
+      widget.dayTime.add(const Duration(days: 7)),
     ]);
     _pageKeys.addAll([GlobalKey(), GlobalKey(), GlobalKey()]);
     _pageController.addListener(_onPageChanged);
@@ -140,7 +91,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       itemBuilder: (context, index) {
         return _SchedulePage(
           key: _pageKeys[index],
-          type: widget.type,
           id: widget.id,
           dayTime: _weekDates[index],
           onSwipeLeft: _onSwipeLeft,
@@ -153,8 +103,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 }
 
 class _SchedulePage extends StatelessWidget {
-  final ScheduleType type;
-  final dynamic id;
+  final EntityId id;
   final DateTime dayTime;
   final VoidCallback onSwipeLeft;
   final VoidCallback onSwipeRight;
@@ -162,8 +111,7 @@ class _SchedulePage extends StatelessWidget {
 
   const _SchedulePage({
     required Key key,
-    required this.type,
-    this.id,
+    required this.id,
     required this.dayTime,
     required this.onSwipeLeft,
     required this.onSwipeRight,
@@ -189,13 +137,14 @@ class _SchedulePage extends StatelessWidget {
   }
 
   ScheduleEvent _createEvent() {
-    switch (type) {
-      case ScheduleType.group:
-        return LoadScheduleByGroup(groupId: id, dayTime: dayTime);
-      case ScheduleType.teacher:
-        return LoadScheduleByTeacher(teacherId: id, dayTime: dayTime);
-      case ScheduleType.classroom:
-        return LoadScheduleByRoom(roomId: id, dayTime: dayTime);
+    if (id.isGroup) {
+      return LoadScheduleByGroup(groupId: id.asGroup, dayTime: dayTime);
+    } else if (id.isTeacher) {
+      return LoadScheduleByTeacher(teacherId: id.asTeacher, dayTime: dayTime);
+    } else if (id.isRoom) {
+      return LoadScheduleByRoom(roomId: id.asRoom, dayTime: dayTime);
+    } else {
+      throw UnimplementedError();
     }
   }
 }
