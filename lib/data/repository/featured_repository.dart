@@ -1,8 +1,8 @@
 import 'package:hive/hive.dart';
 
 import '../../core/logger.dart';
-import '../../domain/entities/room.dart';
 import '../../domain/entities/group.dart';
+import '../../domain/entities/room.dart';
 import '../../domain/entities/teacher.dart';
 import '../../domain/repositories/featured_repository.dart';
 

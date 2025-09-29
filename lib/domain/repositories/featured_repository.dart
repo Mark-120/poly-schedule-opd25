@@ -1,6 +1,6 @@
 import '../entities/group.dart';
-import '../entities/teacher.dart';
 import '../entities/room.dart';
+import '../entities/teacher.dart';
 
 abstract class FeaturedRepository {
   Future<List<Teacher>> getFeaturedTeachers();

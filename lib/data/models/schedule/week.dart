@@ -1,5 +1,5 @@
-import '../../../domain/entities/schedule/week.dart';
 import '../../../domain/entities/schedule/day.dart';
+import '../../../domain/entities/schedule/week.dart';
 import 'day.dart';
 
 class WeekModel extends Week {

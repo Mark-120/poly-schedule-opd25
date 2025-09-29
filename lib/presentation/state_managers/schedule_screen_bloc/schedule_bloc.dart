@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:poly_scheduler/domain/usecases/schedule_usecases/get_schedule_usecases.dart';
-import 'package:poly_scheduler/presentation/state_managers/schedule_screen_bloc/schedule_event.dart';
-import 'package:poly_scheduler/presentation/state_managers/schedule_screen_bloc/schedule_state.dart';
+import '../../../domain/usecases/schedule_usecases/get_schedule_usecases.dart';
+import 'schedule_event.dart';
+import 'schedule_state.dart';
 
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final GetScheduleByGroup getScheduleByGroup;

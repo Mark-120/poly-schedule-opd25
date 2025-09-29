@@ -1,16 +1,11 @@
-import 'package:poly_scheduler/domain/entities/building.dart';
-
-import 'package:poly_scheduler/domain/entities/group.dart';
-
-import 'package:poly_scheduler/domain/entities/room.dart';
-
-import 'package:poly_scheduler/domain/entities/schedule/week.dart';
-
-import 'package:poly_scheduler/domain/entities/teacher.dart';
-
+import '../../domain/entities/building.dart';
 import '../../domain/entities/entity_id.dart';
-import '../data_sources/base.dart';
+import '../../domain/entities/group.dart';
+import '../../domain/entities/room.dart';
+import '../../domain/entities/schedule/week.dart';
+import '../../domain/entities/teacher.dart';
 import '../../domain/repositories/schedule_repository.dart';
+import '../data_sources/base.dart';
 
 class ScheduleRepositoryImpl extends ScheduleRepository {
   final FetchDataSource fetchDataSource;

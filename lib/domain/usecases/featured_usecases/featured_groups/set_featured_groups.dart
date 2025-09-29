@@ -1,5 +1,5 @@
-import '../../../repositories/featured_repository.dart';
 import '../../../entities/group.dart';
+import '../../../repositories/featured_repository.dart';
 
 class SetFeaturedGroups {
   final FeaturedRepository repository;

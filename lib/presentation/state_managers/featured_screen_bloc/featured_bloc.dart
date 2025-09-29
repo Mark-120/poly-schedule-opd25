@@ -1,11 +1,11 @@
 // featured_bloc.dart
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/group.dart';
-import '../../../domain/entities/teacher.dart';
 import '../../../domain/entities/room.dart';
+import '../../../domain/entities/teacher.dart';
 import '../../../domain/usecases/featured_usecases/featured_groups/get_featured_groups.dart';
 import '../../../domain/usecases/featured_usecases/featured_groups/set_featured_groups.dart';
 import '../../../domain/usecases/featured_usecases/featured_rooms/get_featured_rooms.dart';

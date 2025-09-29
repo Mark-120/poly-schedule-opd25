@@ -1,8 +1,7 @@
 // domain/usecases/last_schedule_usecases.dart
 
-import 'package:poly_scheduler/domain/entities/entity_id.dart';
-
 import '../../../data/models/last_schedule.dart';
+import '../../entities/entity_id.dart';
 import '../../repositories/last_schedule_repository.dart';
 
 class SaveLastSchedule {

@@ -1,8 +1,8 @@
-import '../entities/schedule/week.dart';
-import '../entities/group.dart';
-import '../entities/teacher.dart';
-import '../entities/room.dart';
 import '../entities/building.dart';
+import '../entities/group.dart';
+import '../entities/room.dart';
+import '../entities/schedule/week.dart';
+import '../entities/teacher.dart';
 
 abstract class ScheduleRepository {
   const ScheduleRepository();

@@ -1,5 +1,5 @@
-import '../../../repositories/featured_repository.dart';
 import '../../../entities/teacher.dart';
+import '../../../repositories/featured_repository.dart';
 
 class SetFeaturedTeachers {
   final FeaturedRepository repository;

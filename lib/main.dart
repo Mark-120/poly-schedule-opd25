@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:poly_scheduler/domain/entities/entity_id.dart';
+
 import 'core/logger.dart';
 import 'core/presentation/bloc_observer.dart';
 import 'core/presentation/uikit/app_strings.dart';
+import 'core/presentation/uikit/app_text_styles.dart';
+import 'core/presentation/uikit/app_theme.dart';
 import 'data/models/last_schedule.dart';
-
+import 'domain/entities/entity_id.dart';
 import 'domain/entities/group.dart';
 import 'domain/entities/room.dart';
 import 'domain/entities/teacher.dart';
 import 'domain/repositories/last_schedule_repository.dart';
 import 'domain/usecases/last_schedule_usecases/save_last_schedule.dart';
 import 'presentation/pages/empty_schedule_screen.dart';
-import 'core/presentation/uikit/app_theme.dart';
-import 'core/presentation/uikit/app_text_styles.dart';
 import 'presentation/pages/schedule_screen.dart';
 import 'service_locator.dart' as di;
 import 'service_locator.dart';

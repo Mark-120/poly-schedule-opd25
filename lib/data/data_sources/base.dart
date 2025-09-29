@@ -1,9 +1,9 @@
-import '../../domain/entities/entity_id.dart';
-import '../../domain/entities/room.dart';
-import '../../domain/entities/teacher.dart';
-import '../../domain/entities/group.dart';
 import '../../domain/entities/building.dart';
+import '../../domain/entities/entity_id.dart';
+import '../../domain/entities/group.dart';
+import '../../domain/entities/room.dart';
 import '../../domain/entities/schedule/week.dart';
+import '../../domain/entities/teacher.dart';
 
 abstract class ScheduleDataSource {
   Future<Week> getSchedule(EntityId id, DateTime dayTime);

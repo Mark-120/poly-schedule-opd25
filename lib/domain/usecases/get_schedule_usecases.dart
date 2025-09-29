@@ -1,9 +1,9 @@
 // Для получения расписания группы
 import '../../common/usecases/usecase.dart';
-import '../entities/room.dart';
 import '../entities/group.dart';
-import '../entities/teacher.dart';
+import '../entities/room.dart';
 import '../entities/schedule/week.dart';
+import '../entities/teacher.dart';
 import '../repositories/schedule_repository.dart';
 
 class GetScheduleByGroup implements UseCase<Week, GetScheduleByGroupParams> {

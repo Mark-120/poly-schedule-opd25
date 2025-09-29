@@ -1,6 +1,7 @@
 import "package:hive/hive.dart";
-import '../../../domain/entities/schedule/lesson.dart';
+
 import '../../../domain/entities/schedule/day.dart';
+import '../../../domain/entities/schedule/lesson.dart';
 import '../../models/schedule/day.dart';
 
 class DayAdapter extends TypeAdapter<Day> {

@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:poly_scheduler/domain/entities/group.dart';
-import 'package:poly_scheduler/domain/entities/teacher.dart';
 
+import '../../../domain/entities/group.dart';
 import '../../../domain/entities/room.dart';
+import '../../../domain/entities/teacher.dart';
 
 abstract class ScheduleEvent extends Equatable {
   const ScheduleEvent();
