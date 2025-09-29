@@ -15,16 +15,16 @@ void main() {
 
     test('teacherJson', () {
       var a = TeacherModel.fromJson(
-        jsonDecode("""{
+        jsonDecode('''{
     "id": 2,
     "full_name": "2"
-    }"""),
+    }'''),
       );
       var b = TeacherModel.fromJson(
-        jsonDecode("""{
+        jsonDecode('''{
     "id": 2,
     "full_name": "2"
-    }"""),
+    }'''),
       );
       expect(a, b);
     });

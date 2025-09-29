@@ -1,4 +1,4 @@
-import "package:hive/hive.dart";
+import 'package:hive/hive.dart';
 import '../../../domain/entities/schedule/day.dart';
 import '../../../domain/entities/schedule/week.dart';
 import '../../models/schedule/week.dart';

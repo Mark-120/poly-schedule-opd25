@@ -12,7 +12,7 @@ class TeacherId extends Equatable {
   }
   @override
   String toString() {
-    return "$id";
+    return '$id';
   }
 }
 

@@ -30,7 +30,7 @@ class RemoteScheduleDataSourceImpl implements ScheduleDataSource {
     } else if (id.isRoom) {
       return getScheduleByRoom(id.asRoom, dayTime);
     }
-    throw RemoteException("Invalid Id type");
+    throw RemoteException('Invalid Id type');
   }
 
   Future<Week> getScheduleByTeacher(int teacherId, DateTime dayTime) async {

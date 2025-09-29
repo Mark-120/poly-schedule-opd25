@@ -1,4 +1,4 @@
-import "package:hive/hive.dart";
+import 'package:hive/hive.dart';
 import '../../domain/entities/teacher.dart';
 import '../models/teacher.dart';
 

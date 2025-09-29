@@ -6,3 +6,5 @@ linter:
   rules:
     - prefer_relative_imports
     - directives_ordering
+    - prefer_single_quotes
+    - eol_at_end_of_file
