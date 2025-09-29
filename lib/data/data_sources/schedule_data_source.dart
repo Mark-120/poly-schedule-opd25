@@ -1,14 +1,15 @@
-import 'package:http/http.dart';
 import 'dart:convert';
 
-import '../../domain/entities/entity_id.dart';
-import 'base.dart';
-import '../models/schedule/week.dart';
-import '../../core/logger.dart';
-import '../../domain/entities/room.dart';
-import '../../domain/entities/schedule/week.dart';
+import 'package:http/http.dart';
+
 import '../../core/date_formater.dart';
 import '../../core/exception/remote_exception.dart';
+import '../../core/logger.dart';
+import '../../domain/entities/entity_id.dart';
+import '../../domain/entities/room.dart';
+import '../../domain/entities/schedule/week.dart';
+import '../models/schedule/week.dart';
+import 'base.dart';
 
 class RemoteScheduleDataSourceImpl implements ScheduleDataSource {
   final Client client;
@@ -29,7 +30,7 @@ class RemoteScheduleDataSourceImpl implements ScheduleDataSource {
     } else if (id.isRoom) {
       return getScheduleByRoom(id.asRoom, dayTime);
     }
-    throw RemoteException("Invalid Id type");
+    throw RemoteException('Invalid Id type');
   }
 
   Future<Week> getScheduleByTeacher(int teacherId, DateTime dayTime) async {

@@ -12,7 +12,7 @@ class GroupId extends Equatable {
   }
   @override
   String toString() {
-    return "$id";
+    return '$id';
   }
 }
 

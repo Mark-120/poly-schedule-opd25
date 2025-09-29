@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:poly_scheduler/core/presentation/uikit/theme_extension.dart';
 
 import '../../core/presentation/uikit/app_text_styles.dart';
+import '../../core/presentation/uikit/theme_extension.dart';
 
 class ExpandableClassCard extends StatefulWidget {
   final String timeStart;

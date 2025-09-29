@@ -1,6 +1,6 @@
 import 'dart:math';
-import "package:hive/hive.dart";
-import 'package:poly_scheduler/core/logger.dart';
+import 'package:hive/hive.dart';
+import '../../core/logger.dart';
 import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/schedule/week.dart';
 import 'base.dart';
@@ -50,7 +50,7 @@ class KeySchedule {
 
   @override
   String toString() {
-    return "${originalKey.toString()}_${dateTime.toString()}";
+    return '${originalKey.toString()}_${dateTime.toString()}';
   }
 }
 

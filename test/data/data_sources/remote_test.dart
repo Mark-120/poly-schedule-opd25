@@ -1,21 +1,21 @@
 import 'dart:convert';
 
+import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:flutter_test/flutter_test.dart';
 
-import '../../../lib/core/logger.dart';
-import '../../../lib/data/models/schedule/day.dart';
-import '../../../lib/data/models/schedule/lesson.dart';
-import '../../../lib/data/models/schedule/week.dart';
-import '../../../lib/data/data_sources/fetch_data_source.dart';
-import '../../../lib/data/data_sources/schedule_data_source.dart';
-import '../../../lib/data/models/building.dart';
-import '../../../lib/data/models/teacher.dart';
-import '../../../lib/data/models/group.dart';
-import '../../../lib/data/models/room.dart';
-import '../../../lib/domain/entities/teacher.dart';
-import '../../../lib/domain/entities/group.dart';
+import 'package:poly_scheduler/core/logger.dart';
+import 'package:poly_scheduler/data/data_sources/fetch_data_source.dart';
+import 'package:poly_scheduler/data/data_sources/schedule_data_source.dart';
+import 'package:poly_scheduler/data/models/building.dart';
+import 'package:poly_scheduler/data/models/group.dart';
+import 'package:poly_scheduler/data/models/room.dart';
+import 'package:poly_scheduler/data/models/schedule/day.dart';
+import 'package:poly_scheduler/data/models/schedule/lesson.dart';
+import 'package:poly_scheduler/data/models/schedule/week.dart';
+import 'package:poly_scheduler/data/models/teacher.dart';
+import 'package:poly_scheduler/domain/entities/group.dart';
+import 'package:poly_scheduler/domain/entities/teacher.dart';
 
 void main() {
   group('RemoteSourceTestsWithRealHTTP', () {
@@ -29,7 +29,7 @@ void main() {
 
       expect(
         buildings.firstWhere((x) => x.id == 11),
-        BuildingModel(id: 11, name: 'Главное здание', abbr: "ГЗ", address: ''),
+        BuildingModel(id: 11, name: 'Главное здание', abbr: 'ГЗ', address: ''),
       );
     });
   });
@@ -38,7 +38,7 @@ void main() {
     test('getAllBuildings', () async {
       final source = FetchRemoteDataSourceImpl(
         client: MockClient((request) async {
-          return http.Response("""{
+          return http.Response('''{
  "buildings": [
   {
    "id": 1,
@@ -52,7 +52,7 @@ void main() {
    "abbr": "b 2",
    "address": "k2"
   }
-  ]}""", 200);
+  ]}''', 200);
         }),
         logger: MockLogger(),
       );
@@ -60,8 +60,8 @@ void main() {
       final buildings = await source.getAllBuildings();
 
       expect(buildings, [
-        BuildingModel(id: 1, name: 'Building 1', abbr: "b 1", address: 'k1'),
-        BuildingModel(id: 2, name: 'Building 2', abbr: "b 2", address: 'k2'),
+        BuildingModel(id: 1, name: 'Building 1', abbr: 'b 1', address: 'k1'),
+        BuildingModel(id: 2, name: 'Building 2', abbr: 'b 2', address: 'k2'),
       ]);
     });
 
@@ -71,7 +71,7 @@ void main() {
           if (!request.toString().endsWith('q=teacher')) {
             throw Exception('Wrong query, query is $request');
           }
-          return http.Response("""{
+          return http.Response('''{
  "teachers": [
   {
    "id": 1,
@@ -80,7 +80,7 @@ void main() {
   {
    "id": 2,
    "full_name": "2"
-  }]}""", 200);
+  }]}''', 200);
         }),
         logger: MockLogger(),
       );
@@ -99,7 +99,7 @@ void main() {
           if (!request.toString().endsWith('q=group')) {
             throw Exception('Wrong query, query is $request');
           }
-          return http.Response("""{
+          return http.Response('''{
  "groups": [
   {
    "id": 1,
@@ -110,7 +110,7 @@ void main() {
    "id": 2,
    "name": "2",
    "faculty": {"id": 2, "name": "Name2", "abbr": "N2"}
-  }]}""", 200);
+  }]}''', 200);
         }),
         logger: MockLogger(),
       );
@@ -126,9 +126,9 @@ void main() {
     test('getAllRoomsOfBuilding', () async {
       BuildingModel building = BuildingModel(
         id: 938,
-        name: "build",
-        abbr: "bld",
-        address: "none",
+        name: 'build',
+        abbr: 'bld',
+        address: 'none',
       );
 
       final source = FetchRemoteDataSourceImpl(
@@ -137,7 +137,7 @@ void main() {
             throw Exception('Wrong query, query is $request');
           }
           return http.Response.bytes(
-            utf8.encode("""{
+            utf8.encode('''{
  "rooms": [
   {
    "id": 1,
@@ -153,7 +153,7 @@ void main() {
   "name": "build",
   "abbr": "bld",
   "address": "none"
-  }}"""),
+  }}'''),
             200,
             headers: {'content-type': 'text/plain; charset=utf-8'},
           );
@@ -175,7 +175,7 @@ void main() {
             throw Exception('Wrong query, query is $request');
           }
           return http.Response.bytes(
-            utf8.encode("""{
+            utf8.encode('''{
  "week": {
   "date_start": "2001.01.01",
   "date_end": "2001.01.07",
@@ -237,7 +237,7 @@ void main() {
      ],
      "webinar_url": "",
      "lms_url": "https://dl.spbstu.ru//course/view.php?id=-1"
-    }]}]}"""),
+    }]}]}'''),
             200,
           );
         }),
@@ -257,32 +257,32 @@ void main() {
               date: DateTime(2001, 1, 1),
               lessons: [
                 LessonModel(
-                  subject: "Зельеварение",
-                  type: "Лекции",
-                  typeAbbr: "Лек",
-                  start: "10:00",
-                  end: "11:40",
+                  subject: 'Зельеварение',
+                  type: 'Лекции',
+                  typeAbbr: 'Лек',
+                  start: '10:00',
+                  end: '11:40',
                   groups: [
-                    GroupModel(id: GroupId(101), name: "10101"),
-                    GroupModel(id: GroupId(102), name: "10102"),
+                    GroupModel(id: GroupId(101), name: '10101'),
+                    GroupModel(id: GroupId(102), name: '10102'),
                   ],
                   auditories: [
                     RoomModel(
                       id: 301,
                       building: BuildingModel(
                         id: 25,
-                        name: "Школа Чародейства и волшебства Хогвартс",
-                        abbr: "Хогвартс",
-                        address: "Великобритания",
+                        name: 'Школа Чародейства и волшебства Хогвартс',
+                        abbr: 'Хогвартс',
+                        address: 'Великобритания',
                       ),
-                      name: "Кабинет Зельеварения",
+                      name: 'Кабинет Зельеварения',
                     ),
                   ],
                   teachers: [
-                    TeacherModel(id: TeacherId(201), fullName: "Северус Снегг"),
+                    TeacherModel(id: TeacherId(201), fullName: 'Северус Снегг'),
                   ],
-                  webinarUrl: "",
-                  lmsUrl: "https://dl.spbstu.ru//course/view.php?id=-1",
+                  webinarUrl: '',
+                  lmsUrl: 'https://dl.spbstu.ru//course/view.php?id=-1',
                 ),
               ],
             ),

@@ -1,4 +1,7 @@
 include: package:flutter_lints/flutter.yaml
-analyzer:
-  errors:
-    avoid_relative_lib_imports: ignore
+linter:
+  rules:
+    - prefer_relative_imports
+    - directives_ordering
+    - prefer_single_quotes
+    - eol_at_end_of_file

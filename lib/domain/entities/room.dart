@@ -19,7 +19,7 @@ class RoomId extends Equatable {
   }
   @override
   String toString() {
-    return "${roomId}_$buildingId";
+    return '${roomId}_$buildingId';
   }
 }
 
