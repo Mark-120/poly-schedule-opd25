@@ -2,10 +2,7 @@
 
 import '../../../common/usecases/usecase.dart';
 import '../../entities/entity_id.dart';
-import '../../entities/group.dart';
-import '../../entities/room.dart';
 import '../../entities/schedule/week.dart';
-import '../../entities/teacher.dart';
 import '../../repositories/schedule_repository.dart';
 
 class GetSchedule implements UseCase<Week, GetScheduleParams> {
