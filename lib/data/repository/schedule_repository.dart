@@ -1,3 +1,4 @@
+import '../../core/date_formater.dart';
 import '../../domain/entities/building.dart';
 import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/group.dart';
@@ -37,11 +38,17 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
 
   @override
   Future<Week> getSchedule(EntityId entityId, DateTime dayTime) {
-    return scheduleDataSource.getSchedule(entityId, dayTime);
+    return scheduleDataSource.getSchedule(
+      entityId,
+      DateFormater.truncDate(dayTime),
+    );
   }
 
   @override
   Future<void> invalidateSchedule(EntityId entityId, DateTime dayTime) {
-    return scheduleDataSource.invalidateSchedule(entityId, dayTime);
+    return scheduleDataSource.invalidateSchedule(
+      entityId,
+      DateFormater.truncDate(dayTime),
+    );
   }
 }
