@@ -36,44 +36,12 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
   }
 
   @override
-  Future<Week> getScheduleByGroup(GroupId groupId, DateTime dayTime) {
-    return scheduleDataSource.getSchedule(EntityId.group(groupId), dayTime);
+  Future<Week> getSchedule(EntityId entityId, DateTime dayTime) {
+    return scheduleDataSource.getSchedule(entityId, dayTime);
   }
 
   @override
-  Future<Week> getScheduleByRoom(RoomId roomId, DateTime dayTime) {
-    return scheduleDataSource.getSchedule(EntityId.room(roomId), dayTime);
-  }
-
-  @override
-  Future<Week> getScheduleByTeacher(TeacherId teacherId, DateTime dayTime) {
-    return scheduleDataSource.getSchedule(EntityId.teacher(teacherId), dayTime);
-  }
-
-  @override
-  Future<void> invalidateScheduleByGroup(GroupId groupId, DateTime dayTime) {
-    return scheduleDataSource.invalidateSchedule(
-      EntityId.group(groupId),
-      dayTime,
-    );
-  }
-
-  @override
-  Future<void> invalidateScheduleByRoom(RoomId roomId, DateTime dayTime) {
-    return scheduleDataSource.invalidateSchedule(
-      EntityId.room(roomId),
-      dayTime,
-    );
-  }
-
-  @override
-  Future<void> invalidateScheduleByTeacher(
-    TeacherId teacherId,
-    DateTime dayTime,
-  ) {
-    return scheduleDataSource.invalidateSchedule(
-      EntityId.teacher(teacherId),
-      dayTime,
-    );
+  Future<void> invalidateSchedule(EntityId entityId, DateTime dayTime) {
+    return scheduleDataSource.invalidateSchedule(entityId, dayTime);
   }
 }

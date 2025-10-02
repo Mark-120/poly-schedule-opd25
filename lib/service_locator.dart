@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'core/logger.dart';
 import 'data/adapters/building.dart';
 import 'data/adapters/date.dart';
+import 'data/adapters/entity_id.dart';
 import 'data/adapters/group.dart';
 import 'data/adapters/last_schedule.dart';
 import 'data/adapters/room.dart';
@@ -53,9 +54,7 @@ Future<void> init() async {
   );
 
   // UseCases
-  sl.registerLazySingleton(() => GetScheduleByGroup(sl()));
-  sl.registerLazySingleton(() => GetScheduleByTeacher(sl()));
-  sl.registerLazySingleton(() => GetScheduleByRoom(sl()));
+  sl.registerLazySingleton(() => GetSchedule(sl()));
   sl.registerLazySingleton(() => FindGroups(sl()));
   sl.registerLazySingleton(() => FindTeachers(sl()));
   sl.registerLazySingleton(() => GetAllBuildings(sl()));
@@ -101,6 +100,7 @@ Future<void> init() async {
   // Hive
   await Hive.initFlutter();
 
+  Hive.registerAdapter(EntityIdAdapter());
   Hive.registerAdapter(DateAdapter());
   Hive.registerAdapter(TeacherAdapter());
   Hive.registerAdapter(RoomAdapter());

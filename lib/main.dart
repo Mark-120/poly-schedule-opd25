@@ -52,28 +52,13 @@ class MainApp extends StatelessWidget {
 
   Widget _buildHomeScreen() {
     if (lastSchedule == null) return EmptyScheduleScreen();
-
-    switch (lastSchedule!.type) {
-      case 'group':
-        return ScheduleScreen(
-          id: EntityId.group(GroupId(int.parse(lastSchedule!.id))),
-          dayTime: DateTime.now(),
-          bottomTitle: lastSchedule!.title,
-        );
-      case 'teacher':
-        return ScheduleScreen(
-          id: EntityId.teacher(TeacherId(int.parse(lastSchedule!.id))),
-          dayTime: DateTime.now(),
-          bottomTitle: AppStrings.fullNameToAbbreviation(lastSchedule!.title),
-        );
-      case 'room':
-        return ScheduleScreen(
-          id: EntityId.room(RoomId.parse(lastSchedule!.id)),
-          dayTime: DateTime.now(),
-          bottomTitle: lastSchedule!.title,
-        );
-      default:
-        return EmptyScheduleScreen();
-    }
+    return ScheduleScreen(
+      id: lastSchedule!.id,
+      dayTime: DateTime.now(),
+      bottomTitle:
+          (lastSchedule!.id.isTeacher)
+              ? AppStrings.fullNameToAbbreviation(lastSchedule!.title)
+              : lastSchedule!.title,
+    );
   }
 }
