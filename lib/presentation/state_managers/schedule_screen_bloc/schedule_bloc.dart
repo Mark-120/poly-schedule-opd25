@@ -1,20 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../domain/entities/entity_id.dart';
 import '../../../domain/usecases/schedule_usecases/get_schedule_usecases.dart';
 import 'schedule_event.dart';
 import 'schedule_state.dart';
 
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
-  final GetScheduleByGroup getScheduleByGroup;
-  final GetScheduleByTeacher getScheduleByTeacher;
-  final GetScheduleByRoom getScheduleByRoom;
+  final GetSchedule getSchedule;
 
-  ScheduleBloc({
-    required this.getScheduleByGroup,
-    required this.getScheduleByTeacher,
-    required this.getScheduleByRoom,
-  }) : super(const ScheduleLoading()) {
+  ScheduleBloc({required this.getSchedule}) : super(const ScheduleLoading()) {
     on<LoadScheduleByGroup>(_onLoadScheduleByGroup);
     on<LoadScheduleByTeacher>(_onLoadScheduleByTeacher);
     on<LoadScheduleByRoom>(_onLoadScheduleByRoom);
@@ -26,9 +21,9 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   ) async {
     emit(const ScheduleLoading());
     try {
-      final week = await getScheduleByGroup(
-        GetScheduleByGroupParams(
-          groupId: event.groupId,
+      final week = await getSchedule(
+        GetScheduleParams(
+          entityId: EntityId.group(event.groupId),
           dayTime: event.dayTime,
         ),
       );
@@ -44,9 +39,9 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   ) async {
     emit(const ScheduleLoading());
     try {
-      final week = await getScheduleByTeacher(
-        GetScheduleByTeacherParams(
-          teacherId: event.teacherId,
+      final week = await getSchedule(
+        GetScheduleParams(
+          entityId: EntityId.teacher(event.teacherId),
           dayTime: event.dayTime,
         ),
       );
@@ -62,8 +57,11 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   ) async {
     emit(const ScheduleLoading());
     try {
-      final week = await getScheduleByRoom(
-        GetScheduleByRoomParams(roomId: event.roomId, dayTime: event.dayTime),
+      final week = await getSchedule(
+        GetScheduleParams(
+          entityId: EntityId.room(event.roomId),
+          dayTime: event.dayTime,
+        ),
       );
       emit(ScheduleLoaded(week));
     } catch (e) {

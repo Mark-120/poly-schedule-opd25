@@ -1,11 +1,11 @@
+import '../../domain/entities/entity_id.dart';
+
 class LastSchedule {
-  final String type;
-  final String id;
+  final EntityId id;
   final String title;
   final DateTime lastOpened;
 
   LastSchedule({
-    required this.type,
     required this.id,
     required this.title,
     required this.lastOpened,
@@ -13,7 +13,6 @@ class LastSchedule {
 
   Map<dynamic, dynamic> toMap() {
     return {
-      'type': type,
       'id': id,
       'title': title,
       'lastOpened': lastOpened.toIso8601String(),
@@ -22,7 +21,6 @@ class LastSchedule {
 
   factory LastSchedule.fromMap(Map<dynamic, dynamic> map) {
     return LastSchedule(
-      type: map['type'],
       id: map['id'],
       title: map['title'],
       lastOpened: DateTime.parse(map['lastOpened']),

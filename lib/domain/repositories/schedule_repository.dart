@@ -1,4 +1,5 @@
 import '../entities/building.dart';
+import '../entities/entity_id.dart';
 import '../entities/group.dart';
 import '../entities/room.dart';
 import '../entities/schedule/week.dart';
@@ -12,14 +13,7 @@ abstract class ScheduleRepository {
   Future<List<Building>> getAllBuildings();
   Future<List<Room>> getAllRoomsOfBuilding(int buildingId);
 
-  Future<Week> getScheduleByTeacher(TeacherId teacherId, DateTime dayTime);
-  Future<Week> getScheduleByGroup(GroupId groupId, DateTime dayTime);
-  Future<Week> getScheduleByRoom(RoomId roomId, DateTime dayTime);
+  Future<Week> getSchedule(EntityId entityId, DateTime dayTime);
 
-  Future<void> invalidateScheduleByTeacher(
-    TeacherId teacherId,
-    DateTime dayTime,
-  );
-  Future<void> invalidateScheduleByGroup(GroupId groupId, DateTime dayTime);
-  Future<void> invalidateScheduleByRoom(RoomId roomId, DateTime dayTime);
+  Future<void> invalidateSchedule(EntityId entityId, DateTime dayTime);
 }

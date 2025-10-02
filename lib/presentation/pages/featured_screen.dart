@@ -432,7 +432,6 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
   void onSaveRoom(Room room) {
     context.read<FeaturedBloc>().add(
       SaveLastOpenedSchedule(
-        type: 'room',
         id: EntityId.room(room.getId()),
         title: AppStrings.fullNameOfRoom(room),
       ),
@@ -441,18 +440,13 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
 
   void onSaveGroup(Group group) {
     context.read<FeaturedBloc>().add(
-      SaveLastOpenedSchedule(
-        type: 'group',
-        id: EntityId.group(group.id),
-        title: group.name,
-      ),
+      SaveLastOpenedSchedule(id: EntityId.group(group.id), title: group.name),
     );
   }
 
   void onSaveTeacher(Teacher teacher) {
     context.read<FeaturedBloc>().add(
       SaveLastOpenedSchedule(
-        type: 'teacher',
         id: EntityId.teacher(teacher.id),
         title: teacher.fullName,
       ),
