@@ -1,66 +1,24 @@
 // Для получения расписания группы
 
 import '../../../common/usecases/usecase.dart';
-import '../../entities/group.dart';
-import '../../entities/room.dart';
+import '../../entities/entity_id.dart';
 import '../../entities/schedule/week.dart';
-import '../../entities/teacher.dart';
 import '../../repositories/schedule_repository.dart';
 
-class GetScheduleByGroup implements UseCase<Week, GetScheduleByGroupParams> {
+class GetSchedule implements UseCase<Week, GetScheduleParams> {
   final ScheduleRepository repository;
 
-  GetScheduleByGroup(this.repository);
+  GetSchedule(this.repository);
 
   @override
-  Future<Week> call(GetScheduleByGroupParams params) async {
-    return await repository.getScheduleByGroup(params.groupId, params.dayTime);
+  Future<Week> call(GetScheduleParams params) async {
+    return await repository.getSchedule(params.entityId, params.dayTime);
   }
 }
 
-class GetScheduleByGroupParams {
-  final GroupId groupId;
+class GetScheduleParams {
+  final EntityId entityId;
   final DateTime dayTime;
 
-  GetScheduleByGroupParams({required this.groupId, required this.dayTime});
-}
-
-class GetScheduleByTeacher
-    implements UseCase<Week, GetScheduleByTeacherParams> {
-  final ScheduleRepository repository;
-
-  GetScheduleByTeacher(this.repository);
-
-  @override
-  Future<Week> call(GetScheduleByTeacherParams params) async {
-    return await repository.getScheduleByTeacher(
-      params.teacherId,
-      params.dayTime,
-    );
-  }
-}
-
-class GetScheduleByTeacherParams {
-  final TeacherId teacherId;
-  final DateTime dayTime;
-
-  GetScheduleByTeacherParams({required this.teacherId, required this.dayTime});
-}
-
-class GetScheduleByRoom implements UseCase<Week, GetScheduleByRoomParams> {
-  final ScheduleRepository repository;
-
-  GetScheduleByRoom(this.repository);
-
-  @override
-  Future<Week> call(GetScheduleByRoomParams params) async {
-    return await repository.getScheduleByRoom(params.roomId, params.dayTime);
-  }
-}
-
-class GetScheduleByRoomParams {
-  final RoomId roomId;
-  final DateTime dayTime;
-
-  GetScheduleByRoomParams({required this.roomId, required this.dayTime});
+  GetScheduleParams({required this.entityId, required this.dayTime});
 }

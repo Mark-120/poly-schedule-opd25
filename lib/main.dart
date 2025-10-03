@@ -8,10 +8,6 @@ import 'core/presentation/uikit/app_strings.dart';
 import 'core/presentation/uikit/app_text_styles.dart';
 import 'core/presentation/uikit/app_theme.dart';
 import 'data/models/last_schedule.dart';
-import 'domain/entities/entity_id.dart';
-import 'domain/entities/group.dart';
-import 'domain/entities/room.dart';
-import 'domain/entities/teacher.dart';
 import 'domain/repositories/last_schedule_repository.dart';
 import 'domain/usecases/last_schedule_usecases/save_last_schedule.dart';
 import 'presentation/pages/empty_schedule_screen.dart';
@@ -52,28 +48,13 @@ class MainApp extends StatelessWidget {
 
   Widget _buildHomeScreen() {
     if (lastSchedule == null) return EmptyScheduleScreen();
-
-    switch (lastSchedule!.type) {
-      case 'group':
-        return ScheduleScreen(
-          id: EntityId.group(GroupId(int.parse(lastSchedule!.id))),
-          dayTime: DateTime.now(),
-          bottomTitle: lastSchedule!.title,
-        );
-      case 'teacher':
-        return ScheduleScreen(
-          id: EntityId.teacher(TeacherId(int.parse(lastSchedule!.id))),
-          dayTime: DateTime.now(),
-          bottomTitle: AppStrings.fullNameToAbbreviation(lastSchedule!.title),
-        );
-      case 'room':
-        return ScheduleScreen(
-          id: EntityId.room(RoomId.parse(lastSchedule!.id)),
-          dayTime: DateTime.now(),
-          bottomTitle: lastSchedule!.title,
-        );
-      default:
-        return EmptyScheduleScreen();
-    }
+    return ScheduleScreen(
+      id: lastSchedule!.id,
+      dayTime: DateTime.now(),
+      bottomTitle:
+          (lastSchedule!.id.isTeacher)
+              ? AppStrings.fullNameToAbbreviation(lastSchedule!.title)
+              : lastSchedule!.title,
+    );
   }
 }

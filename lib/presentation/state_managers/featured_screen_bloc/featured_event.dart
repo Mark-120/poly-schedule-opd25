@@ -68,16 +68,11 @@ class DeleteRoom extends FeaturedEvent {
 }
 
 class SaveLastOpenedSchedule extends FeaturedEvent {
-  final String type;
   final EntityId id;
   final String title;
 
-  const SaveLastOpenedSchedule({
-    required this.type,
-    required this.id,
-    required this.title,
-  });
+  const SaveLastOpenedSchedule({required this.id, required this.title});
 
   @override
-  List<Object> get props => [type, id, title];
+  List<Object> get props => [id, title];
 }

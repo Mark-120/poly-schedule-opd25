@@ -122,11 +122,8 @@ class _SchedulePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create:
-          (context) => ScheduleBloc(
-            getScheduleByGroup: sl<GetScheduleByGroup>(),
-            getScheduleByTeacher: sl<GetScheduleByTeacher>(),
-            getScheduleByRoom: sl<GetScheduleByRoom>(),
-          )..add(_createEvent()),
+          (context) =>
+              ScheduleBloc(getSchedule: sl<GetSchedule>())..add(_createEvent()),
       child: _ScheduleView(
         dayTime: dayTime,
         onSwipeLeft: onSwipeLeft,

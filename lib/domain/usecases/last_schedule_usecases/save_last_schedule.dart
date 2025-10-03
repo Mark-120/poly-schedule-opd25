@@ -9,18 +9,9 @@ class SaveLastSchedule {
 
   SaveLastSchedule(this.repository);
 
-  Future<void> call({
-    required String type,
-    required EntityId id,
-    required String title,
-  }) async {
+  Future<void> call({required EntityId id, required String title}) async {
     await repository.saveLastSchedule(
-      LastSchedule(
-        type: type,
-        id: id.toString(),
-        title: title,
-        lastOpened: DateTime.now(),
-      ),
+      LastSchedule(id: id, title: title, lastOpened: DateTime.now()),
     );
   }
 }

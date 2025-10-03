@@ -66,30 +66,30 @@ class CacheDataSource extends PassThroughSource {
   @override
   Future<Week> getSchedule(EntityId id, DateTime dayTime) async {
     final cacheKey = KeySchedule(id, dayTime);
-    logger.debug('[Cache] ScheduleByTeacher - checking cache for $cacheKey');
+    logger.debug('[Cache] Schedule - checking cache for $cacheKey');
     var val = scheduleCache.getValue(cacheKey);
 
     if (val == null) {
-      logger.debug('[Cache] ScheduleByTeacher - CACHE MISS for $cacheKey');
+      logger.debug('[Cache] Schedule - CACHE MISS for $cacheKey');
       var newVal = await prevDataSource.getSchedule(id, dayTime);
       scheduleCache.addValue(KeySchedule(id, dayTime), newVal);
       return newVal;
     }
-    logger.debug('[Cache] ScheduleByTeacher - CACHE HIT for $cacheKey');
+    logger.debug('[Cache] Schedule - CACHE HIT for $cacheKey');
     return val;
   }
 
   @override
   Future<void> invalidateSchedule(EntityId id, DateTime dayTime) async {
-    logger.debug('[Cache] ScheduleByTeacher - invalidating $id at $dayTime');
+    logger.debug('[Cache] Schedule - invalidating $id at $dayTime');
     var newVal = await prevDataSource.getSchedule(id, dayTime);
 
     if (newVal != scheduleCache.getValue(KeySchedule(id, dayTime))) {
-      logger.debug('[Cache] ScheduleByTeacher - data changed, updating cache');
+      logger.debug('[Cache] Schedule - data changed, updating cache');
       await scheduleCache.addValue(KeySchedule(id, dayTime), newVal);
     } else {
       logger.debug(
-        '[Cache] ScheduleByTeacher - data didn\'t change, no need to update cache',
+        '[Cache] Schedule- data didn\'t change, no need to update cache',
       );
     }
   }

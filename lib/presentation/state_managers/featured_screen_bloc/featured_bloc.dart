@@ -151,6 +151,6 @@ class FeaturedBloc extends Bloc<FeaturedEvent, FeaturedState> {
     SaveLastOpenedSchedule event,
     Emitter<FeaturedState> emit,
   ) async {
-    await saveLastSchedule(type: event.type, id: event.id, title: event.title);
+    await saveLastSchedule(id: event.id, title: event.title);
   }
 }
