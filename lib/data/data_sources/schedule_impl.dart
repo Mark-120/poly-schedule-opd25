@@ -88,10 +88,7 @@ class RemoteScheduleDataSourceImpl implements ScheduleDataSource {
   }
 
   @override
-  Future<Week> invalidateSchedule(EntityId id, DateTime dayTime) async {
-    // Return new data from server
-    return getSchedule(id, dayTime).then((x) => x.$1);
-  }
+  Future<void> invalidateSchedule(EntityId id, DateTime dayTime) async {}
 
   void _logEndpointCall(String endpoint) {
     logger.debug(
@@ -109,4 +106,7 @@ class RemoteScheduleDataSourceImpl implements ScheduleDataSource {
       );
     }
   }
+
+  @override
+  Future<void> removeSchedule(EntityId id, DateTime dayTime) async {}
 }

@@ -14,8 +14,12 @@ import 'data/adapters/schedule/day.dart';
 import 'data/adapters/schedule/lesson.dart';
 import 'data/adapters/schedule/week.dart';
 import 'data/adapters/teacher.dart';
-import 'data/data_sources/cache/cache.dart';
 import 'data/data_sources/fetch_impl.dart';
+import 'data/data_sources/local/cache.dart';
+import 'data/data_sources/local/hive_cache.dart';
+import 'data/data_sources/local/local.dart';
+import 'data/data_sources/local/prefetch.dart';
+import 'data/data_sources/local/schedule_key.dart';
 import 'data/data_sources/schedule_impl.dart';
 import 'data/models/last_schedule.dart';
 import 'data/repository/featured_repository.dart';
@@ -53,6 +57,31 @@ Future<void> init() async {
     () => kDebugMode ? DevLogger() : ProdLogger(),
   );
 
+  // Hive
+  await Hive.initFlutter();
+
+  Hive.registerAdapter(EntityIdAdapter());
+  Hive.registerAdapter(DateAdapter());
+  Hive.registerAdapter(TeacherAdapter());
+  Hive.registerAdapter(RoomAdapter());
+  Hive.registerAdapter(RoomIdAdapter());
+  Hive.registerAdapter(BuildingAdapter());
+  Hive.registerAdapter(GroupAdapter());
+  Hive.registerAdapter(LessonAdapter());
+  Hive.registerAdapter(DayAdapter());
+  Hive.registerAdapter(WeekAdapter());
+  Hive.registerAdapter(WeekDateAdapter());
+  Hive.registerAdapter(LastScheduleAdapter());
+
+  await Hive.openBox<LastSchedule>('last_schedule');
+
+  await Hive.openBox<Week>('schedule_local');
+  await Hive.openBox<(Week, DateTime)>('schedule_cache');
+
+  await Hive.openBox<Group>('featured_groups');
+  await Hive.openBox<Teacher>('featured_teachers');
+  await Hive.openBox<Room>('featured_rooms');
+
   // UseCases
   sl.registerLazySingleton(() => GetSchedule(sl()));
   sl.registerLazySingleton(() => FindGroups(sl()));
@@ -73,9 +102,9 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SaveLastSchedule(sl()));
   sl.registerLazySingleton(() => GetLastSchedule(sl()));
 
-  // Repository
-  sl.registerLazySingleton<FeaturedRepository>(
-    () => FeaturedRepositorySourceImpl(
+  //Featured Repository
+  sl.registerSingleton<FeaturedRepository>(
+    FeaturedRepositorySourceImpl(
       featuredGroups: Hive.box<Group>('featured_groups'),
       featuredTeachers: Hive.box<Teacher>('featured_teachers'),
       featuredRooms: Hive.box<Room>('featured_rooms'),
@@ -83,58 +112,54 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerLazySingleton<ScheduleRepository>(
-    () => ScheduleRepositoryImpl(
-      fetchDataSource: sl<FetchRemoteDataSourceImpl>(),
-      scheduleDataSource: sl<CacheDataSource>(),
-    ),
+  // Data Sources
+  sl.registerSingleton(
+    RemoteScheduleDataSourceImpl(client: sl(), logger: sl()),
+  );
+  sl.registerSingleton<FetchRemoteDataSourceImpl>(
+    FetchRemoteDataSourceImpl(client: sl(), logger: sl()),
   );
 
-  sl.registerLazySingleton<LastScheduleRepository>(
-    () => LastScheduleRepositoryImpl(
-      Hive.box<LastSchedule>('last_schedule'),
+  sl.registerSingleton<HiveCache<Week, ScheduleKey>>(
+    HiveCache<Week, ScheduleKey>(
+      box: Hive.box<(Week, DateTime)>('schedule_cache'),
+      entriesCount: 30,
       logger: sl(),
     ),
   );
 
-  // Hive
-  await Hive.initFlutter();
-
-  Hive.registerAdapter(EntityIdAdapter());
-  Hive.registerAdapter(DateAdapter());
-  Hive.registerAdapter(TeacherAdapter());
-  Hive.registerAdapter(RoomAdapter());
-  Hive.registerAdapter(RoomIdAdapter());
-  Hive.registerAdapter(BuildingAdapter());
-  Hive.registerAdapter(GroupAdapter());
-  Hive.registerAdapter(LessonAdapter());
-  Hive.registerAdapter(DayAdapter());
-  Hive.registerAdapter(WeekAdapter());
-  Hive.registerAdapter(WeekDateAdapter());
-  Hive.registerAdapter(LastScheduleAdapter());
-
-  await Hive.openBox<LastSchedule>('last_schedule');
-
-  await Hive.openBox<Week>('schedule_local');
-
-  await Hive.openBox<Group>('featured_groups');
-  await Hive.openBox<Teacher>('featured_teachers');
-  await Hive.openBox<Room>('featured_rooms');
-
-  // Data Sources
-  sl.registerLazySingleton(
-    () => CacheDataSource(
+  sl.registerSingleton(
+    CacheDataSource(
       prevDataSource: sl<RemoteScheduleDataSourceImpl>(),
+      localBox: sl(),
+      logger: sl(),
+    ),
+  );
+
+  sl.registerSingleton(
+    LocalDataSource(
+      prevDataSource: sl<CacheDataSource>(),
       localBox: Hive.box<Week>('schedule_local'),
       featuredRepository: sl<FeaturedRepository>(),
       logger: sl(),
     ),
   );
-
-  sl.registerLazySingleton(
-    () => RemoteScheduleDataSourceImpl(client: sl(), logger: sl()),
+  sl.registerSingleton(
+    PrefetchDataSource(prevDataSource: sl<LocalDataSource>(), prefetchSize: 2),
   );
-  sl.registerLazySingleton<FetchRemoteDataSourceImpl>(
-    () => FetchRemoteDataSourceImpl(client: sl(), logger: sl()),
+
+  // Repositories
+  sl.registerSingleton<ScheduleRepository>(
+    ScheduleRepositoryImpl(
+      fetchDataSource: sl<FetchRemoteDataSourceImpl>(),
+      scheduleDataSource: sl<PrefetchDataSource>(),
+    ),
+  );
+
+  sl.registerSingleton<LastScheduleRepository>(
+    LastScheduleRepositoryImpl(
+      Hive.box<LastSchedule>('last_schedule'),
+      logger: sl(),
+    ),
   );
 }

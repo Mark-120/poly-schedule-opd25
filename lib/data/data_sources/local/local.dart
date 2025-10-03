@@ -1,6 +1,5 @@
 import 'package:hive/hive.dart';
 
-import '../../../core/date_formater.dart';
 import '../../../core/exception/local_exception.dart';
 import '../../../core/logger.dart';
 import '../../../domain/entities/entity_id.dart';
@@ -10,29 +9,20 @@ import '../pass_through.dart';
 import '../schedule.dart';
 import 'schedule_key.dart';
 
-final class CacheDataSource extends PassThroughSource {
+final class LocalDataSource extends PassThroughSource {
   AppLogger logger;
   FeaturedRepository featuredRepository;
   Box<Week> localBox;
-  Map<ScheduleKey, Week> memoryCache = {};
 
-  CacheDataSource({
+  LocalDataSource({
     required super.prevDataSource,
     required this.featuredRepository,
     required this.localBox,
     required this.logger,
   });
 
-  DateTime getCurrentDate() {
-    return DateFormater.truncDate(DateTime.now());
-  }
-
   @override
   Future<(Week, StorageType)> getSchedule(EntityId id, DateTime dayTime) async {
-    //Prefetch data
-    retrieveAndSaveSchedule(ScheduleKey(id, dayTime.add(Duration(days: 7))));
-    retrieveAndSaveSchedule(ScheduleKey(id, dayTime.add(Duration(days: 14))));
-
     return retrieveAndSaveSchedule(ScheduleKey(id, dayTime));
   }
 
@@ -49,20 +39,13 @@ final class CacheDataSource extends PassThroughSource {
 
   //Get Data from memory/local storage/remote connection
   Future<(Week, StorageType)> retrieveSchedule(ScheduleKey cacheKey) async {
-    final memory = memoryCache[cacheKey];
-
-    if (memory != null) {
-      logger.debug('[Cache] Schedule - MEMORY CACHE HIT for $cacheKey');
-      return (memory, StorageType.memory);
-    }
-
     var val = localBox.get(cacheKey.toString());
     if (val != null) {
-      logger.debug('[Cache] Schedule - CACHE HIT for $cacheKey');
+      logger.debug('[Local] Schedule - LOCAL HIT for $cacheKey');
       return (val, StorageType.local);
     }
 
-    logger.debug('[Cache] Schedule - CACHE MISS for $cacheKey');
+    logger.debug('[Local] Schedule - LOCAL MISS for $cacheKey');
     return prevDataSource.getSchedule(cacheKey.id, cacheKey.dateTime);
   }
 
@@ -72,25 +55,14 @@ final class CacheDataSource extends PassThroughSource {
     (Week, StorageType) schedule,
   ) async {
     final featured = await isSavedInFeatured(key.id);
-    //Featured saved on disk
+
+    //Featured are saved on disk
     if (schedule.$2 != StorageType.local && featured) {
-      if (isBetween(key.dateTime, featured)) {
-        localBox.put(key, schedule.$1);
-        return;
+      if (isBetween(key.dateTime)) {
+        final a = localBox.put(key, schedule.$1);
+        final b = prevDataSource.removeSchedule(key.id, key.dateTime);
+        await (a, b).wait;
       }
-    }
-    //Non featured saved on disk
-    //TODO - make removing of old values
-    if (schedule.$2 == StorageType.remote && !featured) {
-      if (isBetween(key.dateTime, featured)) {
-        localBox.put(key.toString(), schedule.$1);
-        return;
-      }
-    }
-    //Non featured saved in memory
-    //TODO - make removing of old values
-    if (schedule.$2 == StorageType.remote) {
-      memoryCache[key] = schedule.$1;
     }
   }
 
@@ -111,16 +83,16 @@ final class CacheDataSource extends PassThroughSource {
     return throw LocalException('non valid id');
   }
 
-  DateTime getMin(bool featured) {
-    return getCurrentDate().subtract(Duration(days: 7) * 1);
+  DateTime getMin() {
+    return getCurrentDate().subtract(Duration(days: 7));
   }
 
-  DateTime getMax(bool featured) {
-    return getCurrentDate().add(Duration(days: 7) * (featured ? 4 : 2));
+  DateTime getMax() {
+    return getCurrentDate().add(Duration(days: 28));
   }
 
-  bool isBetween(DateTime time, bool featured) {
-    return !time.isAfter(getMax(featured)) && !time.isBefore(getMin(featured));
+  bool isBetween(DateTime time) {
+    return !time.isAfter(getMax()) && !time.isBefore(getMin());
   }
 
   Future<void> preload() async {}
