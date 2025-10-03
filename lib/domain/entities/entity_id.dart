@@ -26,4 +26,8 @@ class EntityId extends Equatable {
   String toString() {
     return 'EntityId(value: $value, type: ${isGroup ? "group" : (isRoom ? "room" : "teacher")})';
   }
+
+  String toShortString() {
+    return '$value,${isGroup ? "g" : (isRoom ? "r" : "t")}';
+  }
 }

@@ -20,43 +20,43 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
 
   @override
   Future<void> addFeaturedGroup(Group group) async {
-    logger.debug('[Cache] FeaturedGroup - SET $group');
+    logger.debug('[Featured] FeaturedGroup - SET $group');
     await featuredGroups.put(group.id, group);
   }
 
   @override
   Future<void> addFeaturedRoom(Room newRoom) async {
-    logger.debug('[Cache] FeaturedRoom - SET $newRoom');
+    logger.debug('[Featured] FeaturedRoom - SET $newRoom');
     await featuredRooms.put(newRoom.getId().toString(), newRoom);
   }
 
   @override
   Future<void> addFeaturedTeacher(Teacher newTeacher) async {
-    logger.debug('[Cache] FeaturedTeacher - SET $newTeacher');
+    logger.debug('[Featured] FeaturedTeacher - SET $newTeacher');
     await featuredTeachers.put(newTeacher.id, newTeacher);
   }
 
   @override
   Future<List<Group>> getFeaturedGroups() async {
-    logger.debug('[Cache] FeaturedGroups - GET');
+    logger.debug('[Featured] FeaturedGroups - GET');
     return featuredGroups.values.toList();
   }
 
   @override
   Future<List<Room>> getFeaturedRooms() async {
-    logger.debug('[Cache] FeaturedRooms - GET');
+    logger.debug('[Featured] FeaturedRooms - GET');
     return featuredRooms.values.toList();
   }
 
   @override
   Future<List<Teacher>> getFeaturedTeachers() async {
-    logger.debug('[Cache] FeaturedTeachers - GET');
+    logger.debug('[Featured] FeaturedTeachers - GET');
     return featuredTeachers.values.toList();
   }
 
   @override
   Future<void> setFeaturedGroups(List<Group> newGroups) async {
-    logger.debug('[Cache] FeaturedGroups - SET $newGroups');
+    logger.debug('[Featured] FeaturedGroups - SET $newGroups');
     featuredGroups.clear();
     featuredGroups.putAll(
       Map.fromIterables(newGroups.map((x) => x.id), newGroups),
@@ -65,7 +65,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
 
   @override
   Future<void> setFeaturedRooms(List<Room> newRooms) async {
-    logger.debug('[Cache] FeaturedRooms - SET $newRooms');
+    logger.debug('[Featured] FeaturedRooms - SET $newRooms');
     featuredRooms.clear();
     featuredRooms.putAll(
       Map.fromIterables(newRooms.map((x) => x.getId().toString()), newRooms),
@@ -74,7 +74,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
 
   @override
   Future<void> setFeaturedTeachers(List<Teacher> newTeachers) async {
-    logger.debug('[Cache] FeaturedTeachers - SET $newTeachers');
+    logger.debug('[Featured] FeaturedTeachers - SET $newTeachers');
     featuredTeachers.clear();
     featuredTeachers.putAll(
       Map.fromIterables(newTeachers.map((x) => x.id), newTeachers),

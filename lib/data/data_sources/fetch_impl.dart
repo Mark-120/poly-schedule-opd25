@@ -14,7 +14,7 @@ import '../models/room.dart';
 import '../models/teacher.dart';
 import 'fetch.dart';
 
-class FetchRemoteDataSourceImpl implements FetchDataSource {
+final class FetchRemoteDataSourceImpl implements FetchDataSource {
   final Client client;
   final AppLogger logger;
   FetchRemoteDataSourceImpl({required this.client, required this.logger});

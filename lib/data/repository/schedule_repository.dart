@@ -39,10 +39,9 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
 
   @override
   Future<Week> getSchedule(EntityId entityId, DateTime dayTime) {
-    return scheduleDataSource.getSchedule(
-      entityId,
-      DateFormater.truncDate(dayTime),
-    );
+    return scheduleDataSource
+        .getSchedule(entityId, DateFormater.truncDate(dayTime))
+        .then((x) => x.$1);
   }
 
   @override
