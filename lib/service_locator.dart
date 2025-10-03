@@ -15,6 +15,7 @@ import 'data/adapters/schedule/lesson.dart';
 import 'data/adapters/schedule/week.dart';
 import 'data/adapters/teacher.dart';
 import 'data/data_sources/cache/cache.dart';
+import 'data/data_sources/cache/schedule_key.dart';
 import 'data/data_sources/fetch_impl.dart';
 import 'data/data_sources/schedule_impl.dart';
 import 'data/models/last_schedule.dart';
@@ -121,8 +122,8 @@ Future<void> init() async {
   await Hive.openBox<Teacher>('featured_teachers');
   await Hive.openBox<Room>('featured_rooms');
 
-  sl.registerSingleton<HiveCache<Week, KeySchedule>>(
-    HiveCache<Week, KeySchedule>(
+  sl.registerSingleton<HiveCache<Week, ScheduleKey>>(
+    HiveCache<Week, ScheduleKey>(
       box: Hive.box<(Week, DateTime)>('schedule_cache'),
       entriesCount: 30,
       logger: sl(),
