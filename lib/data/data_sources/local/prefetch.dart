@@ -4,7 +4,7 @@ import '../pass_through.dart';
 import '../schedule.dart';
 
 final class PrefetchDataSource extends PassThroughSource {
-  int prefetchSize;
+  final int prefetchSize;
   PrefetchDataSource({
     required super.prevDataSource,
     required this.prefetchSize,

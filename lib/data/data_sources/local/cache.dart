@@ -7,9 +7,9 @@ import 'hive_cache.dart';
 import 'schedule_key.dart';
 
 final class CacheDataSource extends PassThroughSource {
-  AppLogger logger;
-  HiveCache<Week, ScheduleKey> localBox;
-  Map<ScheduleKey, Week> memoryCache = {};
+  final AppLogger logger;
+  final HiveCache<Week, ScheduleKey> localBox;
+  final Map<ScheduleKey, Week> memoryCache = {};
 
   CacheDataSource({
     required super.prevDataSource,

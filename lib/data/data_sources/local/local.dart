@@ -10,9 +10,9 @@ import '../schedule.dart';
 import 'schedule_key.dart';
 
 final class LocalDataSource extends PassThroughSource {
-  AppLogger logger;
-  FeaturedRepository featuredRepository;
-  Box<Week> localBox;
+  final AppLogger logger;
+  final FeaturedRepository featuredRepository;
+  final Box<Week> localBox;
 
   LocalDataSource({
     required super.prevDataSource,

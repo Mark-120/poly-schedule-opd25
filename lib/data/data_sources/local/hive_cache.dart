@@ -4,10 +4,10 @@ import 'package:hive/hive.dart';
 
 import '../../../core/logger.dart';
 
-class HiveCache<T, K> {
+final class HiveCache<T, K> {
   final AppLogger logger;
-  int entriesCount;
-  Box<(T, DateTime)> box;
+  final int entriesCount;
+  final Box<(T, DateTime)> box;
 
   HiveCache({required this.box, this.entriesCount = 30, required this.logger});
 

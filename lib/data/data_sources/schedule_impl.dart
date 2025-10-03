@@ -11,7 +11,7 @@ import '../../domain/entities/schedule/week.dart';
 import '../models/schedule/week.dart';
 import 'schedule.dart';
 
-class RemoteScheduleDataSourceImpl implements ScheduleDataSource {
+final class RemoteScheduleDataSourceImpl implements ScheduleDataSource {
   final Client client;
   final AppLogger logger;
   RemoteScheduleDataSourceImpl({required this.client, required this.logger});
