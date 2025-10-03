@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import '../../core/logger.dart';
 import '../../domain/entities/entity_id.dart';
@@ -43,15 +44,18 @@ class HiveCache<T, K> {
   }
 }
 
-class KeySchedule {
-  final EntityId originalKey;
+class KeySchedule extends Equatable {
+  final EntityId id;
   final DateTime dateTime;
-  KeySchedule(this.originalKey, this.dateTime);
+  const KeySchedule(this.id, this.dateTime);
 
   @override
   String toString() {
-    return '${originalKey.toString()}_${dateTime.toString()}';
+    return 'id: ${id.toString()}, time: ${dateTime.toString()}';
   }
+
+  @override
+  List<Object?> get props => [id, dateTime];
 }
 
 class CacheDataSource extends PassThroughSource {
