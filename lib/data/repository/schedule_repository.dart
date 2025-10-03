@@ -6,7 +6,8 @@ import '../../domain/entities/room.dart';
 import '../../domain/entities/schedule/week.dart';
 import '../../domain/entities/teacher.dart';
 import '../../domain/repositories/schedule_repository.dart';
-import '../data_sources/base.dart';
+import '../data_sources/fetch.dart';
+import '../data_sources/schedule.dart';
 
 class ScheduleRepositoryImpl extends ScheduleRepository {
   final FetchDataSource fetchDataSource;
