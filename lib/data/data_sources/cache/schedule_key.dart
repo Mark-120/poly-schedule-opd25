@@ -9,7 +9,7 @@ class ScheduleKey extends Equatable {
 
   @override
   String toString() {
-    return 'id: ${id.toString()}, time: ${dateTime.toString()}';
+    return '${id.toShortString()},${dateTime.toString()}';
   }
 
   @override

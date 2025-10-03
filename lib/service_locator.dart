@@ -15,7 +15,6 @@ import 'data/adapters/schedule/lesson.dart';
 import 'data/adapters/schedule/week.dart';
 import 'data/adapters/teacher.dart';
 import 'data/data_sources/cache/cache.dart';
-import 'data/data_sources/cache/schedule_key.dart';
 import 'data/data_sources/fetch_impl.dart';
 import 'data/data_sources/schedule_impl.dart';
 import 'data/models/last_schedule.dart';
@@ -75,19 +74,19 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetLastSchedule(sl()));
 
   // Repository
-  sl.registerLazySingleton<ScheduleRepository>(
-    () => ScheduleRepositoryImpl(
-      fetchDataSource: sl<FetchRemoteDataSourceImpl>(),
-      scheduleDataSource: sl<CacheDataSource>(),
-    ),
-  );
-
   sl.registerLazySingleton<FeaturedRepository>(
     () => FeaturedRepositorySourceImpl(
       featuredGroups: Hive.box<Group>('featured_groups'),
       featuredTeachers: Hive.box<Teacher>('featured_teachers'),
       featuredRooms: Hive.box<Room>('featured_rooms'),
       logger: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton<ScheduleRepository>(
+    () => ScheduleRepositoryImpl(
+      fetchDataSource: sl<FetchRemoteDataSourceImpl>(),
+      scheduleDataSource: sl<CacheDataSource>(),
     ),
   );
 
@@ -116,25 +115,18 @@ Future<void> init() async {
 
   await Hive.openBox<LastSchedule>('last_schedule');
 
-  await Hive.openBox<(Week, DateTime)>('schedule_cache');
+  await Hive.openBox<Week>('schedule_local');
 
   await Hive.openBox<Group>('featured_groups');
   await Hive.openBox<Teacher>('featured_teachers');
   await Hive.openBox<Room>('featured_rooms');
 
-  sl.registerSingleton<HiveCache<Week, ScheduleKey>>(
-    HiveCache<Week, ScheduleKey>(
-      box: Hive.box<(Week, DateTime)>('schedule_cache'),
-      entriesCount: 30,
-      logger: sl(),
-    ),
-  );
-
   // Data Sources
   sl.registerLazySingleton(
     () => CacheDataSource(
       prevDataSource: sl<RemoteScheduleDataSourceImpl>(),
-      scheduleCache: sl(),
+      localBox: Hive.box<Week>('schedule_local'),
+      featuredRepository: sl<FeaturedRepository>(),
       logger: sl(),
     ),
   );

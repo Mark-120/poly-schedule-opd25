@@ -22,13 +22,22 @@ class RemoteScheduleDataSourceImpl implements ScheduleDataSource {
   }
 
   @override
-  Future<Week> getSchedule(EntityId id, DateTime dayTime) async {
+  Future<(Week, StorageType)> getSchedule(EntityId id, DateTime dayTime) async {
     if (id.isTeacher) {
-      return getScheduleByTeacher(id.asTeacher.id, dayTime);
+      return getScheduleByTeacher(
+        id.asTeacher.id,
+        dayTime,
+      ).then((x) => (x, StorageType.remote));
     } else if (id.isGroup) {
-      return getScheduleByGroup(id.asGroup.id, dayTime);
+      return getScheduleByGroup(
+        id.asGroup.id,
+        dayTime,
+      ).then((x) => (x, StorageType.remote));
     } else if (id.isRoom) {
-      return getScheduleByRoom(id.asRoom, dayTime);
+      return getScheduleByRoom(
+        id.asRoom,
+        dayTime,
+      ).then((x) => (x, StorageType.remote));
     }
     throw RemoteException('Invalid Id type');
   }
@@ -81,7 +90,7 @@ class RemoteScheduleDataSourceImpl implements ScheduleDataSource {
   @override
   Future<Week> invalidateSchedule(EntityId id, DateTime dayTime) async {
     // Return new data from server
-    return getSchedule(id, dayTime);
+    return getSchedule(id, dayTime).then((x) => x.$1);
   }
 
   void _logEndpointCall(String endpoint) {

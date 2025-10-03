@@ -2,6 +2,8 @@ import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/schedule/week.dart';
 import 'schedule.dart';
 
+enum StorageType { local, memory, remote }
+
 class PassThroughSource extends ScheduleDataSource {
   final ScheduleDataSource prevDataSource;
   PassThroughSource({required this.prevDataSource});
