@@ -9,7 +9,7 @@ import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/room.dart';
 import '../../domain/entities/schedule/week.dart';
 import '../models/schedule/week.dart';
-import 'base.dart';
+import 'schedule.dart';
 
 class RemoteScheduleDataSourceImpl implements ScheduleDataSource {
   final Client client;

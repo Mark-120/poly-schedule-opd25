@@ -12,7 +12,7 @@ import '../models/building.dart';
 import '../models/group.dart';
 import '../models/room.dart';
 import '../models/teacher.dart';
-import 'base.dart';
+import 'fetch.dart';
 
 class FetchRemoteDataSourceImpl implements FetchDataSource {
   final Client client;

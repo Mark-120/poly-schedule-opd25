@@ -1,10 +1,11 @@
 import 'dart:math';
-import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-import '../../core/logger.dart';
-import '../../domain/entities/entity_id.dart';
-import '../../domain/entities/schedule/week.dart';
-import 'base.dart';
+
+import '../../../core/logger.dart';
+import '../../../domain/entities/entity_id.dart';
+import '../../../domain/entities/schedule/week.dart';
+import '../pass_through.dart';
+import 'schedule_key.dart';
 
 class HiveCache<T, K> {
   final AppLogger logger;
@@ -44,23 +45,9 @@ class HiveCache<T, K> {
   }
 }
 
-class KeySchedule extends Equatable {
-  final EntityId id;
-  final DateTime dateTime;
-  const KeySchedule(this.id, this.dateTime);
-
-  @override
-  String toString() {
-    return 'id: ${id.toString()}, time: ${dateTime.toString()}';
-  }
-
-  @override
-  List<Object?> get props => [id, dateTime];
-}
-
 class CacheDataSource extends PassThroughSource {
   final AppLogger logger;
-  HiveCache<Week, KeySchedule> scheduleCache;
+  HiveCache<Week, ScheduleKey> scheduleCache;
   CacheDataSource({
     required super.prevDataSource,
     required this.scheduleCache,
@@ -69,14 +56,14 @@ class CacheDataSource extends PassThroughSource {
 
   @override
   Future<Week> getSchedule(EntityId id, DateTime dayTime) async {
-    final cacheKey = KeySchedule(id, dayTime);
+    final cacheKey = ScheduleKey(id, dayTime);
     logger.debug('[Cache] Schedule - checking cache for $cacheKey');
     var val = scheduleCache.getValue(cacheKey);
 
     if (val == null) {
       logger.debug('[Cache] Schedule - CACHE MISS for $cacheKey');
       var newVal = await prevDataSource.getSchedule(id, dayTime);
-      scheduleCache.addValue(KeySchedule(id, dayTime), newVal);
+      scheduleCache.addValue(ScheduleKey(id, dayTime), newVal);
       return newVal;
     }
     logger.debug('[Cache] Schedule - CACHE HIT for $cacheKey');
@@ -88,9 +75,9 @@ class CacheDataSource extends PassThroughSource {
     logger.debug('[Cache] Schedule - invalidating $id at $dayTime');
     var newVal = await prevDataSource.getSchedule(id, dayTime);
 
-    if (newVal != scheduleCache.getValue(KeySchedule(id, dayTime))) {
+    if (newVal != scheduleCache.getValue(ScheduleKey(id, dayTime))) {
       logger.debug('[Cache] Schedule - data changed, updating cache');
-      await scheduleCache.addValue(KeySchedule(id, dayTime), newVal);
+      await scheduleCache.addValue(ScheduleKey(id, dayTime), newVal);
     } else {
       logger.debug(
         '[Cache] Schedule- data didn\'t change, no need to update cache',
