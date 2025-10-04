@@ -1,9 +1,9 @@
 import '../../../core/logger.dart';
 import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/schedule/week.dart';
-import '../pass_through.dart';
-import '../schedule.dart';
+import '../interface/schedule.dart';
 import 'hive_cache.dart';
+import 'pass_through.dart';
 import 'schedule_key.dart';
 
 final class CacheDataSource extends PassThroughSource {
