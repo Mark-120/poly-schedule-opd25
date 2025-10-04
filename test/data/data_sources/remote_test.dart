@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 import 'package:poly_scheduler/core/logger.dart';
-import 'package:poly_scheduler/data/data_sources/fetch_impl.dart';
-import 'package:poly_scheduler/data/data_sources/schedule_impl.dart';
+import 'package:poly_scheduler/data/data_sources/remote/fetch_impl.dart';
+import 'package:poly_scheduler/data/data_sources/remote/schedule_impl.dart';
 import 'package:poly_scheduler/data/models/building.dart';
 import 'package:poly_scheduler/data/models/group.dart';
 import 'package:poly_scheduler/data/models/room.dart';

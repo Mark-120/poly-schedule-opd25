@@ -1,5 +1,5 @@
-import '../../domain/entities/entity_id.dart';
-import '../../domain/entities/schedule/week.dart';
+import '../../../domain/entities/entity_id.dart';
+import '../../../domain/entities/schedule/week.dart';
 
 enum StorageType { local, memory, remote }
 
