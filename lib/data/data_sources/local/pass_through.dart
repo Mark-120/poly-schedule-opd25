@@ -1,7 +1,7 @@
-import '../../core/date_formater.dart';
-import '../../domain/entities/entity_id.dart';
-import '../../domain/entities/schedule/week.dart';
-import 'schedule.dart';
+import '../../../core/date_formater.dart';
+import '../../../domain/entities/entity_id.dart';
+import '../../../domain/entities/schedule/week.dart';
+import '../interface/schedule.dart';
 
 class PassThroughSource extends ScheduleDataSource {
   final ScheduleDataSource prevDataSource;

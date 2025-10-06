@@ -1,7 +1,7 @@
 import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/schedule/week.dart';
-import '../pass_through.dart';
-import '../schedule.dart';
+import '../interface/schedule.dart';
+import 'pass_through.dart';
 
 final class PrefetchDataSource extends PassThroughSource {
   final int prefetchSize;
