@@ -6,7 +6,7 @@ import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/schedule/week.dart';
 import '../../../domain/repositories/featured_repository.dart';
 import '../interface/schedule.dart';
-import 'pass_through.dart';
+import '../intermediate/pass_through.dart';
 import 'schedule_key.dart';
 
 final class LocalDataSource extends PassThroughSource {
