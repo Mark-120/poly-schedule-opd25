@@ -34,6 +34,12 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
+  final PageController _pageController = PageController(initialPage: 1);
+  final List<DateTime> _weekDates = [];
+  final List<GlobalKey> _pageKeys = [];
+  late final ValueNotifier<DateTime> _weekNotifier;
+  int _savedPageIndex = 1;
+
   void _onSwipeLeft() {
     _pageController.nextPage(
       duration: const Duration(milliseconds: 300),
@@ -48,9 +54,30 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
-  final PageController _pageController = PageController(initialPage: 1);
-  final List<DateTime> _weekDates = [];
-  final List<GlobalKey> _pageKeys = [];
+  void _onPageChanged() {
+    final currentPageIndex = _pageController.page!.round();
+    if (currentPageIndex == 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _weekDates.insert(
+            0,
+            _weekDates.first.subtract(const Duration(days: 7)),
+          );
+          _pageKeys.insert(0, GlobalKey());
+          _pageController.jumpToPage(1);
+        });
+      });
+    } else if (currentPageIndex == _weekDates.length - 1) {
+      setState(() {
+        _weekDates.add(_weekDates.last.add(const Duration(days: 7)));
+        _pageKeys.add(GlobalKey());
+      });
+    }
+    if (currentPageIndex != _savedPageIndex) {
+      _savedPageIndex = currentPageIndex;
+      _weekNotifier.value = _weekDates[_savedPageIndex];
+    }
+  }
 
   @override
   void initState() {
@@ -62,78 +89,33 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     ]);
     _pageKeys.addAll([GlobalKey(), GlobalKey(), GlobalKey()]);
     _pageController.addListener(_onPageChanged);
-  }
-
-  void _onPageChanged() {
-    final currentPage = _pageController.page!.round();
-    if (currentPage == 0) {
-      setState(() {
-        _weekDates.insert(
-          0,
-          _weekDates.first.subtract(const Duration(days: 7)),
-        );
-        _pageKeys.insert(0, GlobalKey());
-      });
-      _pageController.jumpToPage(1);
-    } else if (currentPage == _weekDates.length - 1) {
-      setState(() {
-        _weekDates.add(_weekDates.last.add(const Duration(days: 7)));
-        _pageKeys.add(GlobalKey());
-      });
-    }
+    _weekNotifier = ValueNotifier(widget.dayTime);
   }
 
   @override
   Widget build(BuildContext context) {
-    return PageView.builder(
-      controller: _pageController,
-      itemCount: _weekDates.length,
-      itemBuilder: (context, index) {
-        return _SchedulePage(
-          key: _pageKeys[index],
-          id: widget.id,
-          dayTime: _weekDates[index],
-          onSwipeLeft: _onSwipeLeft,
-          onSwipeRight: _onSwipeRight,
-          bottomTitle: widget.bottomTitle,
-        );
-      },
-    );
-  }
-}
-
-class _SchedulePage extends StatelessWidget {
-  final EntityId id;
-  final DateTime dayTime;
-  final VoidCallback onSwipeLeft;
-  final VoidCallback onSwipeRight;
-  final String bottomTitle;
-
-  const _SchedulePage({
-    required Key key,
-    required this.id,
-    required this.dayTime,
-    required this.onSwipeLeft,
-    required this.onSwipeRight,
-    required this.bottomTitle,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create:
-          (context) =>
-              ScheduleBloc(getSchedule: sl<GetSchedule>())..add(_createEvent()),
-      child: _ScheduleView(
-        dayTime: dayTime,
-        onSwipeLeft: onSwipeLeft,
-        onSwipeRight: onSwipeRight,
-        bottomTitle: bottomTitle,
+    return _ScheduleWrapper(
+      onSwipeLeft: _onSwipeLeft,
+      onSwipeRight: _onSwipeRight,
+      bottomTitle: widget.bottomTitle,
+      weekNotifier: _weekNotifier,
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: _weekDates.length,
+        itemBuilder: (context, index) {
+          return BlocProvider(
+            create:
+                (context) =>
+                    ScheduleBloc(getSchedule: sl<GetSchedule>())
+                      ..add(_createEvent(widget.id, _weekDates[index])),
+            child: _SchedulePage(key: _pageKeys[index]),
+          );
+        },
       ),
     );
   }
 
-  ScheduleEvent _createEvent() {
+  ScheduleEvent _createEvent(EntityId id, DateTime dayTime) {
     if (id.isGroup) {
       return LoadScheduleByGroup(groupId: id.asGroup, dayTime: dayTime);
     } else if (id.isTeacher) {
@@ -146,87 +128,146 @@ class _SchedulePage extends StatelessWidget {
   }
 }
 
-class _ScheduleView extends StatelessWidget {
-  final DateTime dayTime;
+class _ScheduleWrapper extends StatefulWidget {
+  final Widget child;
   final VoidCallback onSwipeLeft;
   final VoidCallback onSwipeRight;
   final String bottomTitle;
+  final ValueNotifier<DateTime> weekNotifier;
 
-  const _ScheduleView({
-    required this.dayTime,
+  const _ScheduleWrapper({
+    required this.child,
     required this.onSwipeLeft,
     required this.onSwipeRight,
     required this.bottomTitle,
+    required this.weekNotifier,
   });
 
+  @override
+  State<_ScheduleWrapper> createState() => _ScheduleWrapperState();
+}
+
+class _ScheduleWrapperState extends State<_ScheduleWrapper> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: context.appTheme.iconColor),
-          onPressed: onSwipeRight,
+          onPressed: widget.onSwipeRight,
         ),
-        title: BlocBuilder<ScheduleBloc, ScheduleState>(
-          builder: (context, state) {
-            return _buildAppBarTitle(context, state);
-          },
-        ),
+        title: _buildAppBarTitle(context, widget.weekNotifier),
         actions: [
           IconButton(
             icon: Icon(
               Icons.arrow_forward_ios,
               color: context.appTheme.iconColor,
             ),
-            onPressed: onSwipeLeft,
+            onPressed: widget.onSwipeLeft,
           ),
         ],
       ),
-      body: GestureDetector(
-        onHorizontalDragEnd: (details) {
-          if (details.primaryVelocity! > 0) onSwipeRight();
-          if (details.primaryVelocity! < 0) onSwipeLeft();
-        },
-        child: BlocBuilder<ScheduleBloc, ScheduleState>(
-          builder: (context, state) {
-            if (state is ScheduleLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is ScheduleError) {
-              return Center(child: Text(state.message));
-            } else if (state is ScheduleLoaded) {
-              return _LoadedScheduleBody(week: state.week);
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
-      ),
-      bottomNavigationBar: _bottomAppBar(context, bottomTitle),
+      body: widget.child,
+      bottomNavigationBar: _buildBottomBar(context, widget.bottomTitle),
     );
   }
 
-  Widget _buildAppBarTitle(BuildContext context, ScheduleState state) {
-    if (state is ScheduleLoaded) {
-      final textStyles = AppTextStylesProvider.of(context);
-      final week = state.week;
+  Widget _buildAppBarTitle(
+    BuildContext context,
+    ValueNotifier<DateTime> weekNotifier,
+  ) {
+    final textStyles = AppTextStylesProvider.of(context);
+    return ValueListenableBuilder<DateTime>(
+      valueListenable: weekNotifier,
+      builder: (context, week, child) {
+        final weekStart = DateFormater.truncDate(week);
+        final weekEnd = weekStart.add(Duration(days: 6));
+        return Column(
+          children: [
+            Text(
+              '${DateFormater.showShortDateToUser(weekStart)} - ${DateFormater.showShortDateToUser(weekEnd)}',
+              style: textStyles.titleAppbar,
+            ),
+            Text(
+              week.isOdd ? AppStrings.oddWeek : AppStrings.evenWeek,
+              style: textStyles.subtitleAppbar,
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-      return Column(
+  Widget _buildBottomBar(BuildContext context, String title) {
+    final textStyles = AppTextStylesProvider.of(context);
+    return BottomAppBar(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            '${DateFormater.showShortDateToUser(week.dateStart)} - ${DateFormater.showShortDateToUser(week.dateEnd)}',
-            style: textStyles.titleAppbar,
+          SizedBox(width: 48),
+          Expanded(
+            child: Center(
+              child: Text(
+                title,
+                style: textStyles.titleBottomAppBar,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ),
-          Text(
-            week.isOdd ? AppStrings.oddWeek : AppStrings.evenWeek,
-            style: textStyles.subtitleAppbar,
+          IconButton(
+            icon: Icon(
+              Icons.star_outline_outlined,
+              color: context.appTheme.iconColor,
+            ),
+            iconSize: 28,
+            onPressed:
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => BlocProvider(
+                          lazy: false,
+                          create:
+                              (context) => FeaturedBloc(
+                                getFeaturedGroups: sl(),
+                                getFeaturedTeachers: sl(),
+                                getFeaturedRooms: sl(),
+                                setFeaturedGroups: sl(),
+                                setFeaturedTeachers: sl(),
+                                setFeaturedRooms: sl(),
+                                saveLastSchedule: sl(),
+                              ),
+                          child: FeaturedScreen(),
+                        ),
+                  ),
+                ),
           ),
         ],
-      );
-    } else if (state is ScheduleLoading) {
-      return Center(child: CircularProgressIndicator());
-    } else {
-      return SizedBox();
-    }
+      ),
+    );
+  }
+}
+
+class _SchedulePage extends StatelessWidget {
+  const _SchedulePage({required Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ScheduleBloc, ScheduleState>(
+      builder: (context, state) {
+        if (state is ScheduleLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is ScheduleError) {
+          return Center(child: Text(state.message));
+        } else if (state is ScheduleLoaded) {
+          return _LoadedScheduleBody(week: state.week);
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
   }
 }
 
@@ -261,56 +302,3 @@ class _LoadedScheduleBody extends StatelessWidget {
     );
   }
 }
-
-Widget _bottomAppBar(BuildContext context, String title) {
-  final textStyles = AppTextStylesProvider.of(context);
-  return BottomAppBar(
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(width: 48),
-        Expanded(
-          child: Center(
-            child: Text(
-              title,
-              style: textStyles.titleBottomAppBar,
-              softWrap: true,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.star_outline_outlined,
-            color: context.appTheme.iconColor,
-          ),
-          iconSize: 28,
-          onPressed:
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) => BlocProvider(
-                        lazy: false,
-                        create:
-                            (context) => FeaturedBloc(
-                              getFeaturedGroups: sl(),
-                              getFeaturedTeachers: sl(),
-                              getFeaturedRooms: sl(),
-                              setFeaturedGroups: sl(),
-                              setFeaturedTeachers: sl(),
-                              setFeaturedRooms: sl(),
-                              saveLastSchedule: sl(),
-                            ),
-                        child: FeaturedScreen(),
-                      ),
-                ),
-              ),
-        ),
-      ],
-    ),
-  );
-}
-
-enum ScheduleType { group, teacher, classroom }
