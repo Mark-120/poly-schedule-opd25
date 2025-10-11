@@ -1,8 +1,8 @@
 import '../../entities/building.dart';
-import '../../repositories/schedule_repository.dart';
+import '../../repositories/fetch_repository.dart';
 
 class GetAllBuildings {
-  final ScheduleRepository repository;
+  final FetchRepository repository;
 
   GetAllBuildings(this.repository);
 

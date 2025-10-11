@@ -1,8 +1,8 @@
 import '../../entities/room.dart';
-import '../../repositories/schedule_repository.dart';
+import '../../repositories/fetch_repository.dart';
 
 class GetRoomsOfBuilding {
-  final ScheduleRepository repository;
+  final FetchRepository repository;
 
   GetRoomsOfBuilding(this.repository);
 
