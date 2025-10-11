@@ -23,6 +23,7 @@ import 'data/data_sources/remote/fetch_impl.dart';
 import 'data/data_sources/remote/schedule_impl.dart';
 import 'data/models/last_schedule.dart';
 import 'data/repository/featured_repository.dart';
+import 'data/repository/fetch_repository.dart';
 import 'data/repository/last_schedule_repository.dart';
 import 'data/repository/schedule_repository.dart';
 import 'domain/entities/group.dart';
@@ -30,6 +31,7 @@ import 'domain/entities/room.dart';
 import 'domain/entities/schedule/week.dart';
 import 'domain/entities/teacher.dart';
 import 'domain/repositories/featured_repository.dart';
+import 'domain/repositories/fetch_repository.dart';
 import 'domain/repositories/last_schedule_repository.dart';
 import 'domain/repositories/schedule_repository.dart';
 import 'domain/usecases/featured_usecases/featured_groups/add_featured_group.dart';
@@ -150,10 +152,11 @@ Future<void> init() async {
 
   // Repositories
   sl.registerSingleton<ScheduleRepository>(
-    ScheduleRepositoryImpl(
-      fetchDataSource: sl<FetchRemoteDataSourceImpl>(),
-      scheduleDataSource: sl<PrefetchDataSource>(),
-    ),
+    ScheduleRepositoryImpl(scheduleDataSource: sl<PrefetchDataSource>()),
+  );
+  // Repositories
+  sl.registerSingleton<FetchRepository>(
+    FetchRepositoryImpl(fetchDataSource: sl<FetchRemoteDataSourceImpl>()),
   );
 
   sl.registerSingleton<LastScheduleRepository>(

@@ -1,8 +1,8 @@
 import '../../entities/group.dart';
-import '../../repositories/schedule_repository.dart';
+import '../../repositories/fetch_repository.dart';
 
 class FindGroups {
-  final ScheduleRepository repository;
+  final FetchRepository repository;
 
   FindGroups(this.repository);
 
