@@ -76,4 +76,10 @@ final class RemoteScheduleDataSourceImpl extends RemoteDataSource
 
   @override
   Future<void> removeSchedule(EntityId id, DateTime dayTime) async {}
+
+  @override
+  Future<void> onAppStart() {}
+
+  @override
+  Future<void> onFeaturedChanged() {}
 }
