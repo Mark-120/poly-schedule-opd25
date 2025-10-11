@@ -1,8 +1,8 @@
 import '../../entities/teacher.dart';
-import '../../repositories/schedule_repository.dart';
+import '../../repositories/fetch_repository.dart';
 
 class FindTeachers {
-  final ScheduleRepository repository;
+  final FetchRepository repository;
 
   FindTeachers(this.repository);
 
