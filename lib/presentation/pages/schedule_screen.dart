@@ -34,6 +34,12 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
+  final PageController _pageController = PageController(initialPage: 1);
+  final List<DateTime> _weekDates = [];
+  final List<GlobalKey> _pageKeys = [];
+  late final ValueNotifier<DateTime> _weekNotifier;
+  int _savedPageIndex = 1;
+
   void _onSwipeLeft() {
     _pageController.nextPage(
       duration: const Duration(milliseconds: 300),
@@ -48,10 +54,30 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
-  final PageController _pageController = PageController(initialPage: 1);
-  final List<DateTime> _weekDates = [];
-  final List<GlobalKey> _pageKeys = [];
-  late final ValueNotifier<Week?> weekNotifier;
+  void _onPageChanged() {
+    final currentPageIndex = _pageController.page!.round();
+    if (currentPageIndex == 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _weekDates.insert(
+            0,
+            _weekDates.first.subtract(const Duration(days: 7)),
+          );
+          _pageKeys.insert(0, GlobalKey());
+          _pageController.jumpToPage(1);
+        });
+      });
+    } else if (currentPageIndex == _weekDates.length - 1) {
+      setState(() {
+        _weekDates.add(_weekDates.last.add(const Duration(days: 7)));
+        _pageKeys.add(GlobalKey());
+      });
+    }
+    if (currentPageIndex != _savedPageIndex) {
+      _savedPageIndex = currentPageIndex;
+      _weekNotifier.value = _weekDates[_savedPageIndex];
+    }
+  }
 
   @override
   void initState() {
@@ -63,28 +89,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     ]);
     _pageKeys.addAll([GlobalKey(), GlobalKey(), GlobalKey()]);
     _pageController.addListener(_onPageChanged);
-    weekNotifier = ValueNotifier(null);
-  }
-
-  void _onPageChanged() {
-    final currentPage = _pageController.page!.round();
-    if (currentPage == 0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          _weekDates.insert(
-            0,
-            _weekDates.first.subtract(const Duration(days: 7)),
-          );
-          _pageKeys.insert(0, GlobalKey());
-          _pageController.jumpToPage(1);
-        });
-      });
-    } else if (currentPage == _weekDates.length - 1) {
-      setState(() {
-        _weekDates.add(_weekDates.last.add(const Duration(days: 7)));
-        _pageKeys.add(GlobalKey());
-      });
-    }
+    _weekNotifier = ValueNotifier(widget.dayTime);
   }
 
   @override
@@ -93,7 +98,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       onSwipeLeft: _onSwipeLeft,
       onSwipeRight: _onSwipeRight,
       bottomTitle: widget.bottomTitle,
-      weekNotifier: weekNotifier,
+      weekNotifier: _weekNotifier,
       child: PageView.builder(
         controller: _pageController,
         itemCount: _weekDates.length,
@@ -103,10 +108,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 (context) =>
                     ScheduleBloc(getSchedule: sl<GetSchedule>())
                       ..add(_createEvent(widget.id, _weekDates[index])),
-            child: _SchedulePage(
-              key: _pageKeys[index],
-              weekNotifier: weekNotifier,
-            ),
+            child: _SchedulePage(key: _pageKeys[index]),
           );
         },
       ),
@@ -131,7 +133,7 @@ class _ScheduleWrapper extends StatefulWidget {
   final VoidCallback onSwipeLeft;
   final VoidCallback onSwipeRight;
   final String bottomTitle;
-  final ValueNotifier<Week?> weekNotifier;
+  final ValueNotifier<DateTime> weekNotifier;
 
   const _ScheduleWrapper({
     required this.child,
@@ -165,44 +167,38 @@ class _ScheduleWrapperState extends State<_ScheduleWrapper> {
           ),
         ],
       ),
-      body: GestureDetector(
-        onHorizontalDragEnd: (details) {
-          if (details.primaryVelocity! > 0) widget.onSwipeRight();
-          if (details.primaryVelocity! < 0) widget.onSwipeLeft();
-        },
-        child: widget.child,
-      ),
-      bottomNavigationBar: _bottomAppBar(context, widget.bottomTitle),
+      body: widget.child,
+      bottomNavigationBar: _buildBottomBar(context, widget.bottomTitle),
     );
   }
 
   Widget _buildAppBarTitle(
     BuildContext context,
-    ValueNotifier<Week?> weekNotifier,
+    ValueNotifier<DateTime> weekNotifier,
   ) {
     final textStyles = AppTextStylesProvider.of(context);
-    return ValueListenableBuilder<Week?>(
+    return ValueListenableBuilder<DateTime>(
       valueListenable: weekNotifier,
-      builder:
-          (context, week, child) =>
-              week != null
-                  ? Column(
-                    children: [
-                      Text(
-                        '${DateFormater.showShortDateToUser(week.dateStart)} - ${DateFormater.showShortDateToUser(week.dateEnd)}',
-                        style: textStyles.titleAppbar,
-                      ),
-                      Text(
-                        week.isOdd ? AppStrings.oddWeek : AppStrings.evenWeek,
-                        style: textStyles.subtitleAppbar,
-                      ),
-                    ],
-                  )
-                  : SizedBox(),
+      builder: (context, week, child) {
+        final weekStart = DateFormater.truncDate(week);
+        final weekEnd = weekStart.add(Duration(days: 6));
+        return Column(
+          children: [
+            Text(
+              '${DateFormater.showShortDateToUser(weekStart)} - ${DateFormater.showShortDateToUser(weekEnd)}',
+              style: textStyles.titleAppbar,
+            ),
+            Text(
+              week.isOdd ? AppStrings.oddWeek : AppStrings.evenWeek,
+              style: textStyles.subtitleAppbar,
+            ),
+          ],
+        );
+      },
     );
   }
 
-  Widget _bottomAppBar(BuildContext context, String title) {
+  Widget _buildBottomBar(BuildContext context, String title) {
     final textStyles = AppTextStylesProvider.of(context);
     return BottomAppBar(
       child: Row(
@@ -255,9 +251,7 @@ class _ScheduleWrapperState extends State<_ScheduleWrapper> {
 }
 
 class _SchedulePage extends StatelessWidget {
-  final ValueNotifier<Week?> weekNotifier;
-  const _SchedulePage({required Key key, required this.weekNotifier})
-    : super(key: key);
+  const _SchedulePage({required Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -268,9 +262,6 @@ class _SchedulePage extends StatelessWidget {
         } else if (state is ScheduleError) {
           return Center(child: Text(state.message));
         } else if (state is ScheduleLoaded) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            weekNotifier.value = state.week;
-          });
           return _LoadedScheduleBody(week: state.week);
         } else {
           return const Center(child: CircularProgressIndicator());
