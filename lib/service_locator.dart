@@ -92,14 +92,14 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetRoomsOfBuilding(sl()));
 
   sl.registerLazySingleton(() => GetFeaturedGroups(sl()));
-  sl.registerLazySingleton(() => SetFeaturedGroups(sl()));
-  sl.registerLazySingleton(() => AddFeaturedGroup(sl()));
+  sl.registerLazySingleton(() => SetFeaturedGroups(sl(), sl()));
+  sl.registerLazySingleton(() => AddFeaturedGroup(sl(), sl()));
   sl.registerLazySingleton(() => GetFeaturedTeachers(sl()));
-  sl.registerLazySingleton(() => SetFeaturedTeachers(sl()));
-  sl.registerLazySingleton(() => AddFeaturedTeacher(sl()));
+  sl.registerLazySingleton(() => SetFeaturedTeachers(sl(), sl()));
+  sl.registerLazySingleton(() => AddFeaturedTeacher(sl(), sl()));
   sl.registerLazySingleton(() => GetFeaturedRooms(sl()));
-  sl.registerLazySingleton(() => SetFeaturedRooms(sl()));
-  sl.registerLazySingleton(() => AddFeaturedRoom(sl()));
+  sl.registerLazySingleton(() => SetFeaturedRooms(sl(), sl()));
+  sl.registerLazySingleton(() => AddFeaturedRoom(sl(), sl()));
 
   sl.registerLazySingleton(() => SaveLastSchedule(sl()));
   sl.registerLazySingleton(() => GetLastSchedule(sl()));

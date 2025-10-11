@@ -22,4 +22,14 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
       DateFormater.truncDate(dayTime),
     );
   }
+
+  @override
+  Future<void> onAppStart() async {
+    scheduleDataSource.onAppStart();
+  }
+
+  @override
+  Future<void> onFeaturedChanged() async {
+    scheduleDataSource.onAppStart();
+  }
 }
