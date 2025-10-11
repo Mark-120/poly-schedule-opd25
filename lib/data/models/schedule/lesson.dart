@@ -1,5 +1,8 @@
+import '../../../domain/entities/group.dart';
+import '../../../domain/entities/room.dart';
 import '../../../domain/entities/schedule/lesson.dart';
 
+import '../../../domain/entities/teacher.dart';
 import '../group.dart';
 import '../room.dart';
 import '../teacher.dart';
@@ -17,6 +20,21 @@ class LessonModel extends Lesson {
     required super.webinarUrl,
     required super.lmsUrl,
   });
+
+  factory LessonModel.fromLesson(Lesson lesson) {
+    return LessonModel(
+      subject: lesson.subject,
+      type: lesson.type,
+      typeAbbr: lesson.typeAbbr,
+      start: lesson.start,
+      end: lesson.end,
+      groups: List<Group>.from(lesson.groups),
+      teachers: List<Teacher>.from(lesson.teachers),
+      auditories: List<Room>.from(lesson.auditories),
+      webinarUrl: lesson.webinarUrl,
+      lmsUrl: lesson.lmsUrl,
+    );
+  }
 
   factory LessonModel.fromJson(Map<String, dynamic> json) {
     return LessonModel(
@@ -39,6 +57,24 @@ class LessonModel extends Lesson {
               .toList(),
       webinarUrl: json['webinar_url'] ?? '',
       lmsUrl: json['lms_url'] ?? '',
+    );
+  }
+  LessonModel copyWith({
+    List<Room>? auditories,
+    List<Group>? groups,
+    List<Teacher>? teachers,
+  }) {
+    return LessonModel(
+      auditories: auditories ?? this.auditories,
+      groups: groups ?? this.groups,
+      teachers: teachers ?? this.teachers,
+      subject: subject,
+      type: type,
+      typeAbbr: typeAbbr,
+      start: start,
+      end: end,
+      webinarUrl: webinarUrl,
+      lmsUrl: lmsUrl,
     );
   }
 }
