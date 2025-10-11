@@ -8,7 +8,4 @@ abstract class ScheduleDataSource {
   Future<void> invalidateSchedule(EntityId id, DateTime dayTime);
   //Notify data source that it's data stored in another layer, and can be deleted
   Future<void> removeSchedule(EntityId id, DateTime dayTime);
-
-  Future<void> onAppStart();
-  Future<void> onFeaturedChanged();
 }
