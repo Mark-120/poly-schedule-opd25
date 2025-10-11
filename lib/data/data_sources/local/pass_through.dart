@@ -22,10 +22,4 @@ class PassThroughSource extends ScheduleDataSource {
   DateTime getCurrentDate() {
     return DateFormater.truncDate(DateTime.now());
   }
-
-  @override
-  Future<void> onAppStart() => prevDataSource.onAppStart();
-
-  @override
-  Future<void> onFeaturedChanged() => prevDataSource.onFeaturedChanged();
 }
