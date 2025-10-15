@@ -34,24 +34,29 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  final PageController _pageController = PageController(initialPage: 1);
+  final PageController _pageController = PageController(initialPage: 49);
   final List<DateTime> _weekDates = [];
   final List<GlobalKey> _pageKeys = [];
   late final ValueNotifier<DateTime> _weekNotifier;
-  int _savedPageIndex = 1;
+  int _savedPageIndex = 49;
 
-  void _onSwipeLeft() {
-    _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+  @override
+  void initState() {
+    super.initState();
+    _addAllWeeks();
+    _pageKeys.addAll([for (int i = 0; i < 100; i++) GlobalKey()]);
+    _pageController.addListener(_onPageChanged);
+    _weekNotifier = ValueNotifier(widget.dayTime);
   }
 
-  void _onSwipeRight() {
-    _pageController.previousPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+  void _addAllWeeks() {
+    _weekDates.add(widget.dayTime);
+    for (int i = 0; i < 49; i++) {
+      _weekDates.insert(0, _weekDates.first.subtract(const Duration(days: 7)));
+    }
+    for (int i = 0; i < 50; i++) {
+      _weekDates.add(_weekDates.last.add(const Duration(days: 7)));
+    }
   }
 
   void _onPageChanged() {
@@ -80,19 +85,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _weekDates.addAll([
-      widget.dayTime.subtract(const Duration(days: 7)),
-      widget.dayTime,
-      widget.dayTime.add(const Duration(days: 7)),
-    ]);
-    _pageKeys.addAll([GlobalKey(), GlobalKey(), GlobalKey()]);
-    _pageController.addListener(_onPageChanged);
-    _weekNotifier = ValueNotifier(widget.dayTime);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return _ScheduleWrapper(
       onSwipeLeft: _onSwipeLeft,
@@ -112,6 +104,20 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           );
         },
       ),
+    );
+  }
+
+  void _onSwipeLeft() {
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _onSwipeRight() {
+    _pageController.previousPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
   }
 
