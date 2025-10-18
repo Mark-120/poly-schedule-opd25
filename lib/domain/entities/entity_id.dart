@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../core/exception/local_exception.dart';
 import 'group.dart';
 import 'room.dart';
 import 'teacher.dart';
@@ -29,5 +30,19 @@ class EntityId extends Equatable {
 
   String toShortString() {
     return '$value,${isGroup ? "g" : (isRoom ? "r" : "t")}';
+  }
+
+  factory EntityId.parseShort(String string) {
+    var strings = string.split(',');
+    switch (strings[1]) {
+      case 'g':
+        return EntityId.group(GroupId(int.parse(strings[0])));
+      case 'r':
+        return EntityId.room(RoomId.parse(strings[0]));
+      case 't':
+        return EntityId.teacher(TeacherId(int.parse(strings[0])));
+      default:
+        throw LocalException('Incorrect format of EntityId');
+    }
   }
 }

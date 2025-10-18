@@ -29,6 +29,20 @@ final class LocalDataSource extends PassThroughSource {
   @override
   Future<void> invalidateSchedule(EntityId id, DateTime dayTime) async {}
 
+  @override
+  Future<void> onAppStart() async {
+    removeExtra();
+    preLoadFeatured();
+    super.onAppStart();
+  }
+
+  @override
+  Future<void> onFeaturedChanged() async {
+    removeExtra();
+    preLoadFeatured();
+    super.onFeaturedChanged();
+  }
+
   Future<(Week, StorageType)> retrieveAndSaveSchedule(
     ScheduleKey cacheKey,
   ) async {
@@ -59,7 +73,7 @@ final class LocalDataSource extends PassThroughSource {
     //Featured are saved on disk
     if (schedule.$2 != StorageType.local && featured) {
       if (isBetween(key.dateTime)) {
-        final a = localBox.put(key, schedule.$1);
+        final a = localBox.put(key.toString(), schedule.$1);
         final b = prevDataSource.removeSchedule(key.id, key.dateTime);
         await (a, b).wait;
       }
@@ -83,6 +97,52 @@ final class LocalDataSource extends PassThroughSource {
     return throw LocalException('non valid id');
   }
 
+  Future<void> preLoadFeatured() {
+    var futures = [
+      featuredRepository.getFeaturedGroups().then(
+        (list) => preLoadEntity(list, (x) => EntityId.group(x.id)),
+      ),
+      featuredRepository.getFeaturedRooms().then(
+        (list) => preLoadEntity(list, (x) => EntityId.room(x.getId())),
+      ),
+      featuredRepository.getFeaturedTeachers().then(
+        (list) => preLoadEntity(list, (x) => EntityId.teacher(x.id)),
+      ),
+    ];
+    return Future.wait(futures);
+  }
+
+  Future<void> preLoadEntity<T>(
+    List<T> featured,
+    EntityId Function(T) convertToEntityId,
+  ) {
+    List<Future<void>> futures = [];
+    for (final obj in featured) {
+      for (
+        DateTime i = getMin();
+        !i.isAfter(getMax());
+        i = i.add(Duration(days: 7))
+      ) {
+        futures.add(
+          retrieveAndSaveSchedule(ScheduleKey(convertToEntityId(obj), i)),
+        );
+      }
+    }
+    return Future.wait(futures);
+  }
+
+  Future<void> removeExtra() async {
+    //TODO: Add real parallel execution
+    for (var x in localBox.keys) {
+      var isOld = ScheduleKey.parse(x).dateTime.isBefore(getMin());
+      var isFeatured = await isSavedInFeatured(ScheduleKey.parse(x).id);
+      if (isOld || !isFeatured) {
+        logger.debug('[Local] Schedule - Delete from cache key: $x');
+        localBox.delete(x);
+      }
+    }
+  }
+
   DateTime getMin() {
     return getCurrentDate().subtract(Duration(days: 7));
   }
@@ -94,6 +154,4 @@ final class LocalDataSource extends PassThroughSource {
   bool isBetween(DateTime time) {
     return !time.isAfter(getMax()) && !time.isBefore(getMin());
   }
-
-  Future<void> preload() async {}
 }

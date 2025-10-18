@@ -21,7 +21,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
   @override
   Future<void> addFeaturedGroup(Group group) async {
     logger.debug('[Featured] FeaturedGroup - SET $group');
-    await featuredGroups.put(group.id, group);
+    await featuredGroups.put(group.id.id, group);
   }
 
   @override
@@ -33,7 +33,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
   @override
   Future<void> addFeaturedTeacher(Teacher newTeacher) async {
     logger.debug('[Featured] FeaturedTeacher - SET $newTeacher');
-    await featuredTeachers.put(newTeacher.id, newTeacher);
+    await featuredTeachers.put(newTeacher.id.id, newTeacher);
   }
 
   @override
@@ -59,7 +59,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
     logger.debug('[Featured] FeaturedGroups - SET $newGroups');
     featuredGroups.clear();
     featuredGroups.putAll(
-      Map.fromIterables(newGroups.map((x) => x.id), newGroups),
+      Map.fromIterables(newGroups.map((x) => x.id.id), newGroups),
     );
   }
 
@@ -77,7 +77,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
     logger.debug('[Featured] FeaturedTeachers - SET $newTeachers');
     featuredTeachers.clear();
     featuredTeachers.putAll(
-      Map.fromIterables(newTeachers.map((x) => x.id), newTeachers),
+      Map.fromIterables(newTeachers.map((x) => x.id.id), newTeachers),
     );
   }
 }
