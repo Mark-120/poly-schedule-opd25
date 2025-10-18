@@ -10,7 +10,6 @@ import '../../domain/entities/schedule/day.dart';
 import '../../domain/entities/schedule/week.dart';
 import '../../domain/usecases/schedule_usecases/get_schedule_usecases.dart';
 import '../../service_locator.dart';
-import '../state_managers/featured_screen_bloc/featured_bloc.dart';
 import '../state_managers/schedule_screen_bloc/schedule_bloc.dart';
 import '../state_managers/schedule_screen_bloc/schedule_event.dart';
 import '../state_managers/schedule_screen_bloc/schedule_state.dart';
@@ -18,6 +17,8 @@ import '../widgets/day_section.dart';
 import 'featured_screen.dart';
 
 class ScheduleScreen extends StatefulWidget {
+  static const route = '/schedule';
+
   final EntityId id;
   final DateTime dayTime;
   final String bottomTitle;
@@ -229,26 +230,7 @@ class _ScheduleWrapperState extends State<_ScheduleWrapper> {
             ),
             iconSize: 28,
             onPressed:
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => BlocProvider(
-                          lazy: false,
-                          create:
-                              (context) => FeaturedBloc(
-                                getFeaturedGroups: sl(),
-                                getFeaturedTeachers: sl(),
-                                getFeaturedRooms: sl(),
-                                setFeaturedGroups: sl(),
-                                setFeaturedTeachers: sl(),
-                                setFeaturedRooms: sl(),
-                                saveLastSchedule: sl(),
-                              ),
-                          child: FeaturedScreen(),
-                        ),
-                  ),
-                ),
+                () => Navigator.of(context).pushNamed(FeaturedScreen.route),
           ),
         ],
       ),
@@ -307,4 +289,16 @@ class _LoadedScheduleBody extends StatelessWidget {
       separatorBuilder: (context, index) => SizedBox(height: 16),
     );
   }
+}
+
+class ScheduleScreenArguments {
+  final EntityId id;
+  final DateTime dayTime;
+  final String bottomTitle;
+
+  const ScheduleScreenArguments({
+    required this.id,
+    required this.dayTime,
+    required this.bottomTitle,
+  });
 }

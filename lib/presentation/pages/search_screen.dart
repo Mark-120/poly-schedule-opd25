@@ -13,6 +13,8 @@ import '../state_managers/search_screen_bloc/search_bloc.dart';
 import 'schedule_screen.dart';
 
 class SearchScreen extends StatefulWidget {
+  static const route = '/search';
+
   final SearchScreenType searchScreenType;
   final Function(Group)? onSaveGroup;
   final Function(Teacher)? onSaveTeacher;
@@ -96,31 +98,25 @@ class _SearchScreenState extends State<SearchScreen> {
                   if (state.searchType == SearchScreenType.groups) {
                     final group = state.selectedItem as Group;
                     widget.onSaveGroup!(group);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (e) => ScheduleScreen(
-                              id: EntityId.group(group.id),
-                              dayTime: DateTime.now(),
-                              bottomTitle: group.name,
-                            ),
+                    Navigator.of(context).pushNamed(
+                      ScheduleScreen.route,
+                      arguments: ScheduleScreenArguments(
+                        id: EntityId.group(group.id),
+                        dayTime: DateTime.now(),
+                        bottomTitle: group.name,
                       ),
                     );
                   } else {
                     final teacher = state.selectedItem as Teacher;
                     widget.onSaveTeacher!(teacher);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (e) => ScheduleScreen(
-                              id: EntityId.teacher(teacher.id),
-                              dayTime: DateTime.now(),
-                              bottomTitle: AppStrings.fullNameToAbbreviation(
-                                teacher.fullName,
-                              ),
-                            ),
+                    Navigator.of(context).pushNamed(
+                      ScheduleScreen.route,
+                      arguments: ScheduleScreenArguments(
+                        id: EntityId.teacher(teacher.id),
+                        dayTime: DateTime.now(),
+                        bottomTitle: AppStrings.fullNameToAbbreviation(
+                          teacher.fullName,
+                        ),
                       ),
                     );
                   }
@@ -283,3 +279,31 @@ class _SearchScreenState extends State<SearchScreen> {
 }
 
 enum SearchScreenType { groups, teachers }
+
+class SearchScreenArguments {
+  final SearchScreenType searchScreenType;
+  final Function(Group)? onSaveGroup;
+  final Function(Teacher)? onSaveTeacher;
+
+  const SearchScreenArguments._({
+    required this.searchScreenType,
+    this.onSaveGroup,
+    this.onSaveTeacher,
+  });
+
+  factory SearchScreenArguments.groups({required Function(Group) onSaveGroup}) {
+    return SearchScreenArguments._(
+      searchScreenType: SearchScreenType.groups,
+      onSaveGroup: onSaveGroup,
+    );
+  }
+
+  factory SearchScreenArguments.teachers({
+    required Function(Teacher) onSaveTeacher,
+  }) {
+    return SearchScreenArguments._(
+      searchScreenType: SearchScreenType.teachers,
+      onSaveTeacher: onSaveTeacher,
+    );
+  }
+}
