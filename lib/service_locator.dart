@@ -50,6 +50,7 @@ import 'domain/usecases/schedule_usecases/find_teachers.dart';
 import 'domain/usecases/schedule_usecases/get_all_buildings.dart';
 import 'domain/usecases/schedule_usecases/get_rooms_of_building.dart';
 import 'domain/usecases/schedule_usecases/get_schedule_usecases.dart';
+import 'domain/usecases/schedule_usecases/on_app_start.dart';
 
 final sl = GetIt.instance;
 
@@ -91,6 +92,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => FindTeachers(sl()));
   sl.registerLazySingleton(() => GetAllBuildings(sl()));
   sl.registerLazySingleton(() => GetRoomsOfBuilding(sl()));
+  sl.registerLazySingleton(() => OnAppStart(sl()));
 
   sl.registerLazySingleton(() => GetFeaturedGroups(sl()));
   sl.registerLazySingleton(() => SetFeaturedGroups(sl(), sl()));
