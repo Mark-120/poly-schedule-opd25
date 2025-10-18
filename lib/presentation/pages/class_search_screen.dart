@@ -12,6 +12,8 @@ import '../widgets/featured_card.dart';
 import 'schedule_screen.dart';
 
 class ClassSearchScreen extends StatefulWidget {
+  static const route = '/classSearch';
+
   final int buildingId;
   final Function(Room) onSaveRoom;
 
@@ -64,16 +66,14 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
                       SaveSelectedRoomToFeatured(),
                     );
                     widget.onSaveRoom(state.selectedRoom!);
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder:
-                            (e) => ScheduleScreen(
-                              id: EntityId.room(state.selectedRoom!.getId()),
-                              dayTime: DateTime.now(),
-                              bottomTitle: AppStrings.fullNameOfRoom(
-                                state.selectedRoom!,
-                              ),
-                            ),
+                    Navigator.of(context).pushNamed(
+                      ScheduleScreen.route,
+                      arguments: ScheduleScreenArguments(
+                        id: EntityId.room(state.selectedRoom!.getId()),
+                        dayTime: DateTime.now(),
+                        bottomTitle: AppStrings.fullNameOfRoom(
+                          state.selectedRoom!,
+                        ),
                       ),
                     );
                   },
@@ -121,4 +121,14 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
       },
     );
   }
+}
+
+class ClassSearchScreenArguments {
+  final int buildingId;
+  final Function(Room) onSaveRoom;
+
+  const ClassSearchScreenArguments({
+    required this.buildingId,
+    required this.onSaveRoom,
+  });
 }

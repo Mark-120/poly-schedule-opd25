@@ -11,6 +11,8 @@ import '../widgets/featured_card.dart';
 import 'class_search_screen.dart';
 
 class BuildingSearchScreen extends StatefulWidget {
+  static const route = '/buildingSearch';
+
   final Function(Room) onSaveRoom;
   const BuildingSearchScreen({super.key, required this.onSaveRoom});
 
@@ -54,14 +56,11 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
                     state.selectedBuilding != null) {
                   return FloatingActionButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => ClassSearchScreen(
-                                buildingId: state.selectedBuilding!.id,
-                                onSaveRoom: widget.onSaveRoom,
-                              ),
+                      Navigator.of(context).pushNamed(
+                        ClassSearchScreen.route,
+                        arguments: ClassSearchScreenArguments(
+                          buildingId: state.selectedBuilding!.id,
+                          onSaveRoom: widget.onSaveRoom,
                         ),
                       );
                     },
@@ -112,4 +111,9 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
       },
     );
   }
+}
+
+class BuildingSearchScreenArguments {
+  final Function(Room) onSaveRoom;
+  const BuildingSearchScreenArguments({required this.onSaveRoom});
 }

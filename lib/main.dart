@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'core/logger.dart';
 import 'core/presentation/bloc_observer.dart';
+import 'core/presentation/navigation/app_navigation.dart';
 import 'core/presentation/uikit/app_strings.dart';
 import 'core/presentation/uikit/app_text_styles.dart';
 import 'core/presentation/uikit/app_theme.dart';
@@ -36,6 +37,8 @@ class MainApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
+      onGenerateRoute: AppNavigation.onGeneretaRoute,
+      routes: AppNavigation.routes,
       builder: (context, child) {
         return AppTextStylesProvider(
           styles: AppTextStyles(context),

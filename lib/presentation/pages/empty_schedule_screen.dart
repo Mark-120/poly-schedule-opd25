@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/date_formater.dart';
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
-import '../../service_locator.dart';
-import '../state_managers/featured_screen_bloc/featured_bloc.dart';
 import 'featured_screen.dart';
 
 class EmptyScheduleScreen extends StatelessWidget {
+  static const route = '/emptySchedule';
+
   const EmptyScheduleScreen({super.key});
 
   @override
@@ -72,26 +71,7 @@ class EmptyScheduleScreen extends StatelessWidget {
               ),
               iconSize: 28,
               onPressed:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => BlocProvider(
-                            lazy: false,
-                            create:
-                                (context) => FeaturedBloc(
-                                  getFeaturedGroups: sl(),
-                                  getFeaturedTeachers: sl(),
-                                  getFeaturedRooms: sl(),
-                                  setFeaturedGroups: sl(),
-                                  setFeaturedTeachers: sl(),
-                                  setFeaturedRooms: sl(),
-                                  saveLastSchedule: sl(),
-                                ),
-                            child: FeaturedScreen(),
-                          ),
-                    ),
-                  ),
+                  () => Navigator.of(context).pushNamed(FeaturedScreen.route),
             ),
           ],
         ),
