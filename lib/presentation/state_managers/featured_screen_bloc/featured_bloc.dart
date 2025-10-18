@@ -2,7 +2,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/group.dart';
 import '../../../domain/entities/room.dart';
 import '../../../domain/entities/teacher.dart';
@@ -12,7 +11,6 @@ import '../../../domain/usecases/featured_usecases/featured_rooms/get_featured_r
 import '../../../domain/usecases/featured_usecases/featured_rooms/set_featured_rooms.dart';
 import '../../../domain/usecases/featured_usecases/featured_teachers/get_featured_teachers.dart';
 import '../../../domain/usecases/featured_usecases/featured_teachers/set_featured_teachers.dart';
-import '../../../domain/usecases/last_schedule_usecases/save_last_schedule.dart';
 
 part 'featured_event.dart';
 part 'featured_state.dart';
@@ -24,7 +22,6 @@ class FeaturedBloc extends Bloc<FeaturedEvent, FeaturedState> {
   final SetFeaturedGroups setFeaturedGroups;
   final SetFeaturedTeachers setFeaturedTeachers;
   final SetFeaturedRooms setFeaturedRooms;
-  final SaveLastSchedule saveLastSchedule;
 
   FeaturedBloc({
     required this.getFeaturedGroups,
@@ -33,7 +30,6 @@ class FeaturedBloc extends Bloc<FeaturedEvent, FeaturedState> {
     required this.setFeaturedGroups,
     required this.setFeaturedTeachers,
     required this.setFeaturedRooms,
-    required this.saveLastSchedule,
   }) : super(FeaturedInitial()) {
     on<LoadFeaturedData>(_onLoadFeaturedData);
     on<ReorderGroups>(_onReorderGroups);
@@ -42,7 +38,6 @@ class FeaturedBloc extends Bloc<FeaturedEvent, FeaturedState> {
     on<DeleteGroup>(_onDeleteGroup);
     on<DeleteTeacher>(_onDeleteTeacher);
     on<DeleteRoom>(_onDeleteRoom);
-    on<SaveLastOpenedSchedule>(_onSaveLastOpenedSchedule);
   }
 
   Future<void> _onLoadFeaturedData(
@@ -145,12 +140,5 @@ class FeaturedBloc extends Bloc<FeaturedEvent, FeaturedState> {
       await setFeaturedRooms(newRooms);
       emit(currentState.copyWith(rooms: newRooms));
     }
-  }
-
-  Future<void> _onSaveLastOpenedSchedule(
-    SaveLastOpenedSchedule event,
-    Emitter<FeaturedState> emit,
-  ) async {
-    await saveLastSchedule(id: event.id, title: event.title);
   }
 }

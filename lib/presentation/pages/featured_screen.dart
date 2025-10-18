@@ -56,7 +56,6 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
             setFeaturedGroups: sl(),
             setFeaturedTeachers: sl(),
             setFeaturedRooms: sl(),
-            saveLastSchedule: sl(),
           )..add(LoadFeaturedData()),
       child: BlocBuilder<FeaturedBloc, FeaturedState>(
         builder: (context, state) {
