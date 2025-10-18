@@ -51,6 +51,11 @@ import 'domain/usecases/schedule_usecases/get_all_buildings.dart';
 import 'domain/usecases/schedule_usecases/get_rooms_of_building.dart';
 import 'domain/usecases/schedule_usecases/get_schedule_usecases.dart';
 import 'domain/usecases/schedule_usecases/on_app_start.dart';
+import 'presentation/state_managers/building_search_screen_bloc/building_search_bloc.dart';
+import 'presentation/state_managers/class_search_screen_bloc/class_search_bloc.dart';
+import 'presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
+import 'presentation/state_managers/schedule_screen_bloc/schedule_bloc.dart';
+import 'presentation/state_managers/search_screen_bloc/search_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -157,7 +162,6 @@ Future<void> init() async {
   sl.registerSingleton<ScheduleRepository>(
     ScheduleRepositoryImpl(scheduleDataSource: sl<PrefetchDataSource>()),
   );
-  // Repositories
   sl.registerSingleton<FetchRepository>(
     FetchRepositoryImpl(fetchDataSource: sl<FetchRemoteDataSourceImpl>()),
   );
@@ -168,6 +172,31 @@ Future<void> init() async {
       logger: sl(),
     ),
   );
+
+  //BLoC
+  sl.registerFactory(() => BuildingSearchBloc(getAllBuildings: sl()));
+  sl.registerFactory(
+    () => ClassSearchBloc(getRoomsOfBuilding: sl(), addFeaturedRoom: sl()),
+  );
+  sl.registerFactory(
+    () => FeaturedBloc(
+      getFeaturedGroups: sl(),
+      getFeaturedTeachers: sl(),
+      getFeaturedRooms: sl(),
+      setFeaturedGroups: sl(),
+      setFeaturedTeachers: sl(),
+      setFeaturedRooms: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => SearchBloc(
+      findGroups: sl(),
+      findTeachers: sl(),
+      addFeaturedGroup: sl(),
+      addFeaturedTeacher: sl(),
+    ),
+  );
+  sl.registerFactory(() => ScheduleBloc(getSchedule: sl<GetSchedule>()));
 
   // Services
   sl.registerSingleton<LastScheduleService>(

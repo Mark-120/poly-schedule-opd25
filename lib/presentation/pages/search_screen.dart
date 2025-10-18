@@ -57,13 +57,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final textStyles = AppTextStylesProvider.of(context);
 
     return BlocProvider(
-      create:
-          (context) => SearchBloc(
-            findGroups: sl(),
-            findTeachers: sl(),
-            addFeaturedGroup: sl(),
-            addFeaturedTeacher: sl(),
-          ),
+      create: (context) => sl<SearchBloc>(),
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.only(top: 100.0, left: 16, right: 16),

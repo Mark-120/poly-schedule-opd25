@@ -48,15 +48,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (context) => FeaturedBloc(
-            getFeaturedGroups: sl(),
-            getFeaturedTeachers: sl(),
-            getFeaturedRooms: sl(),
-            setFeaturedGroups: sl(),
-            setFeaturedTeachers: sl(),
-            setFeaturedRooms: sl(),
-          )..add(LoadFeaturedData()),
+      create: (context) => sl<FeaturedBloc>()..add(LoadFeaturedData()),
       child: BlocBuilder<FeaturedBloc, FeaturedState>(
         builder: (context, state) {
           return Scaffold(

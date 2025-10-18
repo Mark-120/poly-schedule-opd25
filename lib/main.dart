@@ -14,11 +14,12 @@ import 'service_locator.dart';
 
 void main() async {
   await AppInitializationService.initializeApplication();
-  final lastSchedule = await sl<LastScheduleService>().load();
+  final lastScheduleService = sl<LastScheduleService>();
+  final lastSchedule = await lastScheduleService.load();
 
   runApp(
     Provider<LastScheduleService>(
-      create: (context) => sl<LastScheduleService>(),
+      create: (context) => lastScheduleService,
       child: MainApp(lastSchedule: lastSchedule),
     ),
   );

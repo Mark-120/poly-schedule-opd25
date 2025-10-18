@@ -35,7 +35,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
     return BlocProvider(
       create:
           (context) =>
-              ClassSearchBloc(getRoomsOfBuilding: sl(), addFeaturedRoom: sl())
+              sl<ClassSearchBloc>()
                 ..add(LoadRoomsForBuilding(widget.buildingId)),
       child: Scaffold(
         body: Padding(
