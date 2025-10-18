@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
+import '../../core/services/last_schedule_service.dart';
 import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/room.dart';
@@ -427,26 +428,23 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
   }
 
   void onSaveRoom(Room room) {
-    context.read<FeaturedBloc>().add(
-      SaveLastOpenedSchedule(
-        id: EntityId.room(room.getId()),
-        title: AppStrings.fullNameOfRoom(room),
-      ),
+    context.read<LastScheduleService>().save(
+      id: EntityId.room(room.getId()),
+      title: AppStrings.fullNameOfRoom(room),
     );
   }
 
   void onSaveGroup(Group group) {
-    context.read<FeaturedBloc>().add(
-      SaveLastOpenedSchedule(id: EntityId.group(group.id), title: group.name),
+    context.read<LastScheduleService>().save(
+      id: EntityId.group(group.id),
+      title: group.name,
     );
   }
 
   void onSaveTeacher(Teacher teacher) {
-    context.read<FeaturedBloc>().add(
-      SaveLastOpenedSchedule(
-        id: EntityId.teacher(teacher.id),
-        title: teacher.fullName,
-      ),
+    context.read<LastScheduleService>().save(
+      id: EntityId.teacher(teacher.id),
+      title: teacher.fullName,
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 
 import 'core/logger.dart';
+import 'core/services/last_schedule_service.dart';
 import 'data/adapters/building.dart';
 import 'data/adapters/date.dart';
 import 'data/adapters/entity_id.dart';
@@ -164,5 +165,10 @@ Future<void> init() async {
       Hive.box<LastSchedule>('last_schedule'),
       logger: sl(),
     ),
+  );
+
+  // Services
+  sl.registerSingleton<LastScheduleService>(
+    LastScheduleService(saveLastSchedule: sl(), getLastSchedule: sl()),
   );
 }
