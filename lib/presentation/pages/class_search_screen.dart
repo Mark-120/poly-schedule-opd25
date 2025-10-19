@@ -105,7 +105,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
           ErrorHandlingService.handleError(context, state.message);
           return Center(
             child: Text(
-              'Ой! Что-то пошло не так...',
+              AppStrings.errorMessage,
               style: textStyles.noLessonsMessage,
             ),
           );

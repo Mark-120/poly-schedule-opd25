@@ -89,10 +89,7 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
         } else if (state is BuildingSearchError) {
           ErrorHandlingService.handleError(context, state.message);
           return Center(
-            child: Text(
-              'Ой! Что-то пошло не так...',
-              style: textStyles.errorBody,
-            ),
+            child: Text(AppStrings.errorMessage, style: textStyles.errorBody),
           );
         } else if (state is BuildingSearchLoaded) {
           return ListView.builder(
