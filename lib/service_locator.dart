@@ -50,6 +50,7 @@ import 'domain/usecases/schedule_usecases/find_teachers.dart';
 import 'domain/usecases/schedule_usecases/get_all_buildings.dart';
 import 'domain/usecases/schedule_usecases/get_rooms_of_building.dart';
 import 'domain/usecases/schedule_usecases/get_schedule_usecases.dart';
+import 'domain/usecases/schedule_usecases/on_app_start.dart';
 import 'presentation/state_managers/building_search_screen_bloc/building_search_bloc.dart';
 import 'presentation/state_managers/class_search_screen_bloc/class_search_bloc.dart';
 import 'presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
@@ -96,6 +97,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => FindTeachers(sl()));
   sl.registerLazySingleton(() => GetAllBuildings(sl()));
   sl.registerLazySingleton(() => GetRoomsOfBuilding(sl()));
+  sl.registerLazySingleton(() => OnAppStart(sl()));
 
   sl.registerLazySingleton(() => GetFeaturedGroups(sl()));
   sl.registerLazySingleton(() => SetFeaturedGroups(sl(), sl()));
