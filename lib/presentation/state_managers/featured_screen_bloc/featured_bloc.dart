@@ -62,9 +62,16 @@ class FeaturedBloc extends Bloc<FeaturedEvent, FeaturedState> {
     if (state is FeaturedLoaded) {
       final currentState = state as FeaturedLoaded;
       final newGroups = List<Group>.from(currentState.groups);
+      final oldIndex = event.oldIndex;
       final item = newGroups.removeAt(event.oldIndex);
-      newGroups.insert(event.newIndex, item);
-
+      final newIndex = event.newIndex;
+      if (newIndex <= newGroups.length) {
+        oldIndex < newIndex
+            ? newGroups.insert(newIndex - 1, item)
+            : newGroups.insert(newIndex, item);
+      } else {
+        newGroups.add(item);
+      }
       await setFeaturedGroups(newGroups);
       emit(currentState.copyWith(groups: newGroups));
     }
@@ -77,9 +84,16 @@ class FeaturedBloc extends Bloc<FeaturedEvent, FeaturedState> {
     if (state is FeaturedLoaded) {
       final currentState = state as FeaturedLoaded;
       final newTeachers = List<Teacher>.from(currentState.teachers);
+      final oldIndex = event.oldIndex;
       final item = newTeachers.removeAt(event.oldIndex);
-      newTeachers.insert(event.newIndex, item);
-
+      final newIndex = event.newIndex;
+      if (newIndex <= newTeachers.length) {
+        oldIndex < newIndex
+            ? newTeachers.insert(newIndex - 1, item)
+            : newTeachers.insert(newIndex, item);
+      } else {
+        newTeachers.add(item);
+      }
       await setFeaturedTeachers(newTeachers);
       emit(currentState.copyWith(teachers: newTeachers));
     }
@@ -92,9 +106,16 @@ class FeaturedBloc extends Bloc<FeaturedEvent, FeaturedState> {
     if (state is FeaturedLoaded) {
       final currentState = state as FeaturedLoaded;
       final newRooms = List<Room>.from(currentState.rooms);
+      final oldIndex = event.oldIndex;
       final item = newRooms.removeAt(event.oldIndex);
-      newRooms.insert(event.newIndex, item);
-
+      final newIndex = event.newIndex;
+      if (newIndex <= newRooms.length) {
+        oldIndex < newIndex
+            ? newRooms.insert(newIndex - 1, item)
+            : newRooms.insert(newIndex, item);
+      } else {
+        newRooms.add(item);
+      }
       await setFeaturedRooms(newRooms);
       emit(currentState.copyWith(rooms: newRooms));
     }
