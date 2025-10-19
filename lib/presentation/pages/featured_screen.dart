@@ -16,16 +16,38 @@ import '../widgets/featured_card.dart';
 import 'building_search_screen.dart';
 import 'search_screen.dart';
 
-class FeaturedScreen extends StatefulWidget {
+class FeaturedScreen extends StatelessWidget {
   static const route = '/featured';
 
   const FeaturedScreen({super.key});
 
   @override
-  State<FeaturedScreen> createState() => _FeaturedScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create:
+          (context) => FeaturedBloc(
+            getFeaturedGroups: sl(),
+            getFeaturedTeachers: sl(),
+            getFeaturedRooms: sl(),
+            setFeaturedGroups: sl(),
+            setFeaturedTeachers: sl(),
+            setFeaturedRooms: sl(),
+          )..add(LoadFeaturedData()),
+      child: BlocBuilder<FeaturedBloc, FeaturedState>(
+        builder: (context, state) {
+          return _FeaturedScreenBody();
+        },
+      ),
+    );
+  }
 }
 
-class _FeaturedScreenState extends State<FeaturedScreen> {
+class _FeaturedScreenBody extends StatefulWidget {
+  @override
+  State<_FeaturedScreenBody> createState() => _FeaturedScreenBodyState();
+}
+
+class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
   final PageController _pageController = PageController();
   FeaturedSubpages _currentPage = FeaturedSubpages.values.first;
   bool _editMode = false;
@@ -47,143 +69,130 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create:
-          (context) => FeaturedBloc(
-            getFeaturedGroups: sl(),
-            getFeaturedTeachers: sl(),
-            getFeaturedRooms: sl(),
-            setFeaturedGroups: sl(),
-            setFeaturedTeachers: sl(),
-            setFeaturedRooms: sl(),
-          )..add(LoadFeaturedData()),
-      child: BlocBuilder<FeaturedBloc, FeaturedState>(
-        builder: (context, state) {
-          return Scaffold(
-            body: Column(
-              children: [
-                Expanded(
-                  child: PageView(
-                    physics:
-                        _editMode
-                            ? const NeverScrollableScrollPhysics()
-                            : const PageScrollPhysics(),
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      setState(() {
-                        _currentPage = FeaturedSubpages.values[index];
-                      });
-                    },
-                    children: [
-                      _featuredSection(
-                        context,
-                        pageIndex: 0,
-                        items:
-                            state is FeaturedLoaded
-                                ? state.groups.map((g) => g.name).toList()
-                                : [],
-                        onReorder: (oldIndex, newIndex) {
-                          context.read<FeaturedBloc>().add(
-                            ReorderGroups(oldIndex, newIndex),
-                          );
-                        },
-                        onDelete: (index) {
-                          context.read<FeaturedBloc>().add(DeleteGroup(index));
-                        },
-                      ),
-                      _featuredSection(
-                        context,
-                        pageIndex: 1,
-                        items:
-                            state is FeaturedLoaded
-                                ? state.teachers.map((t) => t.fullName).toList()
-                                : [],
-                        onReorder: (oldIndex, newIndex) {
-                          context.read<FeaturedBloc>().add(
-                            ReorderTeachers(oldIndex, newIndex),
-                          );
-                        },
-                        onDelete: (index) {
-                          context.read<FeaturedBloc>().add(
-                            DeleteTeacher(index),
-                          );
-                        },
-                      ),
-                      _featuredSection(
-                        context,
-                        pageIndex: 2,
-                        items:
-                            state is FeaturedLoaded
-                                ? state.rooms
-                                    .map((r) => AppStrings.fullNameOfRoom(r))
-                                    .toList()
-                                : [],
-                        onReorder: (oldIndex, newIndex) {
-                          context.read<FeaturedBloc>().add(
-                            ReorderRooms(oldIndex, newIndex),
-                          );
-                        },
-                        onDelete: (index) {
-                          context.read<FeaturedBloc>().add(DeleteRoom(index));
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
-                  child:
+    return BlocBuilder<FeaturedBloc, FeaturedState>(
+      builder: (context, state) {
+        return Scaffold(
+          body: Column(
+            children: [
+              Expanded(
+                child: PageView(
+                  physics:
                       _editMode
-                          ? Padding(
-                            key: ValueKey('add_button'),
-                            padding: const EdgeInsets.only(top: 57),
-                            child: FloatingActionButton(
-                              heroTag: UniqueKey(),
-                              onPressed: _openSearchScreen,
-                              child: Icon(
-                                Icons.add,
-                                color: context.appTheme.iconColor,
-                                size: 38,
-                              ),
-                            ),
-                          )
-                          : Padding(
-                            key: ValueKey('edit_button'),
-                            padding: const EdgeInsets.only(top: 57),
-                            child: FloatingActionButton(
-                              onPressed: _toggleEditMode,
-                              child: Icon(
-                                Icons.edit_outlined,
-                                color: context.appTheme.iconColor,
-                              ),
+                          ? const NeverScrollableScrollPhysics()
+                          : const PageScrollPhysics(),
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentPage = FeaturedSubpages.values[index];
+                    });
+                  },
+                  children: [
+                    _featuredSection(
+                      context,
+                      pageIndex: 0,
+                      items:
+                          state is FeaturedLoaded
+                              ? state.groups.map((g) => g.name).toList()
+                              : [],
+                      onReorder: (oldIndex, newIndex) {
+                        context.read<FeaturedBloc>().add(
+                          ReorderGroups(oldIndex, newIndex),
+                        );
+                      },
+                      onDelete: (index) {
+                        context.read<FeaturedBloc>().add(DeleteGroup(index));
+                      },
+                    ),
+                    _featuredSection(
+                      context,
+                      pageIndex: 1,
+                      items:
+                          state is FeaturedLoaded
+                              ? state.teachers.map((t) => t.fullName).toList()
+                              : [],
+                      onReorder: (oldIndex, newIndex) {
+                        context.read<FeaturedBloc>().add(
+                          ReorderTeachers(oldIndex, newIndex),
+                        );
+                      },
+                      onDelete: (index) {
+                        context.read<FeaturedBloc>().add(DeleteTeacher(index));
+                      },
+                    ),
+                    _featuredSection(
+                      context,
+                      pageIndex: 2,
+                      items:
+                          state is FeaturedLoaded
+                              ? state.rooms
+                                  .map((r) => AppStrings.fullNameOfRoom(r))
+                                  .toList()
+                              : [],
+                      onReorder: (oldIndex, newIndex) {
+                        context.read<FeaturedBloc>().add(
+                          ReorderRooms(oldIndex, newIndex),
+                        );
+                      },
+                      onDelete: (index) {
+                        context.read<FeaturedBloc>().add(DeleteRoom(index));
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                child:
+                    _editMode
+                        ? Padding(
+                          key: ValueKey('add_button'),
+                          padding: const EdgeInsets.only(top: 57),
+                          child: FloatingActionButton(
+                            heroTag: UniqueKey(),
+                            onPressed: _openSearchScreen,
+                            child: Icon(
+                              Icons.add,
+                              color: context.appTheme.iconColor,
+                              size: 38,
                             ),
                           ),
+                        )
+                        : Padding(
+                          key: ValueKey('edit_button'),
+                          padding: const EdgeInsets.only(top: 57),
+                          child: FloatingActionButton(
+                            onPressed: _toggleEditMode,
+                            child: Icon(
+                              Icons.edit_outlined,
+                              color: context.appTheme.iconColor,
+                            ),
+                          ),
+                        ),
+              ),
+              AnimatedOpacity(
+                opacity: _editMode ? 0.0 : 1.0,
+                duration: Duration(milliseconds: 500),
+                child: Padding(
+                  key: ValueKey('page_routing_dots'),
+                  padding: EdgeInsets.symmetric(vertical: 56),
+                  child: _bottomIndicator(),
                 ),
-                AnimatedOpacity(
-                  opacity: _editMode ? 0.0 : 1.0,
-                  duration: Duration(milliseconds: 500),
-                  child: Padding(
-                    key: ValueKey('page_routing_dots'),
-                    padding: EdgeInsets.symmetric(vertical: 56),
-                    child: _bottomIndicator(),
-                  ),
-                ),
-              ],
-            ),
-            floatingActionButton:
-                _editMode
-                    ? FloatingActionButton(
-                      onPressed: _toggleEditMode,
-                      child: Icon(
-                        Icons.done,
-                        color: context.appTheme.iconColor,
-                        size: 40,
-                      ),
-                    )
-                    : null,
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+          floatingActionButton:
+              _editMode
+                  ? FloatingActionButton(
+                    onPressed: _toggleEditMode,
+                    child: Icon(
+                      Icons.done,
+                      color: context.appTheme.iconColor,
+                      size: 40,
+                    ),
+                  )
+                  : null,
+        );
+      },
     );
   }
 
@@ -257,8 +266,7 @@ class _FeaturedScreenState extends State<FeaturedScreen> {
                           physics: const ClampingScrollPhysics(),
                           itemCount: items.length,
                           itemBuilder:
-                              (_, index) => featuredCard(
-                                context,
+                              (_, index) => FeaturedCard(
                                 items[index],
                                 onTap: () => _openSelectedSchedule(index),
                               ),

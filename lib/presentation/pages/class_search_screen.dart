@@ -105,8 +105,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
             padding: EdgeInsets.zero,
             children:
                 state.rooms.map((room) {
-                  return featuredCard(
-                    context,
+                  return FeaturedCard(
                     room.name,
                     isChosen: room == state.selectedRoom,
                     isCenterText: true,

@@ -250,8 +250,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ? (item as Group).name
                 : (item as Teacher).fullName;
 
-        return featuredCard(
-          context,
+        return FeaturedCard(
           displayText,
           isChosen: isSelected,
           onTap: () {
