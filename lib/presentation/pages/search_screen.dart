@@ -57,13 +57,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final textStyles = AppTextStylesProvider.of(context);
 
     return BlocProvider(
-      create:
-          (context) => SearchBloc(
-            findGroups: sl(),
-            findTeachers: sl(),
-            addFeaturedGroup: sl(),
-            addFeaturedTeacher: sl(),
-          ),
+      create: (context) => sl<SearchBloc>(),
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.only(top: 100.0, left: 16, right: 16),
@@ -98,8 +92,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   if (state.searchType == SearchScreenType.groups) {
                     final group = state.selectedItem as Group;
                     widget.onSaveGroup!(group);
-                    Navigator.of(context).pushNamed(
+                    Navigator.of(context).pushNamedAndRemoveUntil(
                       ScheduleScreen.route,
+                      (route) => false,
                       arguments: ScheduleScreenArguments(
                         id: EntityId.group(group.id),
                         dayTime: DateTime.now(),
@@ -109,8 +104,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   } else {
                     final teacher = state.selectedItem as Teacher;
                     widget.onSaveTeacher!(teacher);
-                    Navigator.of(context).pushNamed(
+                    Navigator.of(context).pushNamedAndRemoveUntil(
                       ScheduleScreen.route,
+                      (route) => false,
                       arguments: ScheduleScreenArguments(
                         id: EntityId.teacher(teacher.id),
                         dayTime: DateTime.now(),
@@ -250,8 +246,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ? (item as Group).name
                 : (item as Teacher).fullName;
 
-        return featuredCard(
-          context,
+        return FeaturedCard(
           displayText,
           isChosen: isSelected,
           onTap: () {

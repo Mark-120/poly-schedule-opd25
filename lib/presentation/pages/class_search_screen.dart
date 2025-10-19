@@ -35,7 +35,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
     return BlocProvider(
       create:
           (context) =>
-              ClassSearchBloc(getRoomsOfBuilding: sl(), addFeaturedRoom: sl())
+              sl<ClassSearchBloc>()
                 ..add(LoadRoomsForBuilding(widget.buildingId)),
       child: Scaffold(
         body: Padding(
@@ -66,8 +66,9 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
                       SaveSelectedRoomToFeatured(),
                     );
                     widget.onSaveRoom(state.selectedRoom!);
-                    Navigator.of(context).pushNamed(
+                    Navigator.of(context).pushNamedAndRemoveUntil(
                       ScheduleScreen.route,
+                      (route) => false,
                       arguments: ScheduleScreenArguments(
                         id: EntityId.room(state.selectedRoom!.getId()),
                         dayTime: DateTime.now(),
@@ -105,8 +106,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
             padding: EdgeInsets.zero,
             children:
                 state.rooms.map((room) {
-                  return featuredCard(
-                    context,
+                  return FeaturedCard(
                     room.name,
                     isChosen: room == state.selectedRoom,
                     isCenterText: true,

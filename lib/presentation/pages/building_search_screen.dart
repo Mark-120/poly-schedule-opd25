@@ -26,9 +26,7 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
     final textStyles = AppTextStylesProvider.of(context);
 
     return BlocProvider(
-      create:
-          (context) =>
-              BuildingSearchBloc(getAllBuildings: sl())..add(LoadBuildings()),
+      create: (context) => sl<BuildingSearchBloc>()..add(LoadBuildings()),
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.only(top: 100, left: 16, right: 16),
@@ -94,8 +92,7 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
             itemCount: state.buildings.length,
             itemBuilder: (context, index) {
               final building = state.buildings[index];
-              return featuredCard(
-                context,
+              return FeaturedCard(
                 building.name,
                 isChosen: building == state.selectedBuilding,
                 onTap: () {
