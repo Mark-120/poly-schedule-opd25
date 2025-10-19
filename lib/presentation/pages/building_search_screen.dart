@@ -94,8 +94,7 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
             itemCount: state.buildings.length,
             itemBuilder: (context, index) {
               final building = state.buildings[index];
-              return featuredCard(
-                context,
+              return FeaturedCard(
                 building.name,
                 isChosen: building == state.selectedBuilding,
                 onTap: () {

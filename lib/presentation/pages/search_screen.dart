@@ -98,8 +98,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   if (state.searchType == SearchScreenType.groups) {
                     final group = state.selectedItem as Group;
                     widget.onSaveGroup!(group);
-                    Navigator.of(context).pushNamed(
+                    Navigator.of(context).pushNamedAndRemoveUntil(
                       ScheduleScreen.route,
+                      (route) => false,
                       arguments: ScheduleScreenArguments(
                         id: EntityId.group(group.id),
                         dayTime: DateTime.now(),
@@ -109,8 +110,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   } else {
                     final teacher = state.selectedItem as Teacher;
                     widget.onSaveTeacher!(teacher);
-                    Navigator.of(context).pushNamed(
+                    Navigator.of(context).pushNamedAndRemoveUntil(
                       ScheduleScreen.route,
+                      (route) => false,
                       arguments: ScheduleScreenArguments(
                         id: EntityId.teacher(teacher.id),
                         dayTime: DateTime.now(),
@@ -250,8 +252,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ? (item as Group).name
                 : (item as Teacher).fullName;
 
-        return featuredCard(
-          context,
+        return FeaturedCard(
           displayText,
           isChosen: isSelected,
           onTap: () {
