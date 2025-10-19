@@ -237,6 +237,7 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
                         )
                         : _editMode
                         ? ReorderableListView.builder(
+                          buildDefaultDragHandles: false,
                           key: ValueKey('reorder_list'),
                           physics: const ClampingScrollPhysics(),
                           itemCount: items.length,
@@ -246,6 +247,7 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
                           itemBuilder:
                               (context, index) => _editableCard(
                                 context,
+                                index,
                                 items[index],
                                 () => onDelete(index),
                               ),
@@ -280,6 +282,7 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
 
   Widget _editableCard(
     BuildContext context,
+    int index,
     String title,
     VoidCallback onDelete,
   ) {
@@ -289,23 +292,29 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
       key: Key(title),
       children: [
         Expanded(
-          child: Card(
-            margin: EdgeInsets.symmetric(vertical: 4),
-            color: context.appTheme.firstLayerCardBackgroundColor,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: textStyles.itemText,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+          child: ReorderableDragStartListener(
+            index: index,
+            child: Card(
+              margin: EdgeInsets.symmetric(vertical: 4),
+              color: context.appTheme.firstLayerCardBackgroundColor,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 9,
+                  horizontal: 16,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: textStyles.itemText,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  Image.asset('assets/icons/drag_icon.png'),
-                ],
+                    Image.asset('assets/icons/drag_icon.png'),
+                  ],
+                ),
               ),
             ),
           ),
