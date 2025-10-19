@@ -24,15 +24,7 @@ class FeaturedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (context) => FeaturedBloc(
-            getFeaturedGroups: sl(),
-            getFeaturedTeachers: sl(),
-            getFeaturedRooms: sl(),
-            setFeaturedGroups: sl(),
-            setFeaturedTeachers: sl(),
-            setFeaturedRooms: sl(),
-          )..add(LoadFeaturedData()),
+      create: (context) => sl<FeaturedBloc>()..add(LoadFeaturedData()),
       child: BlocBuilder<FeaturedBloc, FeaturedState>(
         builder: (context, state) {
           return _FeaturedScreenBody();
@@ -161,6 +153,7 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
                           key: ValueKey('edit_button'),
                           padding: const EdgeInsets.only(top: 57),
                           child: FloatingActionButton(
+                            heroTag: UniqueKey(),
                             onPressed: _toggleEditMode,
                             child: Icon(
                               Icons.edit_outlined,

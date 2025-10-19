@@ -8,7 +8,6 @@ import '../../core/presentation/uikit/theme_extension.dart';
 import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/schedule/day.dart';
 import '../../domain/entities/schedule/week.dart';
-import '../../domain/usecases/schedule_usecases/get_schedule_usecases.dart';
 import '../../service_locator.dart';
 import '../state_managers/schedule_screen_bloc/schedule_bloc.dart';
 import '../state_managers/schedule_screen_bloc/schedule_event.dart';
@@ -99,7 +98,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           return BlocProvider(
             create:
                 (context) =>
-                    ScheduleBloc(getSchedule: sl<GetSchedule>())
+                    sl<ScheduleBloc>()
                       ..add(_createEvent(widget.id, _weekDates[index])),
             child: _SchedulePage(key: _pageKeys[index]),
           );
