@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
+import '../../core/services/error_handling_service.dart';
 import '../../domain/entities/room.dart';
 import '../../service_locator.dart';
 import '../state_managers/building_search_screen_bloc/building_search_bloc.dart';
@@ -36,7 +37,7 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
               const SizedBox(height: 40),
               Text(AppStrings.buildingSearchTitle, style: textStyles.title),
               const SizedBox(height: 65),
-              Expanded(child: _buildSearchResults()),
+              Expanded(child: _buildSearchResults(context)),
               Padding(
                 padding: EdgeInsets.only(top: 88, bottom: 112),
                 child: Text(
@@ -76,7 +77,9 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
     );
   }
 
-  Widget _buildSearchResults() {
+  Widget _buildSearchResults(BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     return BlocBuilder<BuildingSearchBloc, BuildingSearchState>(
       builder: (context, state) {
         if (state is BuildingSearchInitial) {
@@ -84,7 +87,13 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
         } else if (state is BuildingSearchLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is BuildingSearchError) {
-          return Center(child: Text(state.message));
+          ErrorHandlingService.handleError(context, state.message);
+          return Center(
+            child: Text(
+              'Ой! Что-то пошло не так...',
+              style: textStyles.errorBody,
+            ),
+          );
         } else if (state is BuildingSearchLoaded) {
           return ListView.builder(
             physics: const ClampingScrollPhysics(),

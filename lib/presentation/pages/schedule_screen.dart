@@ -5,6 +5,7 @@ import '../../core/date_formater.dart';
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
+import '../../core/services/error_handling_service.dart';
 import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/schedule/day.dart';
 import '../../domain/entities/schedule/week.dart';
@@ -242,12 +243,20 @@ class _SchedulePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     return BlocBuilder<ScheduleBloc, ScheduleState>(
       builder: (context, state) {
         if (state is ScheduleLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is ScheduleError) {
-          return Center(child: Text(state.message));
+          ErrorHandlingService.handleError(context, state.message);
+          return Center(
+            child: Text(
+              'Ой! Что-то пошло не так...',
+              style: textStyles.noLessonsMessage,
+            ),
+          );
         } else if (state is ScheduleLoaded) {
           return _LoadedScheduleBody(week: state.week);
         } else {
