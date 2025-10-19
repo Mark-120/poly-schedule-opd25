@@ -393,8 +393,9 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
         if (index < state.groups.length) {
           final group = state.groups[index];
           onSaveGroup(group);
-          Navigator.of(context).pushNamed(
+          Navigator.of(context).pushNamedAndRemoveUntil(
             ScheduleScreen.route,
+            (route) => false,
             arguments: ScheduleScreenArguments(
               id: EntityId.group(group.id),
               dayTime: DateTime.now(),
@@ -407,8 +408,9 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
         if (index < state.teachers.length) {
           final teacher = state.teachers[index];
           onSaveTeacher(teacher);
-          Navigator.of(context).pushNamed(
+          Navigator.of(context).pushNamedAndRemoveUntil(
             ScheduleScreen.route,
+            (route) => false,
             arguments: ScheduleScreenArguments(
               id: EntityId.teacher(teacher.id),
               dayTime: DateTime.now(),
@@ -421,8 +423,9 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
         if (index < state.rooms.length) {
           final room = state.rooms[index];
           onSaveRoom(room);
-          Navigator.of(context).pushNamed(
+          Navigator.of(context).pushNamedAndRemoveUntil(
             ScheduleScreen.route,
+            (route) => false,
             arguments: ScheduleScreenArguments(
               id: EntityId.room(room.getId()),
               dayTime: DateTime.now(),

@@ -66,8 +66,9 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
                       SaveSelectedRoomToFeatured(),
                     );
                     widget.onSaveRoom(state.selectedRoom!);
-                    Navigator.of(context).pushNamed(
+                    Navigator.of(context).pushNamedAndRemoveUntil(
                       ScheduleScreen.route,
+                      (route) => false,
                       arguments: ScheduleScreenArguments(
                         id: EntityId.room(state.selectedRoom!.getId()),
                         dayTime: DateTime.now(),
