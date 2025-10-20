@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "810368120535",
+    "project_id": "poly-schedule",
+    "storage_bucket": "poly-schedule.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810368120535:android:cd45ec4cebd0441e2f6292",
+        "android_client_info": {
+          "package_name": "com.example.poly_scheduler"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2s3-EmYobaFEa5rGb3qJkqJOb0DfMJBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
