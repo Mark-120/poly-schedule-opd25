@@ -1,6 +1,5 @@
 import 'package:hive/hive.dart';
 
-import '../../../core/exception/local_exception.dart';
 import '../../../core/logger.dart';
 import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/schedule/week.dart';
@@ -118,7 +117,9 @@ final class LocalDataSource extends PassThroughSource {
     //TODO: Add real parallel execution
     for (var x in localBox.keys) {
       var isOld = ScheduleKey.parse(x).dateTime.isBefore(getMin());
-      var isFeatured = await featuredRepository.isSavedInFeatured(ScheduleKey.parse(x).id);
+      var isFeatured = await featuredRepository.isSavedInFeatured(
+        ScheduleKey.parse(x).id,
+      );
       if (isOld || !isFeatured) {
         logger.debug('[Local] Schedule - Delete from cache key: $x');
         localBox.delete(x);
