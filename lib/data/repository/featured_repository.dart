@@ -1,6 +1,8 @@
 import 'package:hive/hive.dart';
 
+import '../../core/exception/local_exception.dart';
 import '../../core/logger.dart';
+import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/room.dart';
 import '../../domain/entities/teacher.dart';
@@ -79,5 +81,17 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
     featuredTeachers.putAll(
       Map.fromIterables(newTeachers.map((x) => x.id.id), newTeachers),
     );
+  }
+
+  @override
+  Future<bool> isSavedInFeatured(EntityId id) async {
+    if (id.isTeacher) {
+      return (await getFeaturedGroups()).any((x) => x.id == id.asTeacher);
+    } else if (id.isRoom) {
+      return (await getFeaturedRooms()).any((x) => x.getId() == id.asRoom);
+    } else if (id.isGroup) {
+      return (await getFeaturedGroups()).any((x) => x.id == id.asGroup);
+    }
+    return throw LocalException('non valid id');
   }
 }
