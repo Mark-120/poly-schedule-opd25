@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
+import '../../core/services/error_handling_service.dart';
 import '../../core/services/last_schedule_service.dart';
 import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/group.dart';
@@ -267,7 +268,13 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
                               ),
                         );
                   } else if (state is FeaturedError) {
-                    return Center(child: Text(state.message));
+                    ErrorHandlingService.handleError(context, state.message);
+                    return Center(
+                      child: Text(
+                        AppStrings.errorMessage,
+                        style: textStyles.noLessonsMessage,
+                      ),
+                    );
                   } else {
                     return const Center(child: CircularProgressIndicator());
                   }

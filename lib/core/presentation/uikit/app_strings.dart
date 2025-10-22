@@ -1,6 +1,9 @@
 import '../../../domain/entities/room.dart';
 
 class AppStrings {
+  // Errors
+  static const String errorMessage = 'Ой! Что-то пошло не так...';
+
   //Schedule Screen
   static const String evenWeek = 'четная';
   static const String oddWeek = 'нечетная';

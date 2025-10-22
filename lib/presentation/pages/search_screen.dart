@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
+import '../../core/services/error_handling_service.dart';
 import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/teacher.dart';
@@ -191,6 +192,8 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildSearchResults(BuildContext context) {
+    final textStyles = AppTextStylesProvider.of(context);
+
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, state) {
         if (state is SearchInitial) {
@@ -198,7 +201,13 @@ class _SearchScreenState extends State<SearchScreen> {
         } else if (state is SearchLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is SearchError) {
-          return Center(child: Text(state.message));
+          ErrorHandlingService.handleError(context, state.message);
+          return Center(
+            child: Text(
+              AppStrings.errorMessage,
+              style: textStyles.noLessonsMessage,
+            ),
+          );
         } else if (state is SearchResultsLoaded) {
           return _buildResultsList(context, state);
         }
