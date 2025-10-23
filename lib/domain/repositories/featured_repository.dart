@@ -1,3 +1,4 @@
+import '../entities/entity_id.dart';
 import '../entities/group.dart';
 import '../entities/room.dart';
 import '../entities/teacher.dart';
@@ -14,4 +15,6 @@ abstract class FeaturedRepository {
   Future<List<Room>> getFeaturedRooms();
   Future<void> setFeaturedRooms(List<Room> newRooms);
   Future<void> addFeaturedRoom(Room newRoom);
+
+  Future<bool> isSavedInFeatured(EntityId id);
 }

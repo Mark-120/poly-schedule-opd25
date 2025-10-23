@@ -1,6 +1,5 @@
 import 'package:hive/hive.dart';
 
-import '../../../core/exception/local_exception.dart';
 import '../../../core/logger.dart';
 import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/schedule/week.dart';
@@ -68,7 +67,7 @@ final class LocalDataSource extends PassThroughSource {
     ScheduleKey key,
     (Week, StorageType) schedule,
   ) async {
-    final featured = await isSavedInFeatured(key.id);
+    final featured = await featuredRepository.isSavedInFeatured(key.id);
 
     //Featured are saved on disk
     if (schedule.$2 != StorageType.local && featured) {
@@ -78,23 +77,6 @@ final class LocalDataSource extends PassThroughSource {
         await (a, b).wait;
       }
     }
-  }
-
-  Future<bool> isSavedInFeatured(EntityId id) async {
-    if (id.isTeacher) {
-      return (await featuredRepository.getFeaturedGroups()).any(
-        (x) => x.id == id.asTeacher,
-      );
-    } else if (id.isRoom) {
-      return (await featuredRepository.getFeaturedRooms()).any(
-        (x) => x.getId() == id.asRoom,
-      );
-    } else if (id.isGroup) {
-      return (await featuredRepository.getFeaturedGroups()).any(
-        (x) => x.id == id.asGroup,
-      );
-    }
-    return throw LocalException('non valid id');
   }
 
   Future<void> preLoadFeatured() {
@@ -135,7 +117,9 @@ final class LocalDataSource extends PassThroughSource {
     //TODO: Add real parallel execution
     for (var x in localBox.keys) {
       var isOld = ScheduleKey.parse(x).dateTime.isBefore(getMin());
-      var isFeatured = await isSavedInFeatured(ScheduleKey.parse(x).id);
+      var isFeatured = await featuredRepository.isSavedInFeatured(
+        ScheduleKey.parse(x).id,
+      );
       if (isOld || !isFeatured) {
         logger.debug('[Local] Schedule - Delete from cache key: $x');
         localBox.delete(x);
