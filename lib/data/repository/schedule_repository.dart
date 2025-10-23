@@ -16,11 +16,10 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
   }
 
   @override
-  Future<void> invalidateSchedule(EntityId entityId, DateTime dayTime) {
-    return scheduleDataSource.invalidateSchedule(
-      entityId,
-      DateFormater.truncDate(dayTime),
-    );
+  Future<Week> invalidateSchedule(EntityId entityId, DateTime dayTime) {
+    return scheduleDataSource
+        .invalidateSchedule(entityId, DateFormater.truncDate(dayTime))
+        .then((val) => val.$1);
   }
 
   @override

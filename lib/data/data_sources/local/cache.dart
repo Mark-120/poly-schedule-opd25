@@ -23,11 +23,15 @@ final class CacheDataSource extends PassThroughSource {
   }
 
   @override
-  Future<void> invalidateSchedule(EntityId id, DateTime dayTime) async {
+  Future<(Week, StorageType)> invalidateSchedule(
+    EntityId id,
+    DateTime dayTime,
+  ) async {
     final cacheKey = ScheduleKey(id, dayTime);
     logger.debug('[Cache] Schedule - Invalidate for $cacheKey');
-    final value = prevDataSource.getSchedule(cacheKey.id, cacheKey.dateTime);
-    saveSchedule(cacheKey, await value);
+    final value = await prevDataSource.invalidateSchedule(id, dayTime);
+    saveSchedule(cacheKey, value);
+    return value;
   }
 
   @override
