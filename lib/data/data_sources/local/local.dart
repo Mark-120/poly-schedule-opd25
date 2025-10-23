@@ -26,9 +26,6 @@ final class LocalDataSource extends PassThroughSource {
   }
 
   @override
-  Future<void> invalidateSchedule(EntityId id, DateTime dayTime) async {}
-
-  @override
   Future<void> onAppStart() async {
     removeExtra();
     preLoadFeatured();
@@ -40,6 +37,19 @@ final class LocalDataSource extends PassThroughSource {
     removeExtra();
     preLoadFeatured();
     super.onFeaturedChanged();
+  }
+
+  @override
+  Future<(Week, StorageType)> invalidateSchedule(
+    EntityId id,
+    DateTime dayTime,
+  ) async {
+    var newSchedule = await prevDataSource.invalidateSchedule(id, dayTime);
+    logger.debug(
+      '[Cache] Schedule - Invalidate for ${ScheduleKey(id, dayTime)}',
+    );
+    saveSchedule(ScheduleKey(id, dayTime), newSchedule);
+    return newSchedule;
   }
 
   Future<(Week, StorageType)> retrieveAndSaveSchedule(
@@ -62,7 +72,7 @@ final class LocalDataSource extends PassThroughSource {
     return prevDataSource.getSchedule(cacheKey.id, cacheKey.dateTime);
   }
 
-  //Save schedule in memory/local storage
+  //Tries to save schedule in memory/local storage
   Future<void> saveSchedule(
     ScheduleKey key,
     (Week, StorageType) schedule,

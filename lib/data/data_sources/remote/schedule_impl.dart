@@ -72,7 +72,10 @@ final class RemoteScheduleDataSourceImpl extends RemoteDataSource
   }
 
   @override
-  Future<void> invalidateSchedule(EntityId id, DateTime dayTime) async {}
+  Future<(Week, StorageType)> invalidateSchedule(
+    EntityId id,
+    DateTime dayTime,
+  ) => getSchedule(id, dayTime);
 
   @override
   Future<void> removeSchedule(EntityId id, DateTime dayTime) async {}

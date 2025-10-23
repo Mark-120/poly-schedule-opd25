@@ -12,8 +12,10 @@ class PassThroughSource extends ScheduleDataSource {
       prevDataSource.getSchedule(id, dayTime);
 
   @override
-  Future<void> invalidateSchedule(EntityId id, DateTime dayTime) =>
-      prevDataSource.invalidateSchedule(id, dayTime);
+  Future<(Week, StorageType)> invalidateSchedule(
+    EntityId id,
+    DateTime dayTime,
+  ) => prevDataSource.invalidateSchedule(id, dayTime);
 
   @override
   Future<void> removeSchedule(EntityId id, DateTime dayTime) =>
