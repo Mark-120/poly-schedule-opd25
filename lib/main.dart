@@ -10,7 +10,7 @@ import 'core/services/last_schedule_service.dart';
 import 'data/models/last_schedule.dart';
 import 'presentation/pages/empty_schedule_screen.dart';
 import 'presentation/pages/schedule_screen.dart';
-// import 'presentation_2.0/pages/navigation_wrapper.dart';
+import 'presentation_2.0/pages/navigation_app_wrapper.dart';
 import 'service_locator.dart';
 
 void main() async {
@@ -48,17 +48,17 @@ class MainApp extends StatelessWidget {
     );
   }
 
-  Widget _buildHomeScreen() {
-    if (lastSchedule == null) return EmptyScheduleScreen();
-    return ScheduleScreen(
-      id: lastSchedule!.id,
-      dayTime: DateTime.now(),
-      bottomTitle:
-          (lastSchedule!.id.isTeacher)
-              ? AppStrings.fullNameToAbbreviation(lastSchedule!.title)
-              : lastSchedule!.title,
-    );
-  }
+  // Widget _buildHomeScreen() {
+  //   if (lastSchedule == null) return EmptyScheduleScreen();
+  //   return ScheduleScreen(
+  //     id: lastSchedule!.id,
+  //     dayTime: DateTime.now(),
+  //     bottomTitle:
+  //         (lastSchedule!.id.isTeacher)
+  //             ? AppStrings.fullNameToAbbreviation(lastSchedule!.title)
+  //             : lastSchedule!.title,
+  //   );
+  // }
 
-  // Widget _buildHomeScreen() => NavigationWrapper();
+  Widget _buildHomeScreen() => NavigationAppWrapper();
 }

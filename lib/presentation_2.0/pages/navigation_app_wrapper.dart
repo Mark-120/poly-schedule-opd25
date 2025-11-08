@@ -2,19 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/configs/assets/app_vectors.dart';
+import '../../domain/entities/entity_id.dart';
+import '../../domain/entities/teacher.dart';
+import 'schedule_page.dart';
 
-class NavigationWrapper extends StatefulWidget {
-  const NavigationWrapper({super.key});
+class NavigationAppWrapper extends StatefulWidget {
+  const NavigationAppWrapper({super.key});
 
   @override
-  State<NavigationWrapper> createState() => NavigationWrapperState();
+  State<NavigationAppWrapper> createState() => NavigationAppWrapperState();
 }
 
-class NavigationWrapperState extends State<NavigationWrapper> {
+class NavigationAppWrapperState extends State<NavigationAppWrapper> {
   int _currentIndex = 0;
 
   List<Widget> get _screens => [
-    Center(child: Text('Schedule')),
+    SchedulePage(
+      id: EntityId.teacher(TeacherId(13445)),
+      dayTime: DateTime.now(),
+      bottomTitle: 'Щукин',
+    ),
     Center(child: Text('Search')),
     Center(child: Text('Settings')),
   ];
