@@ -15,6 +15,7 @@ import '../../presentation/state_managers/schedule_screen_bloc/schedule_event.da
 import '../../presentation/state_managers/schedule_screen_bloc/schedule_state.dart';
 import '../../presentation/widgets/day_section.dart';
 import '../../service_locator.dart';
+import '../widgets/schedule_day_card.dart';
 // import 'featured_screen.dart';
 
 class SchedulePage extends StatefulWidget {
@@ -301,11 +302,10 @@ class _LoadedScheduleBody extends StatelessWidget {
     return ListView.separated(
       itemBuilder: (context, index) {
         final date = daysToShow[index];
-        return daySection(
-          DateFormater.showDateToUser(date),
-          DateFormater.showWeekdayToUser(date),
-          daysWithSchedule[date]?.lessons,
-          context,
+        return ScheduleDayCard(
+          date: DateFormater.showDateToUser(date),
+          day: DateFormater.showWeekdayToUser(date),
+          classes: daysWithSchedule[date]?.lessons,
         );
       },
       itemCount: daysToShow.length,

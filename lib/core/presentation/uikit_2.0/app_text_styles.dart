@@ -40,6 +40,12 @@ class AppTypography extends ThemeExtension<AppTypography> {
       TextStyle(fontSize: 15, color: _textPrimaryColor);
   TextStyle get subjectSubtitle =>
       TextStyle(fontSize: 13, color: _textSecondaryColor);
+  TextStyle get expandedSubjectTitle =>
+      TextStyle(fontSize: 16, color: _textPrimaryColor);
+  TextStyle get expandedSubjectSubtitle => TextStyle(
+    fontSize: 14,
+    color: _textSecondaryColor,
+  );
 
   TextStyle get bottomBarTitle =>
       TextStyle(fontSize: 16, color: _textPrimaryColor);
