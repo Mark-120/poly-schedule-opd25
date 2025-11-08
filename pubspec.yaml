@@ -22,6 +22,7 @@ dependencies:
   firebase_core: ^4.2.0
   firebase_crashlytics: ^5.0.3
   firebase_analytics: ^12.0.3
+  flutter_svg: ^2.2.1
 
 dev_dependencies:
   flutter_test:
@@ -36,3 +37,4 @@ flutter:
     - assets/icons/2.0x/drag_icon.png
     - assets/icons/3.0x/drag_icon.png
     - assets/icons/mingcute_sad-line.png
+    - assets/vectors/

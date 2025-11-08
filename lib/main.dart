@@ -10,6 +10,7 @@ import 'core/services/last_schedule_service.dart';
 import 'data/models/last_schedule.dart';
 import 'presentation/pages/empty_schedule_screen.dart';
 import 'presentation/pages/schedule_screen.dart';
+// import 'presentation_2.0/pages/navigation_wrapper.dart';
 import 'service_locator.dart';
 
 void main() async {
@@ -35,7 +36,7 @@ class MainApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      onGenerateRoute: AppNavigation.onGeneretaRoute,
+      onGenerateRoute: AppNavigation.onGenerateRoute,
       routes: AppNavigation.routes,
       builder: (context, child) {
         return AppTextStylesProvider(
@@ -58,4 +59,6 @@ class MainApp extends StatelessWidget {
               : lastSchedule!.title,
     );
   }
+
+  // Widget _buildHomeScreen() => NavigationWrapper();
 }
