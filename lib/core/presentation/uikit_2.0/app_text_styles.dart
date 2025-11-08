@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 
-class AppTextStyles extends ThemeExtension<AppTextStyles> {
+class AppTypography extends ThemeExtension<AppTypography> {
   final Color? _textPrimaryColor;
   final Color? _textSecondaryColor;
   final Color? _hintColor;
   final Color? _pickedColor;
 
-  AppTextStyles({
+  AppTypography({
     required Color? textPrimaryColor,
     required Color? textSecondaryColor,
     required Color? hintColor,
@@ -25,10 +25,10 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
   TextStyle get appBarTitle => TextStyle(
     fontSize: 19,
     fontWeight: FontWeight.bold,
-    color: AppColors.white,
+    color: NewAppColors.white,
   );
   TextStyle get appBarSubtitle =>
-      TextStyle(fontSize: 14, color: AppColors.white);
+      TextStyle(fontSize: 14, color: NewAppColors.white);
 
   TextStyle get dayTitle => TextStyle(
     fontSize: 20,
@@ -50,12 +50,12 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
   // Methods to override ThemeExtension
 
   @override
-  ThemeExtension<AppTextStyles> copyWith({
+  ThemeExtension<AppTypography> copyWith({
     Color? textPrimaryColor,
     Color? textSecondaryColor,
     Color? hintColor,
   }) {
-    return AppTextStyles(
+    return AppTypography(
       textPrimaryColor: textPrimaryColor ?? _textPrimaryColor,
       textSecondaryColor: textSecondaryColor ?? _textSecondaryColor,
       hintColor: hintColor ?? _hintColor,
@@ -64,8 +64,8 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
   }
 
   @override
-  ThemeExtension<AppTextStyles> lerp(AppTextStyles? other, double t) {
-    return AppTextStyles(
+  ThemeExtension<AppTypography> lerp(AppTypography? other, double t) {
+    return AppTypography(
       textPrimaryColor: Color.lerp(
         _textPrimaryColor,
         other?._textPrimaryColor,

@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/date_formater.dart';
 import '../../core/presentation/navigation/navigation_config_wrapper.dart';
 import '../../core/presentation/uikit/app_strings.dart';
-import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
+import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../core/services/error_handling_service.dart';
 import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/schedule/day.dart';
@@ -186,7 +186,7 @@ class _ScheduleWrapperState extends State<_ScheduleWrapper> {
     BuildContext context,
     ValueNotifier<DateTime> weekNotifier,
   ) {
-    final textStyles = AppTextStylesProvider.of(context);
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
     return ValueListenableBuilder<DateTime>(
       valueListenable: weekNotifier,
       builder: (context, week, child) {
@@ -196,11 +196,11 @@ class _ScheduleWrapperState extends State<_ScheduleWrapper> {
           children: [
             Text(
               '${DateFormater.showShortDateToUser(weekStart)} - ${DateFormater.showShortDateToUser(weekEnd)}',
-              style: textStyles.titleAppbar,
+              style: textStyles.appBarTitle,
             ),
             Text(
               week.isOdd ? AppStrings.oddWeek : AppStrings.evenWeek,
-              style: textStyles.subtitleAppbar,
+              style: textStyles.appBarSubtitle,
             ),
           ],
         );
@@ -216,7 +216,7 @@ class _SchedulePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyles = AppTextStylesProvider.of(context);
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
 
     return BlocBuilder<ScheduleBloc, ScheduleState>(
       builder: (context, state) {
@@ -227,7 +227,7 @@ class _SchedulePage extends StatelessWidget {
           return Center(
             child: Text(
               AppStrings.errorMessage,
-              style: textStyles.noLessonsMessage,
+              style: textStyles.emptySchedule,
             ),
           );
         } else if (state is ScheduleLoaded) {
@@ -248,7 +248,7 @@ class _SchedulePage extends StatelessWidget {
   }
 
   Widget _bottomBar(BuildContext context, {required String title}) {
-    final textStyles = AppTextStylesProvider.of(context);
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
     return Container(
       padding: EdgeInsets.zero,
       height: 38,
@@ -263,7 +263,7 @@ class _SchedulePage extends StatelessWidget {
             child: Center(
               child: Text(
                 title,
-                style: textStyles.itemText,
+                style: textStyles.bottomBarTitle,
                 softWrap: true,
                 overflow: TextOverflow.ellipsis,
               ),

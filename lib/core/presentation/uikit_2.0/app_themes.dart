@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../uikit/app_colors.dart';
+import '../uikit/theme_extension.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
 
@@ -12,7 +14,7 @@ class AppTheme {
     return ThemeData(
       canvasColor: Colors.transparent,
       primaryColor: primaryColor,
-      scaffoldBackgroundColor: AppColors.bgLight,
+      scaffoldBackgroundColor: NewAppColors.bgLight,
       appBarTheme: AppBarTheme(
         backgroundColor: primaryColor,
         elevation: 0,
@@ -30,21 +32,29 @@ class AppTheme {
       ),
       bottomAppBarTheme: BottomAppBarTheme(color: primaryColor),
       extensions: <ThemeExtension<dynamic>>[
-        AppTextStyles(
-          textPrimaryColor: AppColors.black,
-          textSecondaryColor: AppColors.darkGray,
-          hintColor: AppColors.gray,
-          pickedColor: AppColors.white,
+        CustomThemeExtension(
+          primaryColor: AppColors.primaryColor,
+          secondaryColor: AppColors.secondaryColor,
+          firstLayerCardBackgroundColor: AppColors.lightGreenColor,
+          secondLayerCardBackgroundColor: AppColors.lightGrayGreenColor,
+          iconColor: AppColors.white,
+          searchFieldBackgroundColor: AppColors.white,
+        ),
+        AppTypography(
+          textPrimaryColor: NewAppColors.black,
+          textSecondaryColor: NewAppColors.darkGray,
+          hintColor: NewAppColors.gray,
+          pickedColor: NewAppColors.white,
         ),
       ],
     );
   }
 
-  ThemeData get darkThemee {
+  ThemeData get darkTheme {
     return ThemeData(
       canvasColor: Colors.transparent,
       primaryColor: primaryColor,
-      scaffoldBackgroundColor: AppColors.bgDark,
+      scaffoldBackgroundColor: NewAppColors.bgDark,
       appBarTheme: AppBarTheme(
         backgroundColor: primaryColor,
         elevation: 0,
@@ -62,11 +72,11 @@ class AppTheme {
       ),
       bottomAppBarTheme: BottomAppBarTheme(color: primaryColor),
       extensions: <ThemeExtension<dynamic>>[
-        AppTextStyles(
-          textPrimaryColor: AppColors.white,
-          textSecondaryColor: AppColors.gray,
-          hintColor: AppColors.gray,
-          pickedColor: AppColors.white,
+        AppTypography(
+          textPrimaryColor: NewAppColors.white,
+          textSecondaryColor: NewAppColors.gray,
+          hintColor: NewAppColors.gray,
+          pickedColor: NewAppColors.white,
         ),
       ],
     );
