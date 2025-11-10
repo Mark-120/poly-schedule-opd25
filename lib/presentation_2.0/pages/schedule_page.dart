@@ -16,7 +16,6 @@ import '../../presentation/state_managers/schedule_screen_bloc/schedule_event.da
 import '../../presentation/state_managers/schedule_screen_bloc/schedule_state.dart';
 import '../../service_locator.dart';
 import '../widgets/schedule_day_card.dart';
-// import 'featured_screen.dart';
 
 class SchedulePage extends StatefulWidget {
   static const route = '/schedule';
@@ -163,7 +162,6 @@ class _ScheduleAppBarWrapperState extends State<_ScheduleAppBarWrapper> {
       (_) => context.read<ScaffoldUiStateController>().update(
         ScaffoldUiState(
           appBar: AppBar(
-            key: Key('ScheduleAppBar'),
             leading: IconButton(
               icon: Icon(
                 Icons.arrow_back_ios,
@@ -256,10 +254,20 @@ class _SchedulePage extends StatelessWidget {
   Widget _bottomBar(BuildContext context, {required String title}) {
     final textStyles = Theme.of(context).extension<AppTypography>()!;
     return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 10,
+            offset: Offset(0, -6),
+            spreadRadius: 1,
+          ),
+        ],
+      ),
       padding: EdgeInsets.zero,
       height: 38,
       width: double.infinity,
-      color: Theme.of(context).cardColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -304,18 +312,25 @@ class _LoadedScheduleBody extends StatelessWidget {
       (i) => week.dateStart.add(Duration(days: i)),
     );
 
-    return ListView.separated(
-      itemBuilder: (context, index) {
-        final date = daysToShow[index];
-        return ScheduleDayCard(
-          date: DateFormater.showDateToUser(date),
-          day: DateFormater.showWeekdayToUser(date),
-          classes: daysWithSchedule[date]?.lessons,
-        );
-      },
-      itemCount: daysToShow.length,
-      padding: const EdgeInsets.all(16),
-      separatorBuilder: (context, index) => SizedBox(height: 16),
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.separated(
+            itemBuilder: (context, index) {
+              final date = daysToShow[index];
+              return ScheduleDayCard(
+                date: DateFormater.showDateToUser(date),
+                day: DateFormater.showShortWeekdayToUser(date),
+                classes: daysWithSchedule[date]?.lessons,
+              );
+            },
+            itemCount: daysToShow.length,
+            padding: const EdgeInsets.all(12),
+            separatorBuilder: (context, index) => SizedBox(),
+          ),
+        ),
+        SizedBox(height: 38),
+      ],
     );
   }
 }

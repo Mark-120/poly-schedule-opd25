@@ -52,9 +52,19 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
                 uiConfig.state.floatingActionButton ?? SizedBox(),
       ),
       body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 10,
+              offset: Offset(0, -4),
+              spreadRadius: 1,
+            ),
+          ],
+        ),
         padding: EdgeInsets.all(0),
-        notchMargin: 0,
         height: 60,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -16,8 +16,9 @@ class AppTheme {
       primaryColor: primaryColor,
       scaffoldBackgroundColor: NewAppColors.bgLight,
       appBarTheme: AppBarTheme(
+        shadowColor: Colors.black,
         backgroundColor: primaryColor,
-        elevation: 0,
+        elevation: 2,
         centerTitle: true,
       ),
       cardTheme: CardTheme(

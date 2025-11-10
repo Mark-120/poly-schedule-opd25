@@ -31,6 +31,11 @@ class DateFormater {
     final weekday = DateFormat('EEEE', 'ru').format(dateTime);
     return weekday[0].toUpperCase() + weekday.substring(1);
   }
+
+  static String showShortWeekdayToUser(DateTime dateTime) {
+    final weekday = DateFormat('E', 'ru').format(dateTime);
+    return weekday[0].toUpperCase() + weekday.substring(1);
+  }
 }
 
 extension WeekNumber on DateTime {
