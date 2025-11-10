@@ -22,6 +22,7 @@ class AppTheme {
         centerTitle: true,
       ),
       cardTheme: CardTheme(
+        color: NewAppColors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         elevation: 0,
         margin: const EdgeInsets.only(bottom: 12),

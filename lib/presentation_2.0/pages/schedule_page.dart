@@ -6,6 +6,7 @@ import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state.d
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
+import '../../core/presentation/uikit_2.0/app_shadows.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../core/services/error_handling_service.dart';
 import '../../domain/entities/entity_id.dart';
@@ -257,12 +258,7 @@ class _SchedulePage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.25),
-            blurRadius: 10,
-            offset: Offset(0, -6),
-            spreadRadius: 1,
-          ),
+          AppShadows.menuShadow
         ],
       ),
       padding: EdgeInsets.zero,

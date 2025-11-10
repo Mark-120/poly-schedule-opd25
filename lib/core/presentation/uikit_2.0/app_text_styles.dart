@@ -32,7 +32,7 @@ class AppTypography extends ThemeExtension<AppTypography> {
 
   TextStyle get dayTitle => TextStyle(
     fontSize: 20,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w500,
     color: _textPrimaryColor,
   );
   TextStyle get timeBody => TextStyle(fontSize: 14, color: _textPrimaryColor);
@@ -42,10 +42,8 @@ class AppTypography extends ThemeExtension<AppTypography> {
       TextStyle(fontSize: 13, color: _textSecondaryColor);
   TextStyle get expandedSubjectTitle =>
       TextStyle(fontSize: 16, color: _textPrimaryColor);
-  TextStyle get expandedSubjectSubtitle => TextStyle(
-    fontSize: 14,
-    color: _textSecondaryColor,
-  );
+  TextStyle get expandedSubjectSubtitle =>
+      TextStyle(fontSize: 14, color: _textSecondaryColor);
 
   TextStyle get bottomBarTitle =>
       TextStyle(fontSize: 16, color: _textPrimaryColor);

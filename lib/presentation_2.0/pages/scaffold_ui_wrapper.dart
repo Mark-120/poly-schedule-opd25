@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/configs/assets/app_vectors.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
+import '../../core/presentation/uikit_2.0/app_shadows.dart';
 import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/teacher.dart';
 import 'schedule_page.dart';
@@ -55,24 +56,19 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.25),
-              blurRadius: 10,
-              offset: Offset(0, -4),
-              spreadRadius: 1,
-            ),
-          ],
+          boxShadow: [AppShadows.footerShadow],
         ),
-        padding: EdgeInsets.all(0),
         height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(AppVectors.schedule, 0),
-            _buildNavItem(AppVectors.search, 1),
-            _buildNavItem(AppVectors.settings, 2),
-          ],
+        child: BottomAppBar(
+          padding: EdgeInsets.all(0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(AppVectors.schedule, 0),
+              _buildNavItem(AppVectors.search, 1),
+              _buildNavItem(AppVectors.settings, 2),
+            ],
+          ),
         ),
       ),
     );

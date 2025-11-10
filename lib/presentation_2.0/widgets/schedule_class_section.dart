@@ -33,27 +33,33 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 1),
-      child: IntrinsicHeight(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _LectureTime(timeStart, timeEnd),
-            _buildScheduleSeparator(primaryColor),
-            Expanded(
-              child: _LectureInfo(
-                title: lesson.subject,
-                type: type,
-                location: auditories,
-                groups: groups,
-                lessonType: lessonType,
-                isExpanded: _isExpanded,
-                teachers: teachers,
+      child: InkWell(
+        onTap:
+            () => setState(() {
+              _isExpanded = !_isExpanded;
+            }),
+        child: IntrinsicHeight(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _LectureTime(timeStart, timeEnd),
+              _buildScheduleSeparator(primaryColor),
+              Expanded(
+                child: _LectureInfo(
+                  title: lesson.subject,
+                  type: type,
+                  location: auditories,
+                  groups: groups,
+                  lessonType: lessonType,
+                  isExpanded: _isExpanded,
+                  teachers: teachers,
+                ),
               ),
-            ),
-            _buildArrowIcon(),
-          ],
+              _buildArrowIcon(),
+            ],
+          ),
         ),
       ),
     );
