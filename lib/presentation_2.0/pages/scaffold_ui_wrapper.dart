@@ -1,34 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/configs/assets/app_vectors.dart';
+import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
 import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/teacher.dart';
 import 'schedule_page.dart';
 
-class NavigationAppWrapper extends StatefulWidget {
-  const NavigationAppWrapper({super.key});
+class ScaffoldUiWrapper extends StatefulWidget {
+  const ScaffoldUiWrapper({super.key});
 
   @override
-  State<NavigationAppWrapper> createState() => NavigationAppWrapperState();
+  State<ScaffoldUiWrapper> createState() => ScaffoldUiWrapperState();
 }
 
-class NavigationAppWrapperState extends State<NavigationAppWrapper> {
+class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
   int _currentIndex = 0;
+  late final List<Widget> _screens;
 
-  List<Widget> get _screens => [
-    SchedulePage(
-      id: EntityId.teacher(TeacherId(13445)),
-      dayTime: DateTime.now(),
-      bottomTitle: 'Щукин',
-    ),
-    Center(child: Text('Search')),
-    Center(child: Text('Settings')),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      SchedulePage(
+        id: EntityId.teacher(TeacherId(13445)),
+        dayTime: DateTime.now(),
+        bottomTitle: 'Щукин А.В.',
+      ),
+      Center(child: Text('Search')),
+      Center(child: Text('Settings')),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
+    final ScaffoldUiStateController uiConfig =
+        context.watch<ScaffoldUiStateController>();
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size(double.infinity, 60),
+        child: ListenableBuilder(
+          listenable: uiConfig,
+          builder: (context, child) => uiConfig.state.appBar ?? SizedBox(),
+        ),
+      ),
+      floatingActionButton: ListenableBuilder(
+        listenable: uiConfig,
+        builder:
+            (context, child) =>
+                uiConfig.state.floatingActionButton ?? SizedBox(),
+      ),
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: BottomAppBar(
         padding: EdgeInsets.all(0),

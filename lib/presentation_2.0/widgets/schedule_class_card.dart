@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-import '../../core/presentation/uikit/app_text_styles.dart';
-import '../../core/presentation/uikit/theme_extension.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 
 class ScheduleClassCard extends StatefulWidget {
@@ -123,152 +120,18 @@ class _ScheduleClassCardState extends State<ScheduleClassCard> {
         );
   }
 
-  Widget _buildCollapsedCard(BuildContext context, AppTextStyles textStyles) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
-      key: const ValueKey('collapsed'),
-      child: Row(
-        children: [
-          widget.teacher != ''
-              ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.title,
-                    style: textStyles.mainInfoClassCard,
-                    softWrap: true,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    widget.teacher!,
-                    style: textStyles.teacherInfoClassCard,
-                    softWrap: true,
-                  ),
-                ],
-              )
-              : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.title,
-                    style: textStyles.mainInfoClassCard,
-                    softWrap: true,
-                  ),
-                ],
-              ),
-          Row(
-            children: [
-              Text(widget.abbrType, style: textStyles.typeOfLessonClassCard),
-              IconButton(
-                icon: Icon(
-                  Icons.expand_more,
-                  color: context.appTheme.secondaryColor,
-                ),
-                onPressed: () => setState(() => _isExpanded = true),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  // Future<void> _copySdoLink() async {
+  //   if (widget.sdoLink == null || widget.sdoLink!.isEmpty) return;
 
-  Future<void> _copySdoLink() async {
-    if (widget.sdoLink == null || widget.sdoLink!.isEmpty) return;
+  //   await Clipboard.setData(ClipboardData(text: widget.sdoLink!));
 
-    await Clipboard.setData(ClipboardData(text: widget.sdoLink!));
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Ссылка скопирована в буфер обмена'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
-  }
-
-  Widget _buildExpandedCard(BuildContext context, AppTextStyles textStyles) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-      key: const ValueKey('expanded'),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            widget.title,
-            style: textStyles.mainInfoClassCard.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          const SizedBox(height: 4),
-
-          Text(
-            widget.type,
-            style: textStyles.typeOfLessonClassCard.copyWith(fontSize: 14),
-          ),
-          const SizedBox(height: 8),
-
-          if (widget.teacher != '') ...[
-            Text(widget.teacher!, style: textStyles.additionalInfoLabel),
-            const SizedBox(height: 4),
-          ],
-
-          Text(widget.groups.join(', '), style: textStyles.additionalInfoText),
-          const SizedBox(height: 12),
-
-          if (widget.sdoLink != null)
-            InkWell(
-              onTap: _copySdoLink,
-              child: Row(
-                children: [
-                  Text(
-                    'Ссылка на СДО',
-                    style: textStyles.teacherInfoClassCard.copyWith(
-                      fontSize: 14,
-                      decoration: TextDecoration.underline,
-                      decorationColor: context.appTheme.secondaryColor,
-                      decorationThickness: 1,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-          Align(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              onPressed: () => setState(() => _isExpanded = false),
-              icon: Icon(
-                Icons.expand_less,
-                size: 20,
-                color: context.appTheme.secondaryColor,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  //   if (mounted) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Ссылка скопирована в буфер обмена'),
+  //         duration: Duration(seconds: 2),
+  //       ),
+  //     );
+  //   }
+  // }
 }
-
-// ScheduleClassCard
-// -Padding
-// -Row
-// --Row
-// ---Column
-// ----Text: "12:00"
-// ----Text: "13:40"
-// ---SizedBox
-// ----Container
-// ---Column
-// ----Text: "Алгоритмизация и программирование"
-// ----Text: "Лекции"
-// ----Text: " 11 к., 148 ауд."
-// ----Text: "Щукин Александр Валентинович"
-// ----Text: "5130903/50002, 5130903/5000…"
-// ----Text: "Ссылка на СДО"
-// --IconButton
-// ---Iсon

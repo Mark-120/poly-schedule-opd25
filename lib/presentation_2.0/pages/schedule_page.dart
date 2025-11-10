@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/date_formater.dart';
-import '../../core/presentation/navigation/navigation_config_wrapper.dart';
+import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state.dart';
+import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
@@ -13,7 +14,6 @@ import '../../domain/entities/schedule/week.dart';
 import '../../presentation/state_managers/schedule_screen_bloc/schedule_bloc.dart';
 import '../../presentation/state_managers/schedule_screen_bloc/schedule_event.dart';
 import '../../presentation/state_managers/schedule_screen_bloc/schedule_state.dart';
-import '../../presentation/widgets/day_section.dart';
 import '../../service_locator.dart';
 import '../widgets/schedule_day_card.dart';
 // import 'featured_screen.dart';
@@ -89,10 +89,9 @@ class _SchedulePageState extends State<SchedulePage> {
 
   @override
   Widget build(BuildContext context) {
-    return _ScheduleWrapper(
+    return _ScheduleAppBarWrapper(
       onSwipeLeft: _onSwipeLeft,
       onSwipeRight: _onSwipeRight,
-      bottomTitle: widget.bottomTitle,
       weekNotifier: _weekNotifier,
       child: PageView.builder(
         controller: _pageController,
@@ -140,47 +139,53 @@ class _SchedulePageState extends State<SchedulePage> {
   }
 }
 
-class _ScheduleWrapper extends StatefulWidget {
+class _ScheduleAppBarWrapper extends StatefulWidget {
   final Widget child;
   final VoidCallback onSwipeLeft;
   final VoidCallback onSwipeRight;
-  final String bottomTitle;
   final ValueNotifier<DateTime> weekNotifier;
 
-  const _ScheduleWrapper({
+  const _ScheduleAppBarWrapper({
     required this.child,
     required this.onSwipeLeft,
     required this.onSwipeRight,
-    required this.bottomTitle,
     required this.weekNotifier,
   });
 
   @override
-  State<_ScheduleWrapper> createState() => _ScheduleWrapperState();
+  State<_ScheduleAppBarWrapper> createState() => _ScheduleAppBarWrapperState();
 }
 
-class _ScheduleWrapperState extends State<_ScheduleWrapper> {
+class _ScheduleAppBarWrapperState extends State<_ScheduleAppBarWrapper> {
   @override
   Widget build(BuildContext context) {
-    return NavigationConfigWrapper(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: context.appTheme.iconColor),
-          onPressed: widget.onSwipeRight,
-        ),
-        title: _buildAppBarTitle(context, widget.weekNotifier),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.arrow_forward_ios,
-              color: context.appTheme.iconColor,
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => context.read<ScaffoldUiStateController>().update(
+        ScaffoldUiState(
+          appBar: AppBar(
+            key: Key('ScheduleAppBar'),
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: context.appTheme.iconColor,
+              ),
+              onPressed: widget.onSwipeRight,
             ),
-            onPressed: widget.onSwipeLeft,
+            title: _buildAppBarTitle(context, widget.weekNotifier),
+            actions: [
+              IconButton(
+                icon: Icon(
+                  Icons.arrow_forward_ios,
+                  color: context.appTheme.iconColor,
+                ),
+                onPressed: widget.onSwipeLeft,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
-      child: widget.child,
     );
+    return widget.child;
   }
 
   Widget _buildAppBarTitle(

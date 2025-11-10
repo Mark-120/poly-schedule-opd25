@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/presentation/navigation/app_navigation.dart';
-import 'core/presentation/uikit/app_strings.dart';
+import 'core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
 import 'core/presentation/uikit/app_text_styles.dart';
-// import 'core/presentation/uikit/app_theme.dart';
 import 'core/presentation/uikit_2.0/app_colors.dart';
 import 'core/presentation/uikit_2.0/app_themes.dart';
 import 'core/services/app_initialization_service.dart';
 import 'core/services/last_schedule_service.dart';
 import 'data/models/last_schedule.dart';
-import 'presentation/pages/empty_schedule_screen.dart';
-import 'presentation/pages/schedule_screen.dart';
-import 'presentation_2.0/pages/navigation_app_wrapper.dart';
+import 'presentation_2.0/pages/scaffold_ui_wrapper.dart';
 import 'service_locator.dart';
 
 void main() async {
@@ -34,7 +31,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = AppTheme(NewAppColors.Ifksit);
+    final theme = AppTheme(NewAppColors.Ryae);
     return MaterialApp(
       theme: theme.lightTheme,
       darkTheme: theme.darkTheme,
@@ -51,17 +48,10 @@ class MainApp extends StatelessWidget {
     );
   }
 
-  // Widget _buildHomeScreen() {
-  //   if (lastSchedule == null) return EmptyScheduleScreen();
-  //   return ScheduleScreen(
-  //     id: lastSchedule!.id,
-  //     dayTime: DateTime.now(),
-  //     bottomTitle:
-  //         (lastSchedule!.id.isTeacher)
-  //             ? AppStrings.fullNameToAbbreviation(lastSchedule!.title)
-  //             : lastSchedule!.title,
-  //   );
-  // }
-
-  Widget _buildHomeScreen() => NavigationAppWrapper();
+  Widget _buildHomeScreen() {
+    return ChangeNotifierProvider<ScaffoldUiStateController>(
+      create: (_) => ScaffoldUiStateController(),
+      child: ScaffoldUiWrapper(),
+    );
+  }
 }
