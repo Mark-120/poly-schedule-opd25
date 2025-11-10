@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import '../../configs/scaffold_ui_state.dart';
+import 'scaffold_ui_state.dart';
 
 class ScaffoldUiStateController extends ChangeNotifier {
   ScaffoldUiState _state = ScaffoldUiState();
