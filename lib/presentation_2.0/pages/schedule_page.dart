@@ -257,9 +257,7 @@ class _SchedulePage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        boxShadow: [
-          AppShadows.menuShadow
-        ],
+        boxShadow: [AppShadows.menuShadow],
       ),
       padding: EdgeInsets.zero,
       height: 38,

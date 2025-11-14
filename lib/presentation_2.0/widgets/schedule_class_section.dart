@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../core/configs/assets/app_vectors.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../domain/entities/schedule/lesson.dart';
 
@@ -11,8 +13,27 @@ class ScheduleClassSection extends StatefulWidget {
   State<ScheduleClassSection> createState() => _ScheduleClassSectionState();
 }
 
-class _ScheduleClassSectionState extends State<ScheduleClassSection> {
+class _ScheduleClassSectionState extends State<ScheduleClassSection>
+    with SingleTickerProviderStateMixin {
   bool _isExpanded = false;
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+      upperBound: 0.5,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +55,7 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 1),
       child: InkWell(
-        onTap:
-            () => setState(() {
-              _isExpanded = !_isExpanded;
-            }),
+        onTap: _onClassTap,
         child: IntrinsicHeight(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -65,6 +83,17 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection> {
     );
   }
 
+  void _onClassTap() {
+    setState(() {
+      if (_isExpanded) {
+        _controller.reverse(from: 0.5);
+      } else {
+        _controller.forward(from: 0.0);
+      }
+      _isExpanded = !_isExpanded;
+    });
+  }
+
   Widget _buildScheduleSeparator(Color color) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -86,16 +115,16 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection> {
       mainAxisAlignment:
           _isExpanded ? MainAxisAlignment.end : MainAxisAlignment.center,
       children: [
-        IconButton(
-          onPressed: () {
-            setState(() {
-              _isExpanded = !_isExpanded;
-            });
-          },
-          icon:
-              _isExpanded
-                  ? Icon(Icons.arrow_drop_up)
-                  : Icon(Icons.arrow_drop_down),
+        RotationTransition(
+          turns: Tween(begin: 0.0, end: 1.0).animate(_controller),
+          child: SvgPicture.asset(
+            AppVectors.arrowDropDown,
+            colorFilter: ColorFilter.mode(
+              Theme.of(context).extension<AppTypography>()!.primaryColor ??
+                  Colors.black,
+              BlendMode.srcIn,
+            ),
+          ),
         ),
       ],
     );

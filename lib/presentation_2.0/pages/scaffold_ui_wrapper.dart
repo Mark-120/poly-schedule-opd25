@@ -40,7 +40,10 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
         context.watch<ScaffoldUiStateController>();
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size(double.infinity, 60),
+        preferredSize: Size(
+          double.infinity,
+          Theme.of(context).appBarTheme.toolbarHeight ?? 60,
+        ),
         child: ListenableBuilder(
           listenable: uiConfig,
           builder: (context, child) => uiConfig.state.appBar ?? SizedBox(),

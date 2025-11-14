@@ -8,6 +8,8 @@ class AppTypography extends ThemeExtension<AppTypography> {
   final Color? _hintColor;
   final Color? _pickedColor;
 
+  Color? get primaryColor => _textPrimaryColor;
+
   AppTypography({
     required Color? textPrimaryColor,
     required Color? textSecondaryColor,

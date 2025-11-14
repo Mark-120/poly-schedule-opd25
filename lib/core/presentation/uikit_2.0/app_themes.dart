@@ -20,6 +20,7 @@ class AppTheme {
         backgroundColor: primaryColor,
         elevation: 2,
         centerTitle: true,
+        toolbarHeight: 80
       ),
       cardTheme: CardTheme(
         color: NewAppColors.white,
