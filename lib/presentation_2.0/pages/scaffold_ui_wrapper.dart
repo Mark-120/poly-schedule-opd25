@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 
 import '../../core/configs/assets/app_vectors.dart';
+import '../../core/presentation/navigation/page_wrapper.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
 import '../../core/presentation/uikit_2.0/app_shadows.dart';
 import '../../domain/entities/entity_id.dart';
@@ -18,27 +18,28 @@ class ScaffoldUiWrapper extends StatefulWidget {
 }
 
 class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
-  int _currentIndex = 0;
-  late final List<Widget> _screens;
+  int currentIndex = 0;
+  late final List<PageWrapper> screens;
 
   @override
   void initState() {
     super.initState();
-    _screens = [
-      SchedulePage(
-        id: EntityId.teacher(TeacherId(13445)),
-        dayTime: DateTime.now(),
-        bottomTitle: 'Щукин А.В.',
+    screens = [
+      PageWrapper(
+        child: SchedulePage(
+          id: EntityId.teacher(TeacherId(13445)),
+          dayTime: DateTime.now(),
+          bottomTitle: 'Щукин А.В.',
+        ),
       ),
-      FeaturedPage(),
-      Center(child: Text('Settings')),
+      PageWrapper(child: FeaturedPage()),
+      PageWrapper(child: Center(child: Text('Settings'))),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
-    final ScaffoldUiStateController uiConfig =
-        context.watch<ScaffoldUiStateController>();
+    final ScaffoldUiStateController uiConfig = screens[currentIndex].controller;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size(
@@ -56,7 +57,7 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
             (context, child) =>
                 uiConfig.state.floatingActionButton ?? SizedBox(),
       ),
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      body: IndexedStack(index: currentIndex, children: screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
@@ -84,7 +85,7 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
       icon: SvgPicture.asset(
         svgTitle,
         colorFilter: ColorFilter.mode(
-          _currentIndex == index
+          currentIndex == index
               ? Theme.of(context).colorScheme.surface
               : Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
           BlendMode.srcIn,
@@ -92,7 +93,7 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
       ),
       onPressed: () {
         setState(() {
-          _currentIndex = index;
+          currentIndex = index;
         });
       },
     );
