@@ -14,7 +14,6 @@ class FeaturedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _buildAppBar(context);
     return BlocProvider(
       create: (context) => sl<FeaturedBloc>()..add(LoadFeaturedData()),
       child: BlocBuilder<FeaturedBloc, FeaturedState>(
@@ -23,19 +22,6 @@ class FeaturedPage extends StatelessWidget {
         },
       ),
     );
-  }
-
-  void _buildAppBar(BuildContext context) {
-    final textStyles = Theme.of(context).extension<AppTypography>()!;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ScaffoldUiStateController>().update(
-        ScaffoldUiState(
-          appBar: AppBar(
-            title: Text('Поиск расписания', style: textStyles.appBarTitle),
-          ),
-        ),
-      );
-    });
   }
 }
 
@@ -48,7 +34,32 @@ class _FeaturedPageBody extends StatefulWidget {
 
 class _FeaturedPageBodyState extends State<_FeaturedPageBody> {
   int _currentPageIndex = 0;
+  bool _appBarInitialized = false;
   final _featuredSectionKey = GlobalKey<_FeaturedSectionState>();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_appBarInitialized) {
+      _setupAppBar();
+      _appBarInitialized = true;
+    }
+  }
+
+  void _setupAppBar() {
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ScaffoldUiStateController>().update(
+        ScaffoldUiState(
+          appBar: AppBar(
+            title: Text('Поиск расписания', style: textStyles.appBarTitle),
+          ),
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
