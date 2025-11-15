@@ -89,25 +89,68 @@ class _SchedulePageState extends State<SchedulePage> {
 
   @override
   Widget build(BuildContext context) {
-    return _ScheduleAppBarWrapper(
-      onSwipeLeft: _onSwipeLeft,
-      onSwipeRight: _onSwipeRight,
-      weekNotifier: _weekNotifier,
-      child: PageView.builder(
-        controller: _pageController,
-        itemCount: _weekDates.length,
-        itemBuilder: (context, index) {
-          return BlocProvider(
-            create:
-                (context) =>
-                    sl<ScheduleBloc>()
-                      ..add(_createEvent(widget.id, _weekDates[index])),
-            child: _SchedulePage(
-              key: _pageKeys[index],
-              bottomTitle: widget.bottomTitle,
+    return Stack(
+      children: [
+        _ScheduleAppBarWrapper(
+          onSwipeLeft: _onSwipeLeft,
+          onSwipeRight: _onSwipeRight,
+          weekNotifier: _weekNotifier,
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: _weekDates.length,
+            itemBuilder: (context, index) {
+              return BlocProvider(
+                create:
+                    (context) =>
+                        sl<ScheduleBloc>()
+                          ..add(_createEvent(widget.id, _weekDates[index])),
+                child: _SchedulePage(key: _pageKeys[index]),
+              );
+            },
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: _bottomBar(context, title: widget.bottomTitle),
+        ),
+      ],
+    );
+  }
+
+  Widget _bottomBar(BuildContext context, {required String title}) {
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        boxShadow: [AppShadows.menuShadow],
+      ),
+      padding: EdgeInsets.zero,
+      height: 38,
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(width: 48),
+          Expanded(
+            child: Center(
+              child: Text(
+                title,
+                style: textStyles.bottomBarTitle,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          );
-        },
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.star_outline_outlined,
+              color: context.appTheme.iconColor,
+            ),
+            iconSize: 28,
+            onPressed: () => {},
+          ),
+        ],
       ),
     );
   }
@@ -215,9 +258,7 @@ class _ScheduleAppBarWrapperState extends State<_ScheduleAppBarWrapper> {
 }
 
 class _SchedulePage extends StatelessWidget {
-  final String bottomTitle;
-  const _SchedulePage({required Key key, required this.bottomTitle})
-    : super(key: key);
+  const _SchedulePage({required Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -236,57 +277,11 @@ class _SchedulePage extends StatelessWidget {
             ),
           );
         } else if (state is ScheduleLoaded) {
-          return Stack(
-            children: [
-              _LoadedScheduleBody(week: state.week),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: _bottomBar(context, title: bottomTitle),
-              ),
-            ],
-          );
+          return _LoadedScheduleBody(week: state.week);
         } else {
           return const Center(child: CircularProgressIndicator());
         }
       },
-    );
-  }
-
-  Widget _bottomBar(BuildContext context, {required String title}) {
-    final textStyles = Theme.of(context).extension<AppTypography>()!;
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        boxShadow: [AppShadows.menuShadow],
-      ),
-      padding: EdgeInsets.zero,
-      height: 38,
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(width: 48),
-          Expanded(
-            child: Center(
-              child: Text(
-                title,
-                style: textStyles.bottomBarTitle,
-                softWrap: true,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.star_outline_outlined,
-              color: context.appTheme.iconColor,
-            ),
-            iconSize: 28,
-            onPressed: () => {},
-          ),
-        ],
-      ),
     );
   }
 }
