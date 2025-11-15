@@ -10,4 +10,12 @@ class ScaffoldUiState {
   String toString() {
     return 'UiConfig(appBar: $appBar, floatingActionButton: $floatingActionButton)';
   }
+
+  ScaffoldUiState mergeWith(ScaffoldUiState newState) {
+    return ScaffoldUiState(
+      appBar: newState.appBar ?? appBar,
+      floatingActionButton:
+          newState.floatingActionButton ?? floatingActionButton,
+    );
+  }
 }
