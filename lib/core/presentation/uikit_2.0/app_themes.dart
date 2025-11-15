@@ -4,6 +4,7 @@ import '../uikit/app_colors.dart';
 import '../uikit/theme_extension.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
+import 'theme_colors.dart';
 
 class AppTheme {
   final Color primaryColor;
@@ -20,7 +21,7 @@ class AppTheme {
         backgroundColor: primaryColor,
         elevation: 2,
         centerTitle: true,
-        toolbarHeight: 80
+        toolbarHeight: 70,
       ),
       cardTheme: CardTheme(
         color: NewAppColors.white,
@@ -49,6 +50,7 @@ class AppTheme {
           hintColor: NewAppColors.gray,
           pickedColor: NewAppColors.white,
         ),
+        ThemeColors(textPrimary: NewAppColors.black, tile: NewAppColors.white),
       ],
     );
   }

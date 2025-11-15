@@ -7,6 +7,7 @@ import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_c
 import '../../core/presentation/uikit_2.0/app_shadows.dart';
 import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/teacher.dart';
+import 'featured_page.dart';
 import 'schedule_page.dart';
 
 class ScaffoldUiWrapper extends StatefulWidget {
@@ -29,7 +30,7 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
         dayTime: DateTime.now(),
         bottomTitle: 'Щукин А.В.',
       ),
-      Center(child: Text('Search')),
+      FeaturedPage(),
       Center(child: Text('Settings')),
     ];
   }

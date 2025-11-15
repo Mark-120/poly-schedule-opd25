@@ -8,8 +8,6 @@ class AppTypography extends ThemeExtension<AppTypography> {
   final Color? _hintColor;
   final Color? _pickedColor;
 
-  Color? get primaryColor => _textPrimaryColor;
-
   AppTypography({
     required Color? textPrimaryColor,
     required Color? textSecondaryColor,
@@ -52,6 +50,12 @@ class AppTypography extends ThemeExtension<AppTypography> {
 
   TextStyle get emptySchedule =>
       TextStyle(fontSize: 22, color: _textPrimaryColor);
+
+  // Featured page
+
+  TextStyle get navigationBarItem => TextStyle(fontSize: 14, color: _hintColor);
+  TextStyle get navigationBarItemChosen =>
+      TextStyle(fontSize: 14, color: NewAppColors.white);
 
   // Methods to override ThemeExtension
 

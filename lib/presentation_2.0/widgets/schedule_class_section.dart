@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/configs/assets/app_vectors.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
+import '../../core/presentation/uikit_2.0/theme_colors.dart';
 import '../../domain/entities/schedule/lesson.dart';
 
 class ScheduleClassSection extends StatefulWidget {
@@ -120,8 +121,7 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection>
           child: SvgPicture.asset(
             AppVectors.arrowDropDown,
             colorFilter: ColorFilter.mode(
-              Theme.of(context).extension<AppTypography>()!.primaryColor ??
-                  Colors.black,
+              Theme.of(context).extension<ThemeColors>()!.textPrimary,
               BlendMode.srcIn,
             ),
           ),
