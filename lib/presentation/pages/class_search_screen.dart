@@ -116,11 +116,13 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
             children:
                 state.rooms.map((room) {
                   return FeaturedCard(
-                    room.name,
-                    isChosen: room == state.selectedRoom,
+                    room.entity.name,
+                    isChosen: room.entity == state.selectedRoom,
                     isCenterText: true,
                     onTap: () {
-                      context.read<ClassSearchBloc>().add(RoomSelected(room));
+                      context.read<ClassSearchBloc>().add(
+                        RoomSelected(room.entity),
+                      );
                     },
                   );
                 }).toList(),

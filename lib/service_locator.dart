@@ -110,7 +110,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SetFeaturedRooms(sl(), sl()));
   sl.registerLazySingleton(() => AddFeaturedRoom(sl(), sl()));
 
-  sl.registerLazySingleton(() => isSavedInFeatured(sl()));
+  sl.registerLazySingleton(() => IsSavedInFeatured(sl()));
 
   sl.registerLazySingleton(() => SaveLastSchedule(sl()));
   sl.registerLazySingleton(() => GetLastSchedule(sl()));
@@ -167,7 +167,10 @@ Future<void> init() async {
   );
   // Repositories
   sl.registerSingleton<FetchRepository>(
-    FetchRepositoryImpl(fetchDataSource: sl<FetchRemoteDataSourceImpl>()),
+    FetchRepositoryImpl(
+      fetchDataSource: sl<FetchRemoteDataSourceImpl>(),
+      featuredRepository: sl<FeaturedRepository>(),
+    ),
   );
 
   sl.registerSingleton<LastScheduleRepository>(

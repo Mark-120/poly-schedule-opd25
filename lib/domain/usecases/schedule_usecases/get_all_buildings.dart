@@ -1,4 +1,5 @@
 import '../../entities/building.dart';
+import '../../entities/featured.dart';
 import '../../repositories/fetch_repository.dart';
 
 class GetAllBuildings {
@@ -6,7 +7,7 @@ class GetAllBuildings {
 
   GetAllBuildings(this.repository);
 
-  Future<List<Building>> call() async {
+  Future<List<Featured<Building>>> call() async {
     return await repository.getAllBuildings();
   }
 }

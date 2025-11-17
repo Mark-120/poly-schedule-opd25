@@ -12,7 +12,7 @@ class ClassSearchInitial extends ClassSearchState {}
 class ClassSearchLoading extends ClassSearchState {}
 
 class ClassSearchLoaded extends ClassSearchState {
-  final List<Room> rooms;
+  final List<Featured<Room>> rooms;
   final int buildingId;
   final Room? selectedRoom;
 
@@ -23,7 +23,7 @@ class ClassSearchLoaded extends ClassSearchState {
   });
 
   ClassSearchLoaded copyWith({
-    List<Room>? rooms,
+    List<Featured<Room>>? rooms,
     Room? selectedRoom,
     int? buildingId,
   }) {

@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../domain/entities/building.dart';
+import '../../../domain/entities/featured.dart';
 import '../../../domain/usecases/schedule_usecases/get_all_buildings.dart';
 
 part 'building_search_event.dart';

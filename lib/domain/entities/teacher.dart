@@ -18,7 +18,7 @@ class TeacherId extends Equatable {
   }
 }
 
-abstract class Teacher extends Entity with EquatableMixin {
+abstract class Teacher extends ScheduleEntity with EquatableMixin {
   final TeacherId id;
   final String fullName;
   const Teacher({required this.id, required this.fullName});
