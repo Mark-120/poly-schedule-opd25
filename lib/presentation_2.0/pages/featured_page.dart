@@ -8,6 +8,7 @@ import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../core/presentation/uikit_2.0/theme_colors.dart';
 import '../../presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
 import '../../service_locator.dart';
+import '../widgets/featured_card.dart';
 
 class FeaturedPage extends StatelessWidget {
   const FeaturedPage({super.key});
@@ -35,7 +36,7 @@ class _FeaturedPageBody extends StatefulWidget {
 class _FeaturedPageBodyState extends State<_FeaturedPageBody> {
   int _currentPageIndex = 0;
   bool _appBarInitialized = false;
-  final _featuredSectionKey = GlobalKey<_FeaturedSectionState>();
+  final _featuredSectionKey = GlobalKey<_FeaturedPageViewState>();
 
   @override
   void didChangeDependencies() {
@@ -74,7 +75,7 @@ class _FeaturedPageBodyState extends State<_FeaturedPageBody> {
             },
           ),
           SizedBox(height: 24),
-          _FeaturedSection(
+          _FeaturedPageView(
             key: _featuredSectionKey,
             onPageChanged: changeIndex,
           ),
@@ -116,7 +117,8 @@ class _NavigationBar extends StatelessWidget {
   Widget _buildNavigationButton(BuildContext context, int index) {
     final isChosen = currentIndex == index;
     return Expanded(
-      child: GestureDetector(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(50),
         onTap: () => onTap(index),
         child: Container(
           decoration: BoxDecoration(
@@ -124,7 +126,6 @@ class _NavigationBar extends StatelessWidget {
             color:
                 isChosen ? Theme.of(context).primaryColor : Colors.transparent,
           ),
-          // padding: ,
           height: 37,
           child: Center(
             child: Text(
@@ -146,15 +147,15 @@ class _NavigationBar extends StatelessWidget {
   }
 }
 
-class _FeaturedSection extends StatefulWidget {
+class _FeaturedPageView extends StatefulWidget {
   final ValueChanged<int> onPageChanged;
-  const _FeaturedSection({super.key, required this.onPageChanged});
+  const _FeaturedPageView({super.key, required this.onPageChanged});
 
   @override
-  State<_FeaturedSection> createState() => _FeaturedSectionState();
+  State<_FeaturedPageView> createState() => _FeaturedPageViewState();
 }
 
-class _FeaturedSectionState extends State<_FeaturedSection> {
+class _FeaturedPageViewState extends State<_FeaturedPageView> {
   final PageController _pageController = PageController();
   bool _editMode = false;
   int _currentPageIndex = 0;
@@ -179,10 +180,144 @@ class _FeaturedSectionState extends State<_FeaturedSection> {
                     : const PageScrollPhysics(),
             controller: _pageController,
             onPageChanged: widget.onPageChanged,
-            children: [Placeholder(), Placeholder(), Placeholder()],
+            children: [
+              _FeaturedSection(
+                FeaturedSubpages.groups,
+                items:
+                    state is FeaturedLoaded
+                        ? state.groups.map((g) => g.name).toList()
+                        : [],
+              ),
+              _FeaturedSection(
+                FeaturedSubpages.teachers,
+                items:
+                    state is FeaturedLoaded
+                        ? state.teachers.map((g) => g.fullName).toList()
+                        : [],
+              ),
+              _FeaturedSection(
+                FeaturedSubpages.classes,
+                items:
+                    state is FeaturedLoaded
+                        ? state.rooms.map((g) => g.name).toList()
+                        : [],
+              ),
+            ],
           ),
         );
       },
+    );
+  }
+}
+
+class _FeaturedSection extends StatefulWidget {
+  final FeaturedSubpages sectionType;
+  final List<String> items;
+  const _FeaturedSection(this.sectionType, {super.key, required this.items});
+
+  @override
+  State<_FeaturedSection> createState() => _FeaturedSectionState();
+}
+
+class _FeaturedSectionState extends State<_FeaturedSection> {
+  final _searchController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSearchField(context),
+        SizedBox(height: 24),
+        Expanded(child: _buildFeaturedCards(context)),
+      ],
+    );
+  }
+
+  Widget _buildSearchField(BuildContext context) {
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
+    final primaryColor = Theme.of(context).primaryColor;
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).extension<ThemeColors>()!.tile,
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: SizedBox(
+        height: 40,
+        child: TextField(
+          textAlignVertical: TextAlignVertical.center,
+          controller: _searchController,
+          onChanged: (query) {},
+          cursorColor: primaryColor,
+          selectionControls: materialTextSelectionHandleControls,
+          decoration: InputDecoration(
+            hintText: _getHintBySectionType(widget.sectionType),
+            hintStyle: textStyles.searchFieldHint,
+            isDense: true,
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.zero,
+            prefixIcon: IconButton(
+              icon: Icon(Icons.search, color: primaryColor, size: 24),
+              onPressed: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getHintBySectionType(FeaturedSubpages type) {
+    switch (type) {
+      case FeaturedSubpages.groups:
+        return 'Поиск групп';
+      case FeaturedSubpages.teachers:
+        return 'Поиск преподавателей';
+      case FeaturedSubpages.classes:
+        return 'Поиск аудиторий';
+    }
+  }
+
+  Widget _buildFeaturedCards(BuildContext context) {
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
+    final List<String> items =
+    // widget.items;
+    [
+      '5130903/20202aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+      '5130903/20202',
+      '5130903/20202',
+      '5130903/20202',
+      '5130903/20202',
+      '5130903/20202',
+      '5130903/20202',
+      '5130903/20202',
+      '5130903/20202',
+      '5130903/20202',
+      '5130903/20202',
+      '5130903/20202',
+      '5130903/20202',
+      '5130903/20202',
+      '5130903/20202',
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Избранное', style: textStyles.featuredPageTitle),
+        SizedBox(height: 16),
+        items.isEmpty
+            ? Center(
+              child: Text('Пусто', style: textStyles.featuredPageSubtitle),
+            )
+            : Expanded(
+              child: ListView.builder(
+                key: ValueKey('choose_list'),
+                padding: EdgeInsets.zero,
+                physics: const ClampingScrollPhysics(),
+                itemCount: items.length,
+                itemBuilder:
+                    (_, index) => FeaturedCard(items[index], onTap: () {}),
+              ),
+            ),
+      ],
     );
   }
 }
