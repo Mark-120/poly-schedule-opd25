@@ -24,7 +24,7 @@ class RoomId extends Equatable {
   }
 }
 
-abstract class Room extends Entity with EquatableMixin {
+abstract class Room extends ScheduleEntity with EquatableMixin {
   final int id;
   final String name;
   final Building building;

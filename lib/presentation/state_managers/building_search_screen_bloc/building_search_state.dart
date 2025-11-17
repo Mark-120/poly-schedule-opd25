@@ -12,13 +12,13 @@ class BuildingSearchInitial extends BuildingSearchState {}
 class BuildingSearchLoading extends BuildingSearchState {}
 
 class BuildingSearchLoaded extends BuildingSearchState {
-  final List<Building> buildings;
+  final List<Featured<Building>> buildings;
   final Building? selectedBuilding;
 
   const BuildingSearchLoaded(this.buildings, {this.selectedBuilding});
 
   BuildingSearchLoaded copyWith({
-    List<Building>? buildings,
+    List<Featured<Building>>? buildings,
     Building? selectedBuilding,
   }) {
     return BuildingSearchLoaded(

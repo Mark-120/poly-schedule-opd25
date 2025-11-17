@@ -17,7 +17,7 @@ class GroupId extends Equatable {
   }
 }
 
-abstract class Group extends Entity with EquatableMixin {
+abstract class Group extends ScheduleEntity with EquatableMixin {
   final GroupId id;
   final String name;
   const Group({required this.id, required this.name});
