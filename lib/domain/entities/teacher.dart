@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import 'entity.dart';
+
 class TeacherId extends Equatable {
   final int id;
 
@@ -16,7 +18,7 @@ class TeacherId extends Equatable {
   }
 }
 
-abstract class Teacher with EquatableMixin {
+abstract class Teacher extends Entity with EquatableMixin {
   final TeacherId id;
   final String fullName;
   const Teacher({required this.id, required this.fullName});
