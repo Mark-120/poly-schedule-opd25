@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'building.dart';
+import 'entity.dart';
 
 class RoomId extends Equatable {
   final int roomId;
@@ -23,7 +24,7 @@ class RoomId extends Equatable {
   }
 }
 
-abstract class Room with EquatableMixin {
+abstract class Room extends ScheduleEntity with EquatableMixin {
   final int id;
   final String name;
   final Building building;

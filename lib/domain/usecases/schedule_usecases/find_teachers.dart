@@ -1,3 +1,4 @@
+import '../../entities/featured.dart';
 import '../../entities/teacher.dart';
 import '../../repositories/fetch_repository.dart';
 
@@ -6,7 +7,7 @@ class FindTeachers {
 
   FindTeachers(this.repository);
 
-  Future<List<Teacher>> call(String query) async {
+  Future<List<Featured<Teacher>>> call(String query) async {
     return await repository.findTeachers(query);
   }
 }

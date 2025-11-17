@@ -44,6 +44,7 @@ import 'domain/usecases/featured_usecases/featured_rooms/set_featured_rooms.dart
 import 'domain/usecases/featured_usecases/featured_teachers/add_featured_teacher.dart';
 import 'domain/usecases/featured_usecases/featured_teachers/get_featured_teachers.dart';
 import 'domain/usecases/featured_usecases/featured_teachers/set_featured_teachers.dart';
+import 'domain/usecases/featured_usecases/is_featured.dart';
 import 'domain/usecases/last_schedule_usecases/save_last_schedule.dart';
 import 'domain/usecases/schedule_usecases/find_groups.dart';
 import 'domain/usecases/schedule_usecases/find_teachers.dart';
@@ -109,6 +110,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SetFeaturedRooms(sl(), sl()));
   sl.registerLazySingleton(() => AddFeaturedRoom(sl(), sl()));
 
+  sl.registerLazySingleton(() => IsSavedInFeatured(sl()));
+
   sl.registerLazySingleton(() => SaveLastSchedule(sl()));
   sl.registerLazySingleton(() => GetLastSchedule(sl()));
 
@@ -164,7 +167,10 @@ Future<void> init() async {
   );
   // Repositories
   sl.registerSingleton<FetchRepository>(
-    FetchRepositoryImpl(fetchDataSource: sl<FetchRemoteDataSourceImpl>()),
+    FetchRepositoryImpl(
+      fetchDataSource: sl<FetchRemoteDataSourceImpl>(),
+      featuredRepository: sl<FeaturedRepository>(),
+    ),
   );
 
   sl.registerSingleton<LastScheduleRepository>(

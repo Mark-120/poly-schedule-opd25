@@ -1,3 +1,4 @@
+import '../../entities/featured.dart';
 import '../../entities/group.dart';
 import '../../repositories/fetch_repository.dart';
 
@@ -6,7 +7,7 @@ class FindGroups {
 
   FindGroups(this.repository);
 
-  Future<List<Group>> call(String query) async {
+  Future<List<Featured<Group>>> call(String query) async {
     return await repository.findGroups(query);
   }
 }
