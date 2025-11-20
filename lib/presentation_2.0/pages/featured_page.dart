@@ -6,8 +6,11 @@ import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_c
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../core/presentation/uikit_2.0/theme_colors.dart';
+import '../../domain/entities/group.dart';
+import '../../domain/entities/teacher.dart';
 import '../../presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
 import '../../service_locator.dart';
+import '../state_managers/search_screen_bloc/search_bloc.dart';
 import '../widgets/featured_card.dart';
 
 class FeaturedPage extends StatelessWidget {
@@ -211,17 +214,33 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
   }
 }
 
-class _FeaturedSection extends StatefulWidget {
+class _FeaturedSection extends StatelessWidget {
   final FeaturedSubpages sectionType;
   final List<String> items;
-  const _FeaturedSection(this.sectionType, {super.key, required this.items});
+  const _FeaturedSection(this.sectionType, {required this.items});
 
   @override
-  State<_FeaturedSection> createState() => _FeaturedSectionState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => sl<NewSearchBloc>(),
+      child: _FeaturedSectionBody(sectionType, items: items),
+    );
+  }
 }
 
-class _FeaturedSectionState extends State<_FeaturedSection> {
+class _FeaturedSectionBody extends StatefulWidget {
+  final FeaturedSubpages sectionType;
+  final List<String> items;
+  const _FeaturedSectionBody(this.sectionType, {required this.items});
+
+  @override
+  State<_FeaturedSectionBody> createState() => _FeaturedSectionBodyState();
+}
+
+class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
   final _searchController = TextEditingController();
+
+  bool _isFocused = false;
 
   @override
   Widget build(BuildContext context) {
@@ -232,7 +251,7 @@ class _FeaturedSectionState extends State<_FeaturedSection> {
         children: [
           _buildSearchField(context),
           SizedBox(height: 24),
-          Expanded(child: _buildFeaturedCards(context)),
+          _buildFeaturedCards(context),
         ],
       ),
     );
@@ -241,28 +260,43 @@ class _FeaturedSectionState extends State<_FeaturedSection> {
   Widget _buildSearchField(BuildContext context) {
     final textStyles = Theme.of(context).extension<AppTypography>()!;
     final primaryColor = Theme.of(context).primaryColor;
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).extension<ThemeColors>()!.tile,
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: SizedBox(
-        height: 40,
-        child: TextField(
-          textAlignVertical: TextAlignVertical.center,
-          controller: _searchController,
-          onChanged: (query) {},
-          cursorColor: primaryColor,
-          selectionControls: materialTextSelectionHandleControls,
-          decoration: InputDecoration(
-            hintText: _getHintBySectionType(widget.sectionType),
-            hintStyle: textStyles.searchFieldHint,
-            isDense: true,
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.zero,
-            prefixIcon: IconButton(
-              icon: Icon(Icons.search, color: primaryColor, size: 24),
-              onPressed: () {},
+
+    return Focus(
+      onFocusChange: (hasFocus) {
+        setState(() {
+          _isFocused = hasFocus;
+        });
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).extension<ThemeColors>()!.tile,
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: SizedBox(
+          height: 40,
+          child: TextField(
+            textAlignVertical: TextAlignVertical.center,
+            controller: _searchController,
+            onChanged: (query) {
+              if (query.isNotEmpty) {
+                context.read<NewSearchBloc>().add(
+                  SearchQueryChanged(query, widget.sectionType),
+                );
+              }
+              setState(() {});
+            },
+            cursorColor: primaryColor,
+            selectionControls: materialTextSelectionHandleControls,
+            decoration: InputDecoration(
+              hintText: _getHintBySectionType(widget.sectionType),
+              hintStyle: textStyles.searchFieldHint,
+              isDense: true,
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.zero,
+              prefixIcon: IconButton(
+                icon: Icon(Icons.search, color: primaryColor, size: 24),
+                onPressed: () {},
+              ),
             ),
           ),
         ),
@@ -282,26 +316,34 @@ class _FeaturedSectionState extends State<_FeaturedSection> {
   }
 
   Widget _buildFeaturedCards(BuildContext context) {
+    final query = _searchController.text;
+
+    // 1. Пользователь просто нажал на поле
+    if (_isFocused && query.isEmpty) {
+      return Center(
+        child: Text(
+          _getInitialSearchText(widget.sectionType),
+          style:
+              Theme.of(
+                context,
+              ).extension<AppTypography>()!.featuredPageSubtitle,
+        ),
+      );
+    }
+
+    // 2. Пользователь ввёл что-то → показываем результаты поиска
+    if (query.isNotEmpty) {
+      return Expanded(child: _buildSearchResults(context));
+    }
+
+    // 3. Поле пустое, не в фокусе → показываем избранное (старый виджет)
+    return Expanded(child: _buildFavorites(context));
+  }
+
+  Widget _buildFavorites(BuildContext context) {
     final textStyles = Theme.of(context).extension<AppTypography>()!;
-    final List<String> items =
-    // widget.items;
-    [
-      '5130903/20202aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-      '5130903/20202',
-      '5130903/20202',
-      '5130903/20202',
-      '5130903/20202',
-      '5130903/20202',
-      '5130903/20202',
-      '5130903/20202',
-      '5130903/20202',
-      '5130903/20202',
-      '5130903/20202',
-      '5130903/20202',
-      '5130903/20202',
-      '5130903/20202',
-      '5130903/20202',
-    ];
+    final items = widget.items;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -319,11 +361,79 @@ class _FeaturedSectionState extends State<_FeaturedSection> {
                 itemCount: items.length,
                 itemBuilder:
                     (_, index) => FeaturedCard(items[index], onTap: () {}),
-                separatorBuilder: (context, index) => SizedBox(height: 10),
+                separatorBuilder: (_, __) => SizedBox(height: 10),
               ),
             ),
       ],
     );
+  }
+
+  Widget _buildSearchResults(BuildContext context) {
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
+
+    return BlocBuilder<NewSearchBloc, SearchState>(
+      builder: (context, state) {
+        if (state is SearchInitial) {
+          return Center(child: Text(_getInitialSearchText(widget.sectionType)));
+        } else if (state is SearchLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is SearchError) {
+          return Center(
+            child: Text(
+              'Ошибка: ${state.message}',
+              style: textStyles.featuredPageSubtitle,
+            ),
+          );
+        } else if (state is SearchResultsLoaded) {
+          if (state.results.isEmpty) {
+            return Center(
+              child: Text(
+                _getNotFoundText(widget.sectionType),
+                style: textStyles.featuredPageSubtitle,
+              ),
+            );
+          }
+
+          return ListView.separated(
+            padding: EdgeInsets.zero,
+            itemCount: state.results.length,
+            itemBuilder: (_, index) {
+              final item = state.results[index];
+              final displayText =
+                  widget.sectionType == FeaturedSubpages.groups
+                      ? (item as Group).name
+                      : (item as Teacher).fullName;
+              return FeaturedCard(displayText, onTap: () {});
+            },
+            separatorBuilder: (_, __) => SizedBox(height: 10),
+          );
+        }
+
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  String _getInitialSearchText(FeaturedSubpages type) {
+    switch (type) {
+      case FeaturedSubpages.groups:
+        return 'Начните вводить номер группы';
+      case FeaturedSubpages.teachers:
+        return 'Начните вводить ФИО преподавателя';
+      case FeaturedSubpages.classes:
+        return 'Начните вводить номер корпуса';
+    }
+  }
+
+  String _getNotFoundText(FeaturedSubpages type) {
+    switch (type) {
+      case FeaturedSubpages.groups:
+        return 'Группа не найдена';
+      case FeaturedSubpages.teachers:
+        return 'Преподаватель не найден';
+      case FeaturedSubpages.classes:
+        return 'Учебный корпус не найден';
+    }
   }
 }
 

@@ -49,15 +49,17 @@ class FeaturedCard extends StatelessWidget {
               ),
             ),
             SizedBox(width: 10),
-            SvgPicture.asset(
-              width: 13,
-              height: 13,
-              AppVectors.starOutlined,
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).primaryColor,
-                BlendMode.srcIn,
-              ),
-            ),
+            isFeatured
+                ? SvgPicture.asset(
+                  width: 13,
+                  height: 13,
+                  AppVectors.starOutlined,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).primaryColor,
+                    BlendMode.srcIn,
+                  ),
+                )
+                : SizedBox(),
           ],
         ),
       ),

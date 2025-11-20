@@ -8,6 +8,11 @@ class ScaffoldUiStateController extends ChangeNotifier {
   ScaffoldUiState get state => _state;
 
   void update(ScaffoldUiState newState) {
+    _state = newState;
+    notifyListeners();
+  }
+
+  void add(ScaffoldUiState newState) {
     _state = _state.mergeWith(newState);
     notifyListeners();
   }
