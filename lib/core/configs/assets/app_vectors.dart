@@ -9,4 +9,6 @@ class AppVectors {
   static const arrowDropDown = '${_basePath}arrow_drop_down$_format';
 
   static const starOutlined = '${_basePath}star_outlined$_format';
+
+  static const chechMark = '${_basePath}check_mark$_format';
 }

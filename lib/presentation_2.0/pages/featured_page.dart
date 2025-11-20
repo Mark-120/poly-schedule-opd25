@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../core/configs/assets/app_vectors.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
 import '../../core/presentation/uikit/app_strings.dart';
@@ -587,7 +589,10 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.read<ScaffoldUiStateController>().add(
           ScaffoldUiState(
-            floatingActionButton: FloatingActionButton(onPressed: () {}),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {},
+              child: SvgPicture.asset(AppVectors.chechMark),
+            ),
           ),
         );
       });
