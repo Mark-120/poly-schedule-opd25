@@ -3,6 +3,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../domain/entities/featured.dart';
 import '../../../domain/entities/group.dart';
 import '../../../domain/entities/teacher.dart';
 import '../../../domain/usecases/featured_usecases/featured_groups/add_featured_group.dart';
@@ -43,7 +44,7 @@ class NewSearchBloc extends Bloc<SearchEvent, SearchState> {
     emit(SearchLoading());
 
     try {
-      List<dynamic> results;
+      List<Featured> results;
       if (event.searchType == FeaturedSubpages.groups) {
         results = await findGroups(event.query);
       } else {
@@ -62,7 +63,12 @@ class NewSearchBloc extends Bloc<SearchEvent, SearchState> {
   ) {
     if (state is SearchResultsLoaded) {
       final currentState = state as SearchResultsLoaded;
-      emit(currentState.copyWith(selectedItem: event.selectedItem));
+      if (currentState.selectedItem == event.selectedItem) {
+        print('came in');
+        emit(currentState.unchooseItem());
+      } else {
+        emit(currentState.copyWith(selectedItem: event.selectedItem));
+      }
     }
   }
 
@@ -90,14 +96,18 @@ class NewSearchBloc extends Bloc<SearchEvent, SearchState> {
 
 extension on SearchResultsLoaded {
   SearchState copyWith({
-    List<dynamic>? results,
+    List<Featured>? results,
     FeaturedSubpages? searchType,
-    dynamic selectedItem,
+    Featured? selectedItem,
   }) {
     return SearchResultsLoaded(
       results ?? this.results,
       searchType ?? this.searchType,
       selectedItem: selectedItem ?? this.selectedItem,
     );
+  }
+
+  SearchState unchooseItem() {
+    return SearchResultsLoaded(results, searchType, selectedItem: null);
   }
 }

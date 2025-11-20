@@ -18,7 +18,7 @@ class SearchQueryChanged extends SearchEvent {
 }
 
 class SearchItemSelected extends SearchEvent {
-  final dynamic selectedItem;
+  final Featured selectedItem;
   final FeaturedSubpages searchType;
 
   const SearchItemSelected(this.selectedItem, this.searchType);

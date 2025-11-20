@@ -27,7 +27,10 @@ class FeaturedCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(50),
       onTap: onTap ?? () {},
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: EdgeInsets.symmetric(
+          vertical: isChosen ? 10 : 12,
+          horizontal: isChosen ? 14 : 16,
+        ),
         height: 40,
         decoration: BoxDecoration(
           color: Theme.of(context).extension<ThemeColors>()!.tile,

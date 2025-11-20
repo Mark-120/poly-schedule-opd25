@@ -6,6 +6,7 @@ import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_c
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../core/presentation/uikit_2.0/theme_colors.dart';
+import '../../domain/entities/featured.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/teacher.dart';
 import '../../presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
@@ -393,17 +394,40 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
               ),
             );
           }
-
+          if (state.selectedItem != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<ScaffoldUiStateController>().add(
+                ScaffoldUiState(
+                  floatingActionButton: FloatingActionButton(onPressed: () {}),
+                ),
+              );
+            });
+          } else {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<ScaffoldUiStateController>().clearFAB();
+            });
+          }
           return ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: state.results.length,
             itemBuilder: (_, index) {
               final item = state.results[index];
+              final isSelected = item == state.selectedItem;
               final displayText =
                   widget.sectionType == FeaturedSubpages.groups
-                      ? (item as Group).name
-                      : (item as Teacher).fullName;
-              return FeaturedCard(displayText, onTap: () {});
+                      ? (item as Featured<Group>).entity.name
+                      : (item as Featured<Group>).entity.name;
+              final isFeatured = item.isFeatured;
+              return FeaturedCard(
+                displayText,
+                isChosen: isSelected,
+                isFeatured: isFeatured,
+                onTap: () {
+                  context.read<NewSearchBloc>().add(
+                    SearchItemSelected(item, widget.sectionType),
+                  );
+                },
+              );
             },
             separatorBuilder: (_, __) => SizedBox(height: 10),
           );

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'scaffold_ui_state.dart';
+import 'value.dart';
 
 class ScaffoldUiStateController extends ChangeNotifier {
   ScaffoldUiState _state = ScaffoldUiState();
@@ -14,6 +15,11 @@ class ScaffoldUiStateController extends ChangeNotifier {
 
   void add(ScaffoldUiState newState) {
     _state = _state.mergeWith(newState);
+    notifyListeners();
+  }
+
+  void clearFAB() {
+    _state = _state.copyWith(floatingActionButton: Value.set(null));
     notifyListeners();
   }
 }

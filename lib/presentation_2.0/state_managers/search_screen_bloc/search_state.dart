@@ -13,9 +13,9 @@ class SearchLoading extends SearchState {}
 
 // search_state.dart
 class SearchResultsLoaded extends SearchState {
-  final List<dynamic> results;
+  final List<Featured> results;
   final FeaturedSubpages searchType;
-  final dynamic selectedItem; // Добавляем выбранный элемент в состояние
+  final Featured? selectedItem; // Добавляем выбранный элемент в состояние
 
   const SearchResultsLoaded(this.results, this.searchType, {this.selectedItem});
 
