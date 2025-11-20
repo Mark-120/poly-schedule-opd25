@@ -7,6 +7,6 @@ abstract class FetchDataSource {
   Future<List<Teacher>> findTeachers(String query);
   Future<List<Group>> findGroups(String query);
 
-  Future<List<Building>> getAllBuildings();
+  Future<List<Building>> getBuildings(String query);
   Future<List<Room>> getAllRoomsOfBuilding(int buildingId);
 }

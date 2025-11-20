@@ -11,7 +11,7 @@ part 'building_search_state.dart';
 
 class BuildingSearchBloc
     extends Bloc<BuildingSearchEvent, BuildingSearchState> {
-  final GetAllBuildings getAllBuildings;
+  final GetBuildings getAllBuildings;
 
   BuildingSearchBloc({required this.getAllBuildings})
     : super(BuildingSearchInitial()) {
@@ -25,7 +25,7 @@ class BuildingSearchBloc
   ) async {
     emit(BuildingSearchLoading());
     try {
-      final buildings = await getAllBuildings();
+      final buildings = await getAllBuildings('');
       emit(BuildingSearchLoaded(buildings));
     } catch (e) {
       emit(BuildingSearchError(e.toString()));

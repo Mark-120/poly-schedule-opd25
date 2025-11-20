@@ -43,12 +43,13 @@ final class FetchRemoteDataSourceImpl extends RemoteDataSource
   }
 
   @override
-  Future<List<Building>> getAllBuildings() async {
+  Future<List<Building>> getBuildings(String query) async {
     final response = await getRespone('buildings');
     if (response.statusCode == 200) {
       final buildings =
           (decodeToJson(response)['buildings'] as List<dynamic>)
               .map((group) => BuildingModel.fromJson(group))
+              .where((build) => build.name.contains(query))
               .toList();
 
       buildings.sort((a, b) {
