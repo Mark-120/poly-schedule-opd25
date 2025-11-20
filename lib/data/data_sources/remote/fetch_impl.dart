@@ -18,7 +18,7 @@ final class FetchRemoteDataSourceImpl extends RemoteDataSource
   Future<List<Teacher>> findTeachers(String query) async {
     final response = await getRespone('search/teachers?q=$query');
     if (response.statusCode == 200) {
-      return (decodeToJson(response)['teachers'] as List<dynamic>)
+      return ((decodeToJson(response)['teachers'] ?? []) as List<dynamic>)
           .map((teacher) => TeacherModel.fromJson(teacher))
           .toList();
     } else {
