@@ -15,12 +15,23 @@ class SearchLoading extends SearchState {}
 class SearchResultsLoaded extends SearchState {
   final List<Featured> results;
   final FeaturedSubpages searchType;
+  final Building? selectedBuilding;
   final Featured? selectedItem; // Добавляем выбранный элемент в состояние
 
-  const SearchResultsLoaded(this.results, this.searchType, {this.selectedItem});
+  const SearchResultsLoaded(
+    this.results,
+    this.searchType, {
+    this.selectedBuilding,
+    this.selectedItem,
+  });
 
   @override
-  List<Object> get props => [results, searchType, selectedItem ?? ''];
+  List<Object> get props => [
+    results,
+    searchType,
+    selectedBuilding ?? '',
+    selectedItem ?? '',
+  ];
 }
 
 class SearchError extends SearchState {

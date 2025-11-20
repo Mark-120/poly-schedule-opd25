@@ -7,6 +7,26 @@ abstract class SearchEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class LoadBuildings extends SearchEvent {}
+
+class BuildingSelected extends SearchEvent {
+  final Building building;
+
+  const BuildingSelected(this.building);
+
+  @override
+  List<Object> get props => [building];
+}
+
+class LoadRoomsForBuilding extends SearchEvent {
+  final int buildingId;
+
+  const LoadRoomsForBuilding(this.buildingId);
+
+  @override
+  List<Object> get props => [buildingId];
+}
+
 class SearchQueryChanged extends SearchEvent {
   final String query;
   final FeaturedSubpages searchType;

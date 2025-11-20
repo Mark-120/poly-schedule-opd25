@@ -6,8 +6,11 @@ import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_c
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../core/presentation/uikit_2.0/theme_colors.dart';
+import '../../domain/entities/building.dart';
+import '../../domain/entities/entity.dart';
 import '../../domain/entities/featured.dart';
 import '../../domain/entities/group.dart';
+import '../../domain/entities/room.dart';
 import '../../domain/entities/teacher.dart';
 import '../../presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
 import '../../service_locator.dart';
@@ -187,6 +190,7 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
             onPageChanged: widget.onPageChanged,
             children: [
               _FeaturedSection(
+                key: PageStorageKey('page1'),
                 FeaturedSubpages.groups,
                 items:
                     state is FeaturedLoaded
@@ -194,6 +198,7 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
                         : [],
               ),
               _FeaturedSection(
+                key: PageStorageKey('page2'),
                 FeaturedSubpages.teachers,
                 items:
                     state is FeaturedLoaded
@@ -201,6 +206,7 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
                         : [],
               ),
               _FeaturedSection(
+                key: PageStorageKey('page3'),
                 FeaturedSubpages.classes,
                 items:
                     state is FeaturedLoaded
@@ -218,7 +224,7 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
 class _FeaturedSection extends StatelessWidget {
   final FeaturedSubpages sectionType;
   final List<String> items;
-  const _FeaturedSection(this.sectionType, {required this.items});
+  const _FeaturedSection(this.sectionType, {required this.items, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -232,6 +238,7 @@ class _FeaturedSection extends StatelessWidget {
 class _FeaturedSectionBody extends StatefulWidget {
   final FeaturedSubpages sectionType;
   final List<String> items;
+  final debugMode = true;
   const _FeaturedSectionBody(this.sectionType, {required this.items});
 
   @override
@@ -240,7 +247,7 @@ class _FeaturedSectionBody extends StatefulWidget {
 
 class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
   final _searchController = TextEditingController();
-
+  Featured<Building>? _selectedBuilding;
   bool _isFocused = false;
 
   @override
@@ -259,50 +266,104 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
   }
 
   Widget _buildSearchField(BuildContext context) {
+    if (widget.sectionType == FeaturedSubpages.classes &&
+        _selectedBuilding != null) {
+      return _buildSelectedBuildingHeader(context);
+    }
+
+    return _buildSearchInput(context);
+  }
+
+  Widget _buildSelectedBuildingHeader(BuildContext context) {
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
+    final primary = Theme.of(context).primaryColor;
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).extension<ThemeColors>()!.tile,
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              _selectedBuilding!.entity.name,
+              style: textStyles.searchFieldHint,
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                _selectedBuilding = null;
+              });
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                sl<NewSearchBloc>().add(
+                  LoadBuildings(),
+                ); // если у тебя нет такого – скажи, напишу
+                context.read<ScaffoldUiStateController>().clearFAB();
+              });
+            },
+            child: Icon(Icons.close, color: primary),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchInput(BuildContext context) {
     final textStyles = Theme.of(context).extension<AppTypography>()!;
     final primaryColor = Theme.of(context).primaryColor;
 
-    return Focus(
-      onFocusChange: (hasFocus) {
-        setState(() {
-          _isFocused = hasFocus;
-        });
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).extension<ThemeColors>()!.tile,
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: SizedBox(
-          height: 40,
-          child: TextField(
-            textAlignVertical: TextAlignVertical.center,
-            controller: _searchController,
-            onChanged: (query) {
-              if (query.isNotEmpty) {
-                context.read<NewSearchBloc>().add(
-                  SearchQueryChanged(query, widget.sectionType),
-                );
-              }
-              setState(() {});
-            },
-            cursorColor: primaryColor,
-            selectionControls: materialTextSelectionHandleControls,
-            decoration: InputDecoration(
-              hintText: _getHintBySectionType(widget.sectionType),
-              hintStyle: textStyles.searchFieldHint,
-              isDense: true,
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
-              prefixIcon: IconButton(
-                icon: Icon(Icons.search, color: primaryColor, size: 24),
-                onPressed: () {},
+    return widget.sectionType != FeaturedSubpages.classes
+        ? Focus(
+          onFocusChange: (hasFocus) {
+            setState(() {
+              _isFocused = hasFocus;
+            });
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).extension<ThemeColors>()!.tile,
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: SizedBox(
+              height: 40,
+              child: TextField(
+                textAlignVertical: TextAlignVertical.center,
+                controller: _searchController,
+                onChanged: (query) {
+                  if (query.isNotEmpty &&
+                      widget.sectionType != FeaturedSubpages.classes) {
+                    context.read<NewSearchBloc>().add(
+                      SearchQueryChanged(query, widget.sectionType),
+                    );
+                  }
+                  setState(() {});
+                },
+                cursorColor: primaryColor,
+                selectionControls: materialTextSelectionHandleControls,
+                decoration: InputDecoration(
+                  hintText: _getHintBySectionType(widget.sectionType),
+                  hintStyle: textStyles.searchFieldHint,
+                  isDense: true,
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.zero,
+                  prefixIcon: IconButton(
+                    icon: Icon(Icons.search, color: primaryColor, size: 24),
+                    onPressed: () {},
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    );
+        )
+        : TextButton(
+          onPressed: () {
+            context.read<NewSearchBloc>().add(LoadBuildings());
+          },
+          child: Text('Загрузить здания'),
+        );
   }
 
   String _getHintBySectionType(FeaturedSubpages type) {
@@ -319,6 +380,13 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
   Widget _buildFeaturedCards(BuildContext context) {
     final query = _searchController.text;
 
+    if (widget.sectionType == FeaturedSubpages.classes) {
+      // если корпус выбран → показываем аудитории
+      if (_selectedBuilding != null) {
+        return Expanded(child: _buildBuildingSearchResults(context));
+      }
+    }
+
     // 1. Пользователь просто нажал на поле
     if (_isFocused && query.isEmpty) {
       return Center(
@@ -333,12 +401,88 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
     }
 
     // 2. Пользователь ввёл что-то → показываем результаты поиска
-    if (query.isNotEmpty) {
+    if (query.isNotEmpty || widget.debugMode) {
       return Expanded(child: _buildSearchResults(context));
     }
 
     // 3. Поле пустое, не в фокусе → показываем избранное (старый виджет)
     return Expanded(child: _buildFavorites(context));
+  }
+
+  Widget _buildBuildingSearchResults(BuildContext context) {
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
+
+    return BlocBuilder<NewSearchBloc, SearchState>(
+      builder: (context, state) {
+        if (state is SearchInitial) {
+          return const SizedBox.shrink();
+        } else if (state is SearchLoading ||
+            (state is SearchResultsLoaded &&
+                state.results is! List<Featured<Room>>)) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is SearchError) {
+          return Center(
+            child: Text(
+              'Ошибка загрузки',
+              style: textStyles.featuredPageSubtitle,
+            ),
+          );
+        } else if (state is SearchResultsLoaded) {
+          print('came here');
+          _createFAB(state.selectedItem);
+          return ListView.separated(
+            padding: EdgeInsets.zero,
+            itemCount: state.results.length,
+            itemBuilder: (_, index) {
+              final item = state.results[index];
+              final isSelected = item == state.selectedItem;
+              final displayText = _getEntityTextByType(item);
+              final isFeatured = item.isFeatured;
+              return FeaturedCard(
+                displayText,
+                isChosen: isSelected,
+                isFeatured: isFeatured,
+                onTap: () {
+                  context.read<NewSearchBloc>().add(
+                    SearchItemSelected(item, widget.sectionType),
+                  );
+                  setState(() {});
+                },
+              );
+            },
+            separatorBuilder: (_, __) => SizedBox(height: 10),
+          );
+          // return ListView.separated(
+          //   key: ValueKey('choose_list'),
+          //   padding: EdgeInsets.zero,
+          //   physics: const ClampingScrollPhysics(),
+          //   itemCount: items.length,
+          //   itemBuilder: (_, index) => FeaturedCard(items[index], onTap: () {}),
+          //   separatorBuilder: (_, __) => SizedBox(height: 10),
+          // );
+          // return ListView(
+          //   physics: const ClampingScrollPhysics(),
+          //   padding: EdgeInsets.zero,
+          //   children:
+          //       state.results.map((room) {
+          //         room = room as Featured<Room>;
+          //         return FeaturedCard(
+          //           room.entity.name,
+          //           isChosen: room.entity == state.selectedItem?.entity,
+          //           isFeatured: true,
+          //           onTap: () {
+          //             context.read<NewSearchBloc>().add(
+          //               SearchItemSelected(room, widget.sectionType),
+          //             );
+          //           },
+          //         );
+          //       }).toList(),
+          // );
+        }
+
+        return const SizedBox.shrink();
+      },
+    );
   }
 
   Widget _buildFavorites(BuildContext context) {
@@ -394,35 +538,35 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
               ),
             );
           }
-          if (state.selectedItem != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.read<ScaffoldUiStateController>().add(
-                ScaffoldUiState(
-                  floatingActionButton: FloatingActionButton(onPressed: () {}),
-                ),
-              );
-            });
-          } else {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.read<ScaffoldUiStateController>().clearFAB();
-            });
-          }
+          _createFAB(state.selectedItem);
           return ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: state.results.length,
             itemBuilder: (_, index) {
               final item = state.results[index];
               final isSelected = item == state.selectedItem;
-              final displayText =
-                  widget.sectionType == FeaturedSubpages.groups
-                      ? (item as Featured<Group>).entity.name
-                      : (item as Featured<Group>).entity.name;
+              final displayText = _getEntityTextByType(item);
               final isFeatured = item.isFeatured;
               return FeaturedCard(
                 displayText,
                 isChosen: isSelected,
                 isFeatured: isFeatured,
                 onTap: () {
+                  if (widget.sectionType == FeaturedSubpages.classes) {
+                    setState(() {
+                      _selectedBuilding = item as Featured<Building>;
+                    });
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      context.read<NewSearchBloc>().add(
+                        LoadRoomsForBuilding(_selectedBuilding!.entity.id),
+                      );
+                    });
+
+                    return;
+                  }
+
+                  // старая логика для groups/teachers
                   context.read<NewSearchBloc>().add(
                     SearchItemSelected(item, widget.sectionType),
                   );
@@ -436,6 +580,22 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         return const SizedBox.shrink();
       },
     );
+  }
+
+  void _createFAB(Featured? item) {
+    if (item != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<ScaffoldUiStateController>().add(
+          ScaffoldUiState(
+            floatingActionButton: FloatingActionButton(onPressed: () {}),
+          ),
+        );
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<ScaffoldUiStateController>().clearFAB();
+      });
+    }
   }
 
   String _getInitialSearchText(FeaturedSubpages type) {
@@ -457,6 +617,19 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         return 'Преподаватель не найден';
       case FeaturedSubpages.classes:
         return 'Учебный корпус не найден';
+    }
+  }
+
+  String _getEntityTextByType(Featured<Entity> item) {
+    switch (widget.sectionType) {
+      case FeaturedSubpages.groups:
+        return (item as Featured<Group>).entity.name;
+      case FeaturedSubpages.teachers:
+        return (item as Featured<Teacher>).entity.fullName;
+      case FeaturedSubpages.classes:
+        return item.entity is Building
+            ? (item as Featured<Building>).entity.name
+            : (item as Featured<Room>).entity.name;
     }
   }
 }

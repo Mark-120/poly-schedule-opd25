@@ -212,6 +212,9 @@ Future<void> init() async {
       findTeachers: sl(),
       addFeaturedGroup: sl(),
       addFeaturedTeacher: sl(),
+      getAllBuildings: sl(),
+      getRoomsOfBuilding: sl(),
+      addFeaturedRoom: sl(),
     ),
   );
   sl.registerFactory<ScheduleBloc>(
