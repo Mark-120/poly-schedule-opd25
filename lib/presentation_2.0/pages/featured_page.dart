@@ -65,7 +65,7 @@ class _FeaturedPageBodyState extends State<_FeaturedPageBody> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+      padding: EdgeInsets.symmetric(vertical: 24),
       child: Column(
         children: [
           _NavigationBar(
@@ -98,6 +98,7 @@ class _NavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         color: Theme.of(context).extension<ThemeColors>()!.tile,
         borderRadius: BorderRadius.circular(50),
@@ -224,13 +225,16 @@ class _FeaturedSectionState extends State<_FeaturedSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSearchField(context),
-        SizedBox(height: 24),
-        Expanded(child: _buildFeaturedCards(context)),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSearchField(context),
+          SizedBox(height: 24),
+          Expanded(child: _buildFeaturedCards(context)),
+        ],
+      ),
     );
   }
 
@@ -269,11 +273,11 @@ class _FeaturedSectionState extends State<_FeaturedSection> {
   String _getHintBySectionType(FeaturedSubpages type) {
     switch (type) {
       case FeaturedSubpages.groups:
-        return 'Поиск групп';
+        return 'Поиск группы';
       case FeaturedSubpages.teachers:
         return 'Поиск преподавателей';
       case FeaturedSubpages.classes:
-        return 'Поиск аудиторий';
+        return 'Поиск учебного корпуса';
     }
   }
 
@@ -308,13 +312,14 @@ class _FeaturedSectionState extends State<_FeaturedSection> {
               child: Text('Пусто', style: textStyles.featuredPageSubtitle),
             )
             : Expanded(
-              child: ListView.builder(
+              child: ListView.separated(
                 key: ValueKey('choose_list'),
                 padding: EdgeInsets.zero,
                 physics: const ClampingScrollPhysics(),
                 itemCount: items.length,
                 itemBuilder:
                     (_, index) => FeaturedCard(items[index], onTap: () {}),
+                separatorBuilder: (context, index) => SizedBox(height: 10),
               ),
             ),
       ],
