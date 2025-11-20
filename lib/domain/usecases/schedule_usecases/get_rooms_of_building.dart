@@ -1,5 +1,3 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../entities/featured.dart';
 import '../../entities/room.dart';
 import '../../repositories/fetch_repository.dart';
