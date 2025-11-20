@@ -9,6 +9,6 @@ abstract class FetchRepository {
   Future<List<Featured<Teacher>>> findTeachers(String query);
   Future<List<Featured<Group>>> findGroups(String query);
 
-  Future<List<Featured<Building>>> getAllBuildings();
+  Future<List<Featured<Building>>> getBuildings(String query);
   Future<List<Featured<Room>>> getAllRoomsOfBuilding(int buildingId);
 }

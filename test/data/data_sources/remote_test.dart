@@ -25,7 +25,7 @@ void main() {
         logger: MockLogger(),
       );
 
-      final buildings = await source.getAllBuildings();
+      final buildings = await source.getBuildings('');
 
       expect(
         buildings.firstWhere((x) => x.id == 11),
@@ -57,7 +57,7 @@ void main() {
         logger: MockLogger(),
       );
 
-      final buildings = await source.getAllBuildings();
+      final buildings = await source.getBuildings('');
 
       expect(buildings, [
         BuildingModel(id: 1, name: 'Building 1', abbr: 'b 1', address: 'k1'),

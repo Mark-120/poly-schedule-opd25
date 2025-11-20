@@ -96,7 +96,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetSchedule(sl()));
   sl.registerLazySingleton(() => FindGroups(sl()));
   sl.registerLazySingleton(() => FindTeachers(sl()));
-  sl.registerLazySingleton(() => GetAllBuildings(sl()));
+  sl.registerLazySingleton(() => GetBuildings(sl()));
   sl.registerLazySingleton(() => GetRoomsOfBuilding(sl()));
   sl.registerLazySingleton(() => OnAppStart(sl()));
 

@@ -42,9 +42,9 @@ class FetchRepositoryImpl extends FetchRepository {
   }
 
   @override
-  Future<List<Featured<Building>>> getAllBuildings() async {
+  Future<List<Featured<Building>>> getBuildings(String query) async {
     final featured = await featuredRepository.getFeaturedRooms();
-    final stream = (await fetchDataSource.getAllBuildings()).map(
+    final stream = (await fetchDataSource.getBuildings(query)).map(
       (x) =>
           Featured(x, isFeatured: featured.any((room) => room.building == x)),
     );
