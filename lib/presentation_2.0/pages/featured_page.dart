@@ -301,8 +301,8 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
               });
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 sl<NewSearchBloc>().add(
-                  LoadBuildings(),
-                ); // если у тебя нет такого – скажи, напишу
+                  SearchQueryChanged('', widget.sectionType),
+                );
                 context.read<ScaffoldUiStateController>().clearFAB();
               });
             },
@@ -317,55 +317,47 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
     final textStyles = Theme.of(context).extension<AppTypography>()!;
     final primaryColor = Theme.of(context).primaryColor;
 
-    return widget.sectionType != FeaturedSubpages.classes
-        ? Focus(
-          onFocusChange: (hasFocus) {
-            setState(() {
-              _isFocused = hasFocus;
-            });
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).extension<ThemeColors>()!.tile,
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: SizedBox(
-              height: 40,
-              child: TextField(
-                textAlignVertical: TextAlignVertical.center,
-                controller: _searchController,
-                onChanged: (query) {
-                  if (query.isNotEmpty &&
-                      widget.sectionType != FeaturedSubpages.classes) {
-                    context.read<NewSearchBloc>().add(
-                      SearchQueryChanged(query, widget.sectionType),
-                    );
-                  }
-                  setState(() {});
-                },
-                cursorColor: primaryColor,
-                selectionControls: materialTextSelectionHandleControls,
-                decoration: InputDecoration(
-                  hintText: _getHintBySectionType(widget.sectionType),
-                  hintStyle: textStyles.searchFieldHint,
-                  isDense: true,
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
-                  prefixIcon: IconButton(
-                    icon: Icon(Icons.search, color: primaryColor, size: 24),
-                    onPressed: () {},
-                  ),
-                ),
+    return Focus(
+      onFocusChange: (hasFocus) {
+        setState(() {
+          _isFocused = hasFocus;
+        });
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).extension<ThemeColors>()!.tile,
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: SizedBox(
+          height: 40,
+          child: TextField(
+            textAlignVertical: TextAlignVertical.center,
+            controller: _searchController,
+            onChanged: (query) {
+              if (query.isNotEmpty) {
+                context.read<NewSearchBloc>().add(
+                  SearchQueryChanged(query, widget.sectionType),
+                );
+              }
+              setState(() {});
+            },
+            cursorColor: primaryColor,
+            selectionControls: materialTextSelectionHandleControls,
+            decoration: InputDecoration(
+              hintText: _getHintBySectionType(widget.sectionType),
+              hintStyle: textStyles.searchFieldHint,
+              isDense: true,
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.zero,
+              prefixIcon: IconButton(
+                icon: Icon(Icons.search, color: primaryColor, size: 24),
+                onPressed: () {},
               ),
             ),
           ),
-        )
-        : TextButton(
-          onPressed: () {
-            context.read<NewSearchBloc>().add(LoadBuildings());
-          },
-          child: Text('Загрузить здания'),
-        );
+        ),
+      ),
+    );
   }
 
   String _getHintBySectionType(FeaturedSubpages type) {

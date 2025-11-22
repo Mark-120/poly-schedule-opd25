@@ -7,8 +7,6 @@ abstract class SearchEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadBuildings extends SearchEvent {}
-
 class BuildingSelected extends SearchEvent {
   final Building building;
 

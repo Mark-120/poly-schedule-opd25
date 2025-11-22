@@ -212,7 +212,7 @@ Future<void> init() async {
       findTeachers: sl(),
       addFeaturedGroup: sl(),
       addFeaturedTeacher: sl(),
-      getAllBuildings: sl(),
+      findBuildings: sl(),
       getRoomsOfBuilding: sl(),
       addFeaturedRoom: sl(),
     ),

@@ -23,7 +23,7 @@ part 'search_state.dart';
 class NewSearchBloc extends Bloc<SearchEvent, SearchState> {
   final FindGroups findGroups;
   final FindTeachers findTeachers;
-  final GetAllBuildings getAllBuildings;
+  final GetBuildings findBuildings;
   final GetRoomsOfBuilding getRoomsOfBuilding;
   final AddFeaturedRoom addFeaturedRoom;
   final AddFeaturedGroup addFeaturedGroup;
@@ -32,7 +32,7 @@ class NewSearchBloc extends Bloc<SearchEvent, SearchState> {
   NewSearchBloc({
     required this.findGroups,
     required this.findTeachers,
-    required this.getAllBuildings,
+    required this.findBuildings,
     required this.getRoomsOfBuilding,
     required this.addFeaturedRoom,
     required this.addFeaturedGroup,
@@ -41,7 +41,6 @@ class NewSearchBloc extends Bloc<SearchEvent, SearchState> {
     on<SearchQueryChanged>(_onSearchQueryChanged, transformer: restartable());
     on<SearchItemSelected>(_onSearchItemSelected);
     on<SaveToFeatured>(_onSaveToFeatured);
-    on<LoadBuildings>(_onLoadBuildings, transformer: restartable());
     on<BuildingSelected>(_onBuildingSelected);
     on<LoadRoomsForBuilding>(
       _onLoadRoomsForBuilding,
@@ -75,26 +74,17 @@ class NewSearchBloc extends Bloc<SearchEvent, SearchState> {
 
     try {
       List<Featured> results;
-      if (event.searchType == FeaturedSubpages.groups) {
-        results = await findGroups(event.query);
-      } else {
-        results = await findTeachers(event.query);
+      switch (event.searchType) {
+        case FeaturedSubpages.groups:
+          results = await findGroups(event.query);
+
+        case FeaturedSubpages.teachers:
+          results = await findTeachers(event.query);
+
+        case FeaturedSubpages.classes:
+          results = await findBuildings(event.query);
       }
-
       emit(SearchResultsLoaded(results, event.searchType));
-    } catch (e) {
-      emit(SearchError(e.toString()));
-    }
-  }
-
-  Future<void> _onLoadBuildings(
-    LoadBuildings event,
-    Emitter<SearchState> emit,
-  ) async {
-    emit(SearchLoading());
-    try {
-      final buildings = await getAllBuildings();
-      emit(SearchResultsLoaded(buildings, FeaturedSubpages.classes));
     } catch (e) {
       emit(SearchError(e.toString()));
     }
