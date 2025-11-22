@@ -201,59 +201,61 @@ class _ScheduleAppBarWrapper extends StatefulWidget {
 
 class _ScheduleAppBarWrapperState extends State<_ScheduleAppBarWrapper> {
   @override
-  Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => context.read<ScaffoldUiStateController>().update(
-        ScaffoldUiState(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios,
-                color: context.appTheme.iconColor,
+  void initState() {
+    super.initState();
+    widget.weekNotifier.addListener(_updateAppBar);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateAppBar());
+  }
+
+  @override
+  void dispose() {
+    widget.weekNotifier.removeListener(_updateAppBar);
+    super.dispose();
+  }
+
+  void _updateAppBar() {
+    final week = widget.weekNotifier.value;
+    final weekStart = DateFormater.truncDate(week);
+    final weekEnd = weekStart.add(Duration(days: 6));
+
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
+
+    context.read<ScaffoldUiStateController>().update(
+      ScaffoldUiState(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios, color: context.appTheme.iconColor),
+            onPressed: widget.onSwipeRight,
+          ),
+          title: Column(
+            children: [
+              Text(
+                '${DateFormater.showShortDateToUser(weekStart)} - ${DateFormater.showShortDateToUser(weekEnd)}',
+                style: textStyles.appBarTitle,
               ),
-              onPressed: widget.onSwipeRight,
-            ),
-            title: _buildAppBarTitle(context, widget.weekNotifier),
-            actions: [
-              IconButton(
-                icon: Icon(
-                  Icons.arrow_forward_ios,
-                  color: context.appTheme.iconColor,
-                ),
-                onPressed: widget.onSwipeLeft,
+              Text(
+                week.isOdd ? AppStrings.oddWeek : AppStrings.evenWeek,
+                style: textStyles.appBarSubtitle,
               ),
             ],
           ),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.arrow_forward_ios,
+                color: context.appTheme.iconColor,
+              ),
+              onPressed: widget.onSwipeLeft,
+            ),
+          ],
         ),
       ),
     );
-    return widget.child;
   }
 
-  Widget _buildAppBarTitle(
-    BuildContext context,
-    ValueNotifier<DateTime> weekNotifier,
-  ) {
-    final textStyles = Theme.of(context).extension<AppTypography>()!;
-    return ValueListenableBuilder<DateTime>(
-      valueListenable: weekNotifier,
-      builder: (context, week, child) {
-        final weekStart = DateFormater.truncDate(week);
-        final weekEnd = weekStart.add(Duration(days: 6));
-        return Column(
-          children: [
-            Text(
-              '${DateFormater.showShortDateToUser(weekStart)} - ${DateFormater.showShortDateToUser(weekEnd)}',
-              style: textStyles.appBarTitle,
-            ),
-            Text(
-              week.isOdd ? AppStrings.oddWeek : AppStrings.evenWeek,
-              style: textStyles.appBarSubtitle,
-            ),
-          ],
-        );
-      },
-    );
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }
 

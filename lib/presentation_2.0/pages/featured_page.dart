@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/configs/assets/app_vectors.dart';
+import '../../core/presentation/navigation/scaffold_ui_state/global_navigation_ontroller.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
 import '../../core/presentation/uikit/app_strings.dart';
@@ -10,6 +11,7 @@ import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../core/presentation/uikit_2.0/theme_colors.dart';
 import '../../domain/entities/building.dart';
 import '../../domain/entities/entity.dart';
+import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/featured.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/room.dart';
@@ -18,6 +20,7 @@ import '../../presentation/state_managers/featured_screen_bloc/featured_bloc.dar
 import '../../service_locator.dart';
 import '../state_managers/search_screen_bloc/search_bloc.dart';
 import '../widgets/featured_card.dart';
+import 'schedule_page.dart';
 
 class FeaturedPage extends StatelessWidget {
   const FeaturedPage({super.key});
@@ -167,8 +170,7 @@ class _FeaturedPageView extends StatefulWidget {
 
 class _FeaturedPageViewState extends State<_FeaturedPageView> {
   final PageController _pageController = PageController();
-  bool _editMode = false;
-  int _currentPageIndex = 0;
+  final bool _editMode = false;
 
   Future<void> jumpTo(int index) async {
     _pageController.animateToPage(
@@ -446,32 +448,6 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
             },
             separatorBuilder: (_, __) => SizedBox(height: 10),
           );
-          // return ListView.separated(
-          //   key: ValueKey('choose_list'),
-          //   padding: EdgeInsets.zero,
-          //   physics: const ClampingScrollPhysics(),
-          //   itemCount: items.length,
-          //   itemBuilder: (_, index) => FeaturedCard(items[index], onTap: () {}),
-          //   separatorBuilder: (_, __) => SizedBox(height: 10),
-          // );
-          // return ListView(
-          //   physics: const ClampingScrollPhysics(),
-          //   padding: EdgeInsets.zero,
-          //   children:
-          //       state.results.map((room) {
-          //         room = room as Featured<Room>;
-          //         return FeaturedCard(
-          //           room.entity.name,
-          //           isChosen: room.entity == state.selectedItem?.entity,
-          //           isFeatured: true,
-          //           onTap: () {
-          //             context.read<NewSearchBloc>().add(
-          //               SearchItemSelected(room, widget.sectionType),
-          //             );
-          //           },
-          //         );
-          //       }).toList(),
-          // );
         }
 
         return const SizedBox.shrink();
@@ -579,10 +555,28 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
   void _createFAB(Featured? item) {
     if (item != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        print('added');
         context.read<ScaffoldUiStateController>().add(
           ScaffoldUiState(
             floatingActionButton: FloatingActionButton(
-              onPressed: () {},
+              onPressed: () async {
+                final route = MaterialPageRoute(
+                  builder: (_) {
+                    final entity = item.entity;
+                    final entityId = _getEntityIdBySectionType(entity);
+                    final bottomTitle = _getEntityBottomTitleByType(entity);
+                    return SchedulePage(
+                      id: entityId,
+                      dayTime: DateTime.now(),
+                      bottomTitle: bottomTitle,
+                    );
+                  },
+                );
+                await context.read<GlobalNavigationController>().pushToTab(
+                  0,
+                  route,
+                );
+              },
               child: SvgPicture.asset(AppVectors.chechMark),
             ),
           ),
@@ -593,6 +587,22 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         context.read<ScaffoldUiStateController>().clearFAB();
       });
     }
+  }
+
+  EntityId _getEntityIdBySectionType(Entity entity) {
+    if (entity is Group) return EntityId.group(entity.id);
+    if (entity is Teacher) return EntityId.teacher(entity.id);
+    if (entity is Room) return EntityId.room(entity.getId());
+    throw UnimplementedError();
+  }
+
+  String _getEntityBottomTitleByType(Entity entity) {
+    if (entity is Group) return entity.name;
+    if (entity is Teacher) {
+      return AppStrings.fullNameToAbbreviation(entity.fullName);
+    }
+    if (entity is Room) return AppStrings.fullNameOfRoom(entity);
+    throw UnimplementedError();
   }
 
   String _getInitialSearchText(FeaturedSubpages type) {
