@@ -94,4 +94,21 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
     }
     return throw LocalException('non valid id');
   }
+
+  @override
+  Future<void> deleteFeatured(EntityId id) async {
+    if (id.isTeacher) {
+      return (await getFeaturedGroups()).removeWhere(
+        (elem) => elem.id == id.asGroup,
+      );
+    } else if (id.isRoom) {
+      return (await getFeaturedRooms()).removeWhere(
+        (elem) => elem.getId() == id.asRoom,
+      );
+    } else if (id.isGroup) {
+      return (await getFeaturedGroups()).removeWhere(
+        (elem) => elem.id == id.asGroup,
+      );
+    }
+  }
 }
