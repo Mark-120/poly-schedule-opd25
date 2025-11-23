@@ -576,6 +576,14 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
                   0,
                   route,
                 );
+                // сбросить FeaturedPage (она находится в табе 1)
+                final resetRoute = MaterialPageRoute(
+                  builder: (_) => const FeaturedPage(),
+                );
+                await context.read<GlobalNavigationController>().resetRootInTab(
+                  1,
+                  resetRoute,
+                );
               },
               child: SvgPicture.asset(AppVectors.chechMark),
             ),

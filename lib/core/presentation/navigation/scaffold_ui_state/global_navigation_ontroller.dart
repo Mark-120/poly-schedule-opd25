@@ -37,4 +37,34 @@ class GlobalNavigationController extends ChangeNotifier {
       ns2?.push(route);
     });
   }
+
+  /// Заменяет весь стек указанного таба на новый корневой маршрут.
+  Future<void> resetRootInTab(int index, Route newRootRoute) async {
+    final key = _navigatorKeys[index];
+    if (key == null) {
+      debugPrint(
+        '[GlobalNavigationController] resetRootInTab: no key for $index',
+      );
+      return;
+    }
+
+    final ns = key.currentState;
+    if (ns != null) {
+      // Удаляем всё и ставим новый корень
+      ns.pushAndRemoveUntil(newRootRoute, (route) => false);
+      return;
+    }
+
+    // Если currentState еще не доступен — отложим
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ns2 = key.currentState;
+      if (ns2 != null) {
+        ns2.pushAndRemoveUntil(newRootRoute, (route) => false);
+      } else {
+        debugPrint(
+          '[GlobalNavigationController] resetRootInTab: navigator still null for $index',
+        );
+      }
+    });
+  }
 }
