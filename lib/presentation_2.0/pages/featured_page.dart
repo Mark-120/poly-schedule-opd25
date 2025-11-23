@@ -19,6 +19,7 @@ import '../../domain/entities/teacher.dart';
 import '../../presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
 import '../../service_locator.dart';
 import '../state_managers/search_screen_bloc/search_bloc.dart';
+import '../widgets/editable_featured_dard.dart';
 import '../widgets/featured_card.dart';
 import 'schedule_page.dart';
 
@@ -109,20 +110,32 @@ class _NavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).extension<ThemeColors>()!.tile,
-        borderRadius: BorderRadius.circular(50),
-      ),
-      height: 37,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildNavigationButton(context, 0),
-          _buildNavigationButton(context, 1),
-          _buildNavigationButton(context, 2),
-        ],
+    final editMode =
+        context
+            .findAncestorStateOfType<_FeaturedPageViewState>()
+            ?.editMode
+            .value ??
+        false;
+    return Opacity(
+      opacity: editMode ? 0.6 : 1.0,
+      child: IgnorePointer(
+        ignoring: editMode,
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).extension<ThemeColors>()!.tile,
+            borderRadius: BorderRadius.circular(50),
+          ),
+          height: 37,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildNavigationButton(context, 0),
+              _buildNavigationButton(context, 1),
+              _buildNavigationButton(context, 2),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -170,7 +183,7 @@ class _FeaturedPageView extends StatefulWidget {
 
 class _FeaturedPageViewState extends State<_FeaturedPageView> {
   final PageController _pageController = PageController();
-  final bool _editMode = false;
+  ValueNotifier<bool> editMode = ValueNotifier(false);
 
   Future<void> jumpTo(int index) async {
     _pageController.animateToPage(
@@ -187,9 +200,9 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
         return Expanded(
           child: PageView(
             physics:
-                _editMode
-                    ? const NeverScrollableScrollPhysics()
-                    : const PageScrollPhysics(),
+                editMode.value
+                    ? NeverScrollableScrollPhysics()
+                    : PageScrollPhysics(),
             controller: _pageController,
             onPageChanged: widget.onPageChanged,
             children: [
@@ -253,6 +266,7 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
   final _searchController = TextEditingController();
   Featured<Building>? _selectedBuilding;
   bool _isFocused = false;
+  bool _editMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -275,7 +289,13 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
       return _buildSelectedBuildingHeader(context);
     }
 
-    return _buildSearchInput(context);
+    return Opacity(
+      opacity: _editMode ? 0.6 : 1,
+      child: IgnorePointer(
+        ignoring: _editMode,
+        child: _buildSearchInput(context),
+      ),
+    );
   }
 
   Widget _buildSelectedBuildingHeader(BuildContext context) {
@@ -458,6 +478,13 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
   Widget _buildFavorites(BuildContext context) {
     final textStyles = Theme.of(context).extension<AppTypography>()!;
     final items = widget.items;
+    final hasFavorites = widget.items.isNotEmpty;
+
+    if (!_editMode && hasFavorites) {
+      _showEditModeFab();
+    } else if (!hasFavorites) {
+      context.read<ScaffoldUiStateController>().clearFAB();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -467,6 +494,21 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         items.isEmpty
             ? Center(
               child: Text('Пусто', style: textStyles.featuredPageSubtitle),
+            )
+            : _editMode
+            ? Expanded(
+              child: ReorderableListView(
+                onReorder: _onReorder,
+                children: [
+                  for (int i = 0; i < widget.items.length; i++)
+                    EditableFeaturedCard(
+                      key: ValueKey(widget.items[i]),
+                      title: widget.items[i],
+                      dragHandle: Icon(Icons.drag_handle, color: Colors.grey),
+                      onDelete: () => _deleteItem(i),
+                    ),
+                ],
+              ),
             )
             : Expanded(
               child: ListView.separated(
@@ -481,6 +523,82 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
             ),
       ],
     );
+  }
+
+  void _onReorder(int oldIndex, int newIndex) {
+    final item = widget.items.removeAt(oldIndex);
+    setState(() {
+      widget.items.insert(newIndex > oldIndex ? newIndex - 1 : newIndex, item);
+    });
+    if (item is Featured<Group>) {
+      context.read<FeaturedBloc>().add(ReorderGroups(oldIndex, newIndex));
+    }
+    if (item is Featured<Teacher>) {
+      context.read<FeaturedBloc>().add(ReorderTeachers(oldIndex, newIndex));
+    }
+    if (item is Featured<Room>) {
+      context.read<FeaturedBloc>().add(ReorderRooms(oldIndex, newIndex));
+    }
+  }
+
+  void _deleteItem(int index) {
+    setState(() => widget.items.removeAt(index));
+    final type = widget.sectionType;
+    switch (type) {
+      case FeaturedSubpages.groups:
+        context.read<FeaturedBloc>().add(DeleteGroup(index));
+        break;
+      case FeaturedSubpages.teachers:
+        context.read<FeaturedBloc>().add(DeleteTeacher(index));
+        break;
+      case FeaturedSubpages.classes:
+        context.read<FeaturedBloc>().add(DeleteRoom(index));
+        break;
+    }
+  }
+
+  void _showEditModeFab() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ScaffoldUiStateController>().update(
+        ScaffoldUiState(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              setState(() => _editMode = true);
+              _lockNavigation();
+              _showEditDoneFab();
+            },
+            child: Icon(Icons.edit),
+          ),
+        ),
+      );
+    });
+  }
+
+  void _lockNavigation() {
+    context.findAncestorStateOfType<_FeaturedPageViewState>()?.editMode.value =
+        true;
+  }
+
+  void _unlockNavigation() {
+    context.findAncestorStateOfType<_FeaturedPageViewState>()?.editMode.value =
+        false;
+  }
+
+  void _showEditDoneFab() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ScaffoldUiStateController>().update(
+        ScaffoldUiState(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              setState(() => _editMode = false);
+              _unlockNavigation();
+              _showEditModeFab();
+            },
+            child: Icon(Icons.check),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildSearchResults(BuildContext context) {
