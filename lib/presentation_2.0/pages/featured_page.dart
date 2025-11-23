@@ -552,7 +552,6 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
   Widget _buildFavorites(BuildContext context) {
     final textStyles = Theme.of(context).extension<AppTypography>()!;
     final items = widget.items;
-    final hasFavorites = widget.items.isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

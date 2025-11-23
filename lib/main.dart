@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 import 'core/presentation/navigation/app_navigation.dart';
@@ -11,8 +10,6 @@ import 'core/services/app_initialization_service.dart';
 import 'core/services/last_schedule_service.dart';
 import 'data/models/last_schedule.dart';
 import 'presentation_2.0/pages/scaffold_ui_wrapper.dart';
-import 'presentation_2.0/state_managers/schedule_bloc/schedule_bloc.dart';
-import 'presentation_2.0/state_managers/search_screen_bloc/search_bloc.dart';
 import 'service_locator.dart';
 
 void main() async {
