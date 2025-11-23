@@ -57,6 +57,14 @@ class AppTypography extends ThemeExtension<AppTypography> {
   TextStyle get navigationBarItemChosen =>
       TextStyle(fontSize: 14, color: NewAppColors.white);
 
+  TextStyle get searchFieldHint => TextStyle(fontSize: 14, color: _hintColor);
+  TextStyle get featuredPageTitle =>
+      TextStyle(fontSize: 18, color: _textPrimaryColor);
+  TextStyle get featuredCard =>
+      TextStyle(fontSize: 14, color: _textPrimaryColor);
+  TextStyle get featuredPageSubtitle =>
+      TextStyle(fontSize: 16, color: _textPrimaryColor);
+
   // Methods to override ThemeExtension
 
   @override

@@ -57,6 +57,8 @@ import 'presentation/state_managers/class_search_screen_bloc/class_search_bloc.d
 import 'presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
 import 'presentation/state_managers/schedule_screen_bloc/schedule_bloc.dart';
 import 'presentation/state_managers/search_screen_bloc/search_bloc.dart';
+import 'presentation_2.0/state_managers/schedule_bloc/schedule_bloc.dart';
+import 'presentation_2.0/state_managers/search_screen_bloc/search_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -205,8 +207,27 @@ Future<void> init() async {
       addFeaturedTeacher: sl(),
     ),
   );
+  sl.registerFactory<NewSearchBloc>(
+    () => NewSearchBloc(
+      findGroups: sl(),
+      findTeachers: sl(),
+      addFeaturedGroup: sl(),
+      addFeaturedTeacher: sl(),
+      findBuildings: sl(),
+      getRoomsOfBuilding: sl(),
+      addFeaturedRoom: sl(),
+    ),
+  );
   sl.registerFactory<ScheduleBloc>(
     () => ScheduleBloc(getSchedule: sl<GetSchedule>()),
+  );
+  sl.registerFactory<NewScheduleBloc>(
+    () => NewScheduleBloc(
+      getSchedule: sl<GetSchedule>(),
+      addFeaturedGroup: sl(),
+      addFeaturedTeacher: sl(),
+      addFeaturedRoom: sl(),
+    ),
   );
 
   // Services
