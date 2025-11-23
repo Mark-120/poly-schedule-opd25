@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/date_formater.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state.dart';
@@ -9,27 +10,29 @@ import '../../core/presentation/uikit/theme_extension.dart';
 import '../../core/presentation/uikit_2.0/app_shadows.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../core/services/error_handling_service.dart';
+import '../../domain/entities/entity.dart';
 import '../../domain/entities/entity_id.dart';
+import '../../domain/entities/featured.dart';
+import '../../domain/entities/group.dart';
+import '../../domain/entities/room.dart';
 import '../../domain/entities/schedule/day.dart';
 import '../../domain/entities/schedule/week.dart';
-import '../../presentation/state_managers/schedule_screen_bloc/schedule_bloc.dart';
-import '../../presentation/state_managers/schedule_screen_bloc/schedule_event.dart';
-import '../../presentation/state_managers/schedule_screen_bloc/schedule_state.dart';
+import '../../domain/entities/teacher.dart';
 import '../../service_locator.dart';
+import '../state_managers/schedule_bloc/schedule_bloc.dart';
+import '../state_managers/schedule_bloc/schedule_event.dart';
+import '../state_managers/schedule_bloc/schedule_state.dart';
 import '../widgets/schedule_day_card.dart';
 
 class SchedulePage extends StatefulWidget {
   static const route = '/schedule';
 
-  final EntityId id;
+  final Featured featured;
   final DateTime dayTime;
-  final String bottomTitle;
-
   const SchedulePage({
     super.key,
-    required this.id,
     required this.dayTime,
-    required this.bottomTitle,
+    required this.featured,
   });
 
   @override
@@ -42,6 +45,9 @@ class _SchedulePageState extends State<SchedulePage> {
   final List<GlobalKey> _pageKeys = [];
   late final ValueNotifier<DateTime> _weekNotifier;
   int _savedPageIndex = 49;
+  late final EntityId entityId;
+  late final String bottomTitle;
+  late bool isFeatured;
 
   @override
   void initState() {
@@ -50,6 +56,25 @@ class _SchedulePageState extends State<SchedulePage> {
     _pageKeys.addAll([for (int i = 0; i < 100; i++) GlobalKey()]);
     _pageController.addListener(_onPageChanged);
     _weekNotifier = ValueNotifier(widget.dayTime);
+    entityId = _getEntityIdBySectionType(widget.featured.entity);
+    bottomTitle = _getEntityBottomTitleByType(widget.featured.entity);
+    isFeatured = widget.featured.isFeatured;
+  }
+
+  EntityId _getEntityIdBySectionType(Entity entity) {
+    if (entity is Group) return EntityId.group(entity.id);
+    if (entity is Teacher) return EntityId.teacher(entity.id);
+    if (entity is Room) return EntityId.room(entity.getId());
+    throw UnimplementedError();
+  }
+
+  String _getEntityBottomTitleByType(Entity entity) {
+    if (entity is Group) return entity.name;
+    if (entity is Teacher) {
+      return AppStrings.fullNameToAbbreviation(entity.fullName);
+    }
+    if (entity is Room) return AppStrings.fullNameOfRoom(entity);
+    throw UnimplementedError();
   }
 
   void _addAllWeeks() {
@@ -102,8 +127,8 @@ class _SchedulePageState extends State<SchedulePage> {
               return BlocProvider(
                 create:
                     (context) =>
-                        sl<ScheduleBloc>()
-                          ..add(_createEvent(widget.id, _weekDates[index])),
+                        sl<NewScheduleBloc>()
+                          ..add(_createEvent(entityId, _weekDates[index])),
                 child: _SchedulePage(key: _pageKeys[index]),
               );
             },
@@ -111,7 +136,7 @@ class _SchedulePageState extends State<SchedulePage> {
         ),
         Align(
           alignment: Alignment.bottomCenter,
-          child: _bottomBar(context, title: widget.bottomTitle),
+          child: _bottomBar(context, title: bottomTitle),
         ),
       ],
     );
@@ -119,39 +144,52 @@ class _SchedulePageState extends State<SchedulePage> {
 
   Widget _bottomBar(BuildContext context, {required String title}) {
     final textStyles = Theme.of(context).extension<AppTypography>()!;
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        boxShadow: [AppShadows.menuShadow],
-      ),
-      padding: EdgeInsets.zero,
-      height: 38,
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(width: 48),
-          Expanded(
-            child: Center(
-              child: Text(
-                title,
-                style: textStyles.bottomBarTitle,
-                softWrap: true,
-                overflow: TextOverflow.ellipsis,
-              ),
+    return Provider(
+      create: (_) => sl<NewScheduleBloc>(),
+      builder:
+          (context, state) => Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              boxShadow: [AppShadows.menuShadow],
+            ),
+            padding: EdgeInsets.zero,
+            height: 38,
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(width: 48),
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      title,
+                      style: textStyles.bottomBarTitle,
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    isFeatured ? Icons.star : Icons.star_outline_outlined,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  iconSize: 28,
+                  onPressed: () {
+                    if (!isFeatured) {
+                      context.read<NewScheduleBloc>().add(
+                        SaveToFeatured(widget.featured.entity),
+                      );
+                    }
+                    setState(() {
+                      isFeatured = !isFeatured;
+                    });
+                  },
+                ),
+              ],
             ),
           ),
-          IconButton(
-            icon: Icon(
-              Icons.star_outline_outlined,
-              color: context.appTheme.iconColor,
-            ),
-            iconSize: 28,
-            onPressed: () => {},
-          ),
-        ],
-      ),
     );
   }
 
@@ -266,7 +304,7 @@ class _SchedulePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyles = Theme.of(context).extension<AppTypography>()!;
 
-    return BlocBuilder<ScheduleBloc, ScheduleState>(
+    return BlocBuilder<NewScheduleBloc, ScheduleState>(
       builder: (context, state) {
         if (state is ScheduleLoading) {
           return const Center(child: CircularProgressIndicator());

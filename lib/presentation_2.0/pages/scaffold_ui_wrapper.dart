@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 import '../../core/configs/assets/app_vectors.dart';
 import '../../core/presentation/navigation/page_wrapper.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/global_navigation_ontroller.dart';
-import '../../domain/entities/entity_id.dart';
+import '../../data/models/teacher.dart';
+import '../../domain/entities/featured.dart';
 import '../../domain/entities/teacher.dart';
 import 'featured_page.dart';
 import 'schedule_page.dart';
@@ -37,9 +38,13 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
       PageWrapper(
         navigatorKey: navigatorKeys[0],
         child: SchedulePage(
-          id: EntityId.teacher(TeacherId(13445)),
+          featured: Featured(
+            TeacherModel(
+              fullName: 'Щукин Александр Валентинович',
+              id: TeacherId(13445),
+            ),
+          ),
           dayTime: DateTime.now(),
-          bottomTitle: 'Щукин А.В.',
         ),
       ),
       PageWrapper(navigatorKey: navigatorKeys[1], child: FeaturedPage()),
@@ -110,6 +115,8 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
     return Consumer<GlobalNavigationController>(
       builder: (_, controller, __) {
         return BottomAppBar(
+          height: 60,
+          padding: EdgeInsets.all(0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [

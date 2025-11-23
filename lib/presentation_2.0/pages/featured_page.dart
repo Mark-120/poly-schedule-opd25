@@ -11,7 +11,6 @@ import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../core/presentation/uikit_2.0/theme_colors.dart';
 import '../../domain/entities/building.dart';
 import '../../domain/entities/entity.dart';
-import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/featured.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/room.dart';
@@ -58,6 +57,12 @@ class _FeaturedPageBodyState extends State<_FeaturedPageBody> {
     if (!_appBarInitialized) {
       _setupAppBar();
       _appBarInitialized = true;
+    }
+
+    final nav = context.watch<GlobalNavigationController>();
+
+    if (nav.currentIndex == 1) {
+      context.read<FeaturedBloc>().add(LoadFeaturedData());
     }
   }
 
@@ -197,6 +202,19 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
   Widget build(BuildContext context) {
     return BlocBuilder<FeaturedBloc, FeaturedState>(
       builder: (context, state) {
+        final List<String> groupFeatured =
+            state is FeaturedLoaded
+                ? state.groups.map((g) => g.name).toList()
+                : [];
+        final List<String> teacherFeatured =
+            state is FeaturedLoaded
+                ? state.teachers.map((g) => g.fullName).toList()
+                : [];
+        final List<String> classFeatured =
+            state is FeaturedLoaded
+                ? state.rooms.map((g) => g.name).toList()
+                : [];
+        final allFeatured = [groupFeatured, teacherFeatured, classFeatured];
         return Expanded(
           child: PageView(
             physics:
@@ -204,37 +222,81 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
                     ? NeverScrollableScrollPhysics()
                     : PageScrollPhysics(),
             controller: _pageController,
-            onPageChanged: widget.onPageChanged,
+            onPageChanged: (int index) {
+              widget.onPageChanged(index);
+
+              final items = allFeatured[index];
+              final hasFavorites = items.isNotEmpty;
+
+              if (!editMode.value && hasFavorites) {
+                _showEditModeFab();
+              } else if (!hasFavorites) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  context.read<ScaffoldUiStateController>().clearFAB();
+                });
+              }
+            },
             children: [
               _FeaturedSection(
                 key: PageStorageKey('page1'),
                 FeaturedSubpages.groups,
-                items:
-                    state is FeaturedLoaded
-                        ? state.groups.map((g) => g.name).toList()
-                        : [],
+                items: groupFeatured,
               ),
               _FeaturedSection(
                 key: PageStorageKey('page2'),
                 FeaturedSubpages.teachers,
-                items:
-                    state is FeaturedLoaded
-                        ? state.teachers.map((g) => g.fullName).toList()
-                        : [],
+                items: teacherFeatured,
               ),
               _FeaturedSection(
                 key: PageStorageKey('page3'),
                 FeaturedSubpages.classes,
-                items:
-                    state is FeaturedLoaded
-                        ? state.rooms.map((g) => g.name).toList()
-                        : [],
+                items: classFeatured,
               ),
             ],
           ),
         );
       },
     );
+  }
+
+  void _showEditModeFab() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ScaffoldUiStateController>().add(
+        ScaffoldUiState(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              _lockNavigation();
+              _showEditDoneFab();
+            },
+            child: Icon(Icons.edit),
+          ),
+        ),
+      );
+    });
+  }
+
+  void _lockNavigation() {
+    setState(() => editMode.value = true);
+  }
+
+  void _unlockNavigation() {
+    setState(() => editMode.value = false);
+  }
+
+  void _showEditDoneFab() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ScaffoldUiStateController>().add(
+        ScaffoldUiState(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              _unlockNavigation();
+              _showEditModeFab();
+            },
+            child: Icon(Icons.check),
+          ),
+        ),
+      );
+    });
   }
 }
 
@@ -245,9 +307,19 @@ class _FeaturedSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final editMode =
+        context
+            .findAncestorStateOfType<_FeaturedPageViewState>()
+            ?.editMode
+            .value ??
+        false;
     return BlocProvider(
       create: (context) => sl<NewSearchBloc>(),
-      child: _FeaturedSectionBody(sectionType, items: items),
+      child: _FeaturedSectionBody(
+        sectionType,
+        items: items,
+        editMode: editMode,
+      ),
     );
   }
 }
@@ -255,8 +327,12 @@ class _FeaturedSection extends StatelessWidget {
 class _FeaturedSectionBody extends StatefulWidget {
   final FeaturedSubpages sectionType;
   final List<String> items;
-  final debugMode = true;
-  const _FeaturedSectionBody(this.sectionType, {required this.items});
+  final bool editMode;
+  const _FeaturedSectionBody(
+    this.sectionType, {
+    required this.items,
+    required this.editMode,
+  });
 
   @override
   State<_FeaturedSectionBody> createState() => _FeaturedSectionBodyState();
@@ -266,7 +342,6 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
   final _searchController = TextEditingController();
   Featured<Building>? _selectedBuilding;
   bool _isFocused = false;
-  bool _editMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -290,9 +365,9 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
     }
 
     return Opacity(
-      opacity: _editMode ? 0.6 : 1,
+      opacity: widget.editMode ? 0.6 : 1,
       child: IgnorePointer(
-        ignoring: _editMode,
+        ignoring: widget.editMode,
         child: _buildSearchInput(context),
       ),
     );
@@ -397,7 +472,6 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
     final query = _searchController.text;
 
     if (widget.sectionType == FeaturedSubpages.classes) {
-      // если корпус выбран → показываем аудитории
       if (_selectedBuilding != null) {
         return Expanded(child: _buildBuildingSearchResults(context));
       }
@@ -417,7 +491,7 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
     }
 
     // 2. Пользователь ввёл что-то → показываем результаты поиска
-    if (query.isNotEmpty || widget.debugMode) {
+    if (query.isNotEmpty) {
       return Expanded(child: _buildSearchResults(context));
     }
 
@@ -480,12 +554,6 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
     final items = widget.items;
     final hasFavorites = widget.items.isNotEmpty;
 
-    if (!_editMode && hasFavorites) {
-      _showEditModeFab();
-    } else if (!hasFavorites) {
-      context.read<ScaffoldUiStateController>().clearFAB();
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -495,7 +563,7 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
             ? Center(
               child: Text('Пусто', style: textStyles.featuredPageSubtitle),
             )
-            : _editMode
+            : widget.editMode
             ? Expanded(
               child: ReorderableListView(
                 onReorder: _onReorder,
@@ -555,50 +623,6 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         context.read<FeaturedBloc>().add(DeleteRoom(index));
         break;
     }
-  }
-
-  void _showEditModeFab() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ScaffoldUiStateController>().update(
-        ScaffoldUiState(
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              setState(() => _editMode = true);
-              _lockNavigation();
-              _showEditDoneFab();
-            },
-            child: Icon(Icons.edit),
-          ),
-        ),
-      );
-    });
-  }
-
-  void _lockNavigation() {
-    context.findAncestorStateOfType<_FeaturedPageViewState>()?.editMode.value =
-        true;
-  }
-
-  void _unlockNavigation() {
-    context.findAncestorStateOfType<_FeaturedPageViewState>()?.editMode.value =
-        false;
-  }
-
-  void _showEditDoneFab() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ScaffoldUiStateController>().update(
-        ScaffoldUiState(
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              setState(() => _editMode = false);
-              _unlockNavigation();
-              _showEditModeFab();
-            },
-            child: Icon(Icons.check),
-          ),
-        ),
-      );
-    });
   }
 
   Widget _buildSearchResults(BuildContext context) {
@@ -680,13 +704,9 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
               onPressed: () async {
                 final route = MaterialPageRoute(
                   builder: (_) {
-                    final entity = item.entity;
-                    final entityId = _getEntityIdBySectionType(entity);
-                    final bottomTitle = _getEntityBottomTitleByType(entity);
                     return SchedulePage(
-                      id: entityId,
                       dayTime: DateTime.now(),
-                      bottomTitle: bottomTitle,
+                      featured: item,
                     );
                   },
                 );
@@ -713,22 +733,6 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         context.read<ScaffoldUiStateController>().clearFAB();
       });
     }
-  }
-
-  EntityId _getEntityIdBySectionType(Entity entity) {
-    if (entity is Group) return EntityId.group(entity.id);
-    if (entity is Teacher) return EntityId.teacher(entity.id);
-    if (entity is Room) return EntityId.room(entity.getId());
-    throw UnimplementedError();
-  }
-
-  String _getEntityBottomTitleByType(Entity entity) {
-    if (entity is Group) return entity.name;
-    if (entity is Teacher) {
-      return AppStrings.fullNameToAbbreviation(entity.fullName);
-    }
-    if (entity is Room) return AppStrings.fullNameOfRoom(entity);
-    throw UnimplementedError();
   }
 
   String _getInitialSearchText(FeaturedSubpages type) {
