@@ -205,6 +205,7 @@ class _FeaturedPageView extends StatefulWidget {
 class _FeaturedPageViewState extends State<_FeaturedPageView> {
   final PageController _pageController = PageController();
   ValueNotifier<bool> get editMode => widget.editMode;
+  bool isInitialized = false;
 
   Future<void> jumpTo(int index) async {
     _pageController.animateToPage(
@@ -231,6 +232,17 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
                 ? state.rooms.map((g) => g.name).toList()
                 : [];
         final allFeatured = [groupFeatured, teacherFeatured, classFeatured];
+
+        if (state is FeaturedLoaded && !isInitialized) {
+          if (groupFeatured.isNotEmpty) {
+            _showEditStartFab();
+          } else {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<ScaffoldUiStateController>().clearFAB();
+            });
+          }
+          isInitialized = true;
+        }
         return Expanded(
           child: PageView(
             physics:
