@@ -738,7 +738,7 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
   }
 
   void _saveLastOpenedItem(Featured<Entity> item) {
-    context.read<LastScheduleService>().save(featured: item);
+    context.read<LastFeaturedService>().save(featured: item);
   }
 
   String _getInitialSearchText(FeaturedSubpages type) {

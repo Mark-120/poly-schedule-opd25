@@ -448,19 +448,19 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
   }
 
   void onSaveRoom(Room room) {
-    context.read<LastScheduleService>().save(
+    context.read<LastFeaturedService>().save(
       featured: Featured(room, isFeatured: true),
     );
   }
 
   void onSaveGroup(Group group) {
-    context.read<LastScheduleService>().save(
+    context.read<LastFeaturedService>().save(
       featured: Featured(group, isFeatured: true),
     );
   }
 
   void onSaveTeacher(Teacher teacher) {
-    context.read<LastScheduleService>().save(
+    context.read<LastFeaturedService>().save(
       featured: Featured(teacher, isFeatured: true),
     );
   }

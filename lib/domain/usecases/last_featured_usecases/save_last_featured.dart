@@ -13,10 +13,10 @@ class SaveLastFeatured {
   }
 }
 
-class GetLastSchedule {
+class GetLastFeatured {
   final LastFeaturedRepository repository;
 
-  GetLastSchedule(this.repository);
+  GetLastFeatured(this.repository);
 
   Future<Featured?> call() async {
     return await repository.getLastFeatured();

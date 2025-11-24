@@ -115,7 +115,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => IsSavedInFeatured(sl()));
 
   sl.registerLazySingleton(() => SaveLastFeatured(sl()));
-  sl.registerLazySingleton(() => GetLastSchedule(sl()));
+  sl.registerLazySingleton(() => GetLastFeatured(sl()));
 
   //Featured Repository
   sl.registerSingleton<FeaturedRepository>(
@@ -231,7 +231,7 @@ Future<void> init() async {
   );
 
   // Services
-  sl.registerSingleton<LastScheduleService>(
-    LastScheduleService(saveLastSchedule: sl(), getLastSchedule: sl()),
+  sl.registerSingleton<LastFeaturedService>(
+    LastFeaturedService(saveLastFeatured: sl(), getLastFeatured: sl()),
   );
 }
