@@ -28,7 +28,7 @@ class FeaturedCard extends StatelessWidget {
       onTap: onTap ?? () {},
       child: Container(
         padding: EdgeInsets.symmetric(
-          vertical: isChosen ? 10 : 12,
+          vertical: isChosen ? 8 : 10,
           horizontal: isChosen ? 14 : 16,
         ),
         height: 40,

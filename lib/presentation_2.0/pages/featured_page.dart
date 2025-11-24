@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -49,7 +50,9 @@ class _FeaturedPageBody extends StatefulWidget {
 class _FeaturedPageBodyState extends State<_FeaturedPageBody> {
   int _currentPageIndex = 0;
   bool _appBarInitialized = false;
+
   final _featuredSectionKey = GlobalKey<_FeaturedPageViewState>();
+  final editMode = ValueNotifier<bool>(false);
 
   @override
   void didChangeDependencies() {
@@ -89,12 +92,14 @@ class _FeaturedPageBodyState extends State<_FeaturedPageBody> {
         children: [
           _NavigationBar(
             currentIndex: _currentPageIndex,
+            editMode: editMode,
             onTap: (index) async {
               await _featuredSectionKey.currentState?.jumpTo(index);
             },
           ),
           SizedBox(height: 24),
           _FeaturedPageView(
+            editMode: editMode,
             key: _featuredSectionKey,
             onPageChanged: changeIndex,
           ),
@@ -111,38 +116,42 @@ class _FeaturedPageBodyState extends State<_FeaturedPageBody> {
 class _NavigationBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
+  final ValueListenable<bool> editMode;
 
-  const _NavigationBar({required this.onTap, required this.currentIndex});
+  const _NavigationBar({
+    required this.onTap,
+    required this.currentIndex,
+    required this.editMode,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final editMode =
-        context
-            .findAncestorStateOfType<_FeaturedPageViewState>()
-            ?.editMode
-            .value ??
-        false;
-    return Opacity(
-      opacity: editMode ? 0.6 : 1.0,
-      child: IgnorePointer(
-        ignoring: editMode,
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Theme.of(context).extension<ThemeColors>()!.tile,
-            borderRadius: BorderRadius.circular(50),
+    return ValueListenableBuilder<bool>(
+      valueListenable: editMode,
+      builder: (_, editMode, __) {
+        return Opacity(
+          opacity: editMode ? 0.6 : 1.0,
+          child: IgnorePointer(
+            ignoring: editMode,
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).extension<ThemeColors>()!.tile,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              height: 37,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildNavigationButton(context, 0),
+                  _buildNavigationButton(context, 1),
+                  _buildNavigationButton(context, 2),
+                ],
+              ),
+            ),
           ),
-          height: 37,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildNavigationButton(context, 0),
-              _buildNavigationButton(context, 1),
-              _buildNavigationButton(context, 2),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -181,7 +190,13 @@ class _NavigationBar extends StatelessWidget {
 
 class _FeaturedPageView extends StatefulWidget {
   final ValueChanged<int> onPageChanged;
-  const _FeaturedPageView({super.key, required this.onPageChanged});
+  final ValueNotifier<bool> editMode; // ← добавили
+
+  const _FeaturedPageView({
+    super.key,
+    required this.onPageChanged,
+    required this.editMode,
+  });
 
   @override
   State<_FeaturedPageView> createState() => _FeaturedPageViewState();
@@ -189,7 +204,8 @@ class _FeaturedPageView extends StatefulWidget {
 
 class _FeaturedPageViewState extends State<_FeaturedPageView> {
   final PageController _pageController = PageController();
-  ValueNotifier<bool> editMode = ValueNotifier(false);
+  ValueNotifier<bool> get editMode => widget.editMode;
+  bool isInitialized = false;
 
   Future<void> jumpTo(int index) async {
     _pageController.animateToPage(
@@ -203,19 +219,36 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
   Widget build(BuildContext context) {
     return BlocBuilder<FeaturedBloc, FeaturedState>(
       builder: (context, state) {
-        final List<String> groupFeatured =
+        final List<Featured<Group>> groupFeatured =
             state is FeaturedLoaded
-                ? state.groups.map((g) => g.name).toList()
+                ? state.groups
+                    .map((e) => Featured<Group>(e, isFeatured: true))
+                    .toList()
                 : [];
-        final List<String> teacherFeatured =
+        final List<Featured<Teacher>> teacherFeatured =
             state is FeaturedLoaded
-                ? state.teachers.map((g) => g.fullName).toList()
+                ? state.teachers
+                    .map((e) => Featured<Teacher>(e, isFeatured: true))
+                    .toList()
                 : [];
-        final List<String> classFeatured =
+        final List<Featured<Room>> classFeatured =
             state is FeaturedLoaded
-                ? state.rooms.map((g) => g.name).toList()
+                ? state.rooms
+                    .map((e) => Featured<Room>(e, isFeatured: true))
+                    .toList()
                 : [];
         final allFeatured = [groupFeatured, teacherFeatured, classFeatured];
+
+        if (state is FeaturedLoaded && !isInitialized) {
+          if (groupFeatured.isNotEmpty) {
+            _showEditStartFab();
+          } else {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<ScaffoldUiStateController>().clearFAB();
+            });
+          }
+          isInitialized = true;
+        }
         return Expanded(
           child: PageView(
             physics:
@@ -230,7 +263,7 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
               final hasFavorites = items.isNotEmpty;
 
               if (!editMode.value && hasFavorites) {
-                _showEditModeFab();
+                _showEditStartFab();
               } else if (!hasFavorites) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   context.read<ScaffoldUiStateController>().clearFAB();
@@ -260,7 +293,7 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
     );
   }
 
-  void _showEditModeFab() {
+  void _showEditStartFab() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ScaffoldUiStateController>().add(
         ScaffoldUiState(
@@ -269,7 +302,7 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
               _lockNavigation();
               _showEditDoneFab();
             },
-            child: Icon(Icons.edit),
+            child: SvgPicture.asset(AppVectors.pencil),
           ),
         ),
       );
@@ -291,9 +324,9 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               _unlockNavigation();
-              _showEditModeFab();
+              _showEditStartFab();
             },
-            child: Icon(Icons.check),
+            child: SvgPicture.asset(AppVectors.chechMark),
           ),
         ),
       );
@@ -303,7 +336,7 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
 
 class _FeaturedSection extends StatelessWidget {
   final FeaturedSubpages sectionType;
-  final List<String> items;
+  final List<Featured> items;
   const _FeaturedSection(this.sectionType, {required this.items, super.key});
 
   @override
@@ -314,12 +347,18 @@ class _FeaturedSection extends StatelessWidget {
             ?.editMode
             .value ??
         false;
-    return BlocProvider(
-      create: (context) => sl<NewSearchBloc>(),
-      child: _FeaturedSectionBody(
-        sectionType,
-        items: items,
-        editMode: editMode,
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: BlocProvider(
+        create: (context) => sl<NewSearchBloc>(),
+        child: _FeaturedSectionBody(
+          sectionType,
+          items: items,
+          editMode: editMode,
+        ),
       ),
     );
   }
@@ -327,7 +366,7 @@ class _FeaturedSection extends StatelessWidget {
 
 class _FeaturedSectionBody extends StatefulWidget {
   final FeaturedSubpages sectionType;
-  final List<String> items;
+  final List<Featured> items;
   final bool editMode;
   const _FeaturedSectionBody(
     this.sectionType, {
@@ -520,7 +559,6 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
           );
         } else if (state is SearchResultsLoaded) {
           print('came here');
-          _createFAB(state.selectedItem);
           return ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: state.results.length,
@@ -537,6 +575,7 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
                   context.read<NewSearchBloc>().add(
                     SearchItemSelected(item, widget.sectionType),
                   );
+                  _createFAB(item);
                   setState(() {});
                 },
               );
@@ -565,17 +604,18 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
             )
             : widget.editMode
             ? Expanded(
-              child: ReorderableListView(
+              child: ReorderableListView.builder(
                 onReorder: _onReorder,
-                children: [
-                  for (int i = 0; i < widget.items.length; i++)
-                    EditableFeaturedCard(
+                itemCount: widget.items.length,
+                itemBuilder:
+                    (context, i) => EditableFeaturedCard(
                       key: ValueKey(widget.items[i]),
-                      title: widget.items[i],
-                      dragHandle: Icon(Icons.drag_handle, color: Colors.grey),
+                      title: _getEntityTextByType(widget.items[i]),
                       onDelete: () => _deleteItem(i),
                     ),
-                ],
+                proxyDecorator:
+                    (child, index, animation) =>
+                        Material(elevation: 0, child: child),
               ),
             )
             : Expanded(
@@ -585,7 +625,12 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
                 physics: const ClampingScrollPhysics(),
                 itemCount: items.length,
                 itemBuilder:
-                    (_, index) => FeaturedCard(items[index], onTap: () {}),
+                    (_, index) => FeaturedCard(
+                      _getEntityFeaturedTextByType(items[index]),
+                      onTap: () {
+                        _redirectToSchedulePage(items[index]);
+                      },
+                    ),
                 separatorBuilder: (_, __) => SizedBox(height: 10),
               ),
             ),
@@ -633,6 +678,12 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         if (state is SearchInitial) {
           return Center(child: Text(_getInitialSearchText(widget.sectionType)));
         } else if (state is SearchLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is SearchResultsLoaded &&
+            state.results is List<Featured<Room>>) {
+          context.read<NewSearchBloc>().add(
+            SearchQueryChanged(_searchController.text, widget.sectionType),
+          );
           return const Center(child: CircularProgressIndicator());
         } else if (state is SearchError) {
           return Center(
@@ -701,30 +752,7 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         context.read<ScaffoldUiStateController>().add(
           ScaffoldUiState(
             floatingActionButton: FloatingActionButton(
-              onPressed: () async {
-                final route = MaterialPageRoute(
-                  builder: (_) {
-                    return SchedulePage(
-                      dayTime: DateTime.now(),
-                      featured: item,
-                    );
-                  },
-                );
-                await context.read<GlobalNavigationController>().pushToTab(
-                  0,
-                  route,
-                );
-                _saveLastOpenedItem(item);
-
-                // сбросить FeaturedPage (она находится в табе 1)
-                final resetRoute = MaterialPageRoute(
-                  builder: (_) => const FeaturedPage(),
-                );
-                await context.read<GlobalNavigationController>().resetRootInTab(
-                  1,
-                  resetRoute,
-                );
-              },
+              onPressed: () => _redirectToSchedulePage(item),
               child: SvgPicture.asset(AppVectors.chechMark),
             ),
           ),
@@ -735,6 +763,23 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         context.read<ScaffoldUiStateController>().clearFAB();
       });
     }
+  }
+
+  void _redirectToSchedulePage(Featured<Entity> item) async {
+    final route = MaterialPageRoute(
+      builder: (_) {
+        return SchedulePage(dayTime: DateTime.now(), featured: item);
+      },
+    );
+    await context.read<GlobalNavigationController>().pushToTab(0, route);
+    _saveLastOpenedItem(item);
+
+    // сбросить FeaturedPage (она находится в табе 1)
+    final resetRoute = MaterialPageRoute(builder: (_) => const FeaturedPage());
+    await context.read<GlobalNavigationController>().resetRootInTab(
+      1,
+      resetRoute,
+    );
   }
 
   void _saveLastOpenedItem(Featured<Entity> item) {
@@ -773,6 +818,17 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         return item.entity is Building
             ? (item as Featured<Building>).entity.name
             : (item as Featured<Room>).entity.name;
+    }
+  }
+
+  String _getEntityFeaturedTextByType(Featured<Entity> item) {
+    switch (widget.sectionType) {
+      case FeaturedSubpages.groups:
+        return (item as Featured<Group>).entity.name;
+      case FeaturedSubpages.teachers:
+        return (item as Featured<Teacher>).entity.fullName;
+      case FeaturedSubpages.classes:
+        return AppStrings.fullNameOfRoom(item.entity as Room);
     }
   }
 }

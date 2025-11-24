@@ -9,17 +9,23 @@ import 'core/presentation/uikit_2.0/app_themes.dart';
 import 'core/services/app_initialization_service.dart';
 import 'core/services/last_featured_service.dart';
 import 'domain/entities/featured.dart';
+import 'domain/repositories/featured_repository.dart';
 import 'presentation_2.0/pages/scaffold_ui_wrapper.dart';
 import 'service_locator.dart';
 
 void main() async {
   await AppInitializationService.initializeApplication();
-  final lastSchedule = await sl<LastFeaturedService>().load();
+  final lastFeatured = await sl<LastFeaturedService>().load();
+  final featured = lastFeatured?.copyWith(
+    isFeatured: await sl<FeaturedRepository>().isSavedInFeatured(
+      lastFeatured.getEntityId(),
+    ),
+  );
 
   runApp(
     Provider<LastFeaturedService>(
       create: (context) => sl<LastFeaturedService>(),
-      child: MainApp(lastFeatured: lastSchedule),
+      child: MainApp(lastFeatured: featured),
     ),
   );
 }

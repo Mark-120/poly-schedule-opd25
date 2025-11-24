@@ -86,7 +86,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
   @override
   Future<bool> isSavedInFeatured(EntityId id) async {
     if (id.isTeacher) {
-      return (await getFeaturedGroups()).any((x) => x.id == id.asTeacher);
+      return (await getFeaturedTeachers()).any((x) => x.id == id.asTeacher);
     } else if (id.isRoom) {
       return (await getFeaturedRooms()).any((x) => x.getId() == id.asRoom);
     } else if (id.isGroup) {

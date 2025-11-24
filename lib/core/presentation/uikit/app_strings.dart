@@ -16,8 +16,10 @@ class AppStrings {
     return '${list[0]} ${list[1][0]}. ${list[2][0]}.';
   }
 
-  static String fullNameOfRoom(Room room) =>
+  static String shortNameOfRoom(Room room) =>
       '${room.name} ауд., ${room.building.abbr}';
+  static String fullNameOfRoom(Room room) =>
+      '${room.building.name}, аудитория ${room.name}';
 
   //Settings Screen
   static const String settingsTitle = 'Настройки';
