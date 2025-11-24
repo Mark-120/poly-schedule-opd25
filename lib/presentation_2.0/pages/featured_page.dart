@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -49,7 +50,9 @@ class _FeaturedPageBody extends StatefulWidget {
 class _FeaturedPageBodyState extends State<_FeaturedPageBody> {
   int _currentPageIndex = 0;
   bool _appBarInitialized = false;
+
   final _featuredSectionKey = GlobalKey<_FeaturedPageViewState>();
+  final editMode = ValueNotifier<bool>(false);
 
   @override
   void didChangeDependencies() {
@@ -89,12 +92,14 @@ class _FeaturedPageBodyState extends State<_FeaturedPageBody> {
         children: [
           _NavigationBar(
             currentIndex: _currentPageIndex,
+            editMode: editMode,
             onTap: (index) async {
               await _featuredSectionKey.currentState?.jumpTo(index);
             },
           ),
           SizedBox(height: 24),
           _FeaturedPageView(
+            editMode: editMode,
             key: _featuredSectionKey,
             onPageChanged: changeIndex,
           ),
@@ -111,38 +116,42 @@ class _FeaturedPageBodyState extends State<_FeaturedPageBody> {
 class _NavigationBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
+  final ValueListenable<bool> editMode;
 
-  const _NavigationBar({required this.onTap, required this.currentIndex});
+  const _NavigationBar({
+    required this.onTap,
+    required this.currentIndex,
+    required this.editMode,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final editMode =
-        context
-            .findAncestorStateOfType<_FeaturedPageViewState>()
-            ?.editMode
-            .value ??
-        false;
-    return Opacity(
-      opacity: editMode ? 0.6 : 1.0,
-      child: IgnorePointer(
-        ignoring: editMode,
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Theme.of(context).extension<ThemeColors>()!.tile,
-            borderRadius: BorderRadius.circular(50),
+    return ValueListenableBuilder<bool>(
+      valueListenable: editMode,
+      builder: (_, editMode, __) {
+        return Opacity(
+          opacity: editMode ? 0.6 : 1.0,
+          child: IgnorePointer(
+            ignoring: editMode,
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).extension<ThemeColors>()!.tile,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              height: 37,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildNavigationButton(context, 0),
+                  _buildNavigationButton(context, 1),
+                  _buildNavigationButton(context, 2),
+                ],
+              ),
+            ),
           ),
-          height: 37,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildNavigationButton(context, 0),
-              _buildNavigationButton(context, 1),
-              _buildNavigationButton(context, 2),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -181,7 +190,13 @@ class _NavigationBar extends StatelessWidget {
 
 class _FeaturedPageView extends StatefulWidget {
   final ValueChanged<int> onPageChanged;
-  const _FeaturedPageView({super.key, required this.onPageChanged});
+  final ValueNotifier<bool> editMode; // ← добавили
+
+  const _FeaturedPageView({
+    super.key,
+    required this.onPageChanged,
+    required this.editMode,
+  });
 
   @override
   State<_FeaturedPageView> createState() => _FeaturedPageViewState();
@@ -189,7 +204,7 @@ class _FeaturedPageView extends StatefulWidget {
 
 class _FeaturedPageViewState extends State<_FeaturedPageView> {
   final PageController _pageController = PageController();
-  ValueNotifier<bool> editMode = ValueNotifier(false);
+  ValueNotifier<bool> get editMode => widget.editMode;
 
   Future<void> jumpTo(int index) async {
     _pageController.animateToPage(
