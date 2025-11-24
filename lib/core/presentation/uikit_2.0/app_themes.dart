@@ -50,7 +50,12 @@ class AppTheme {
           hintColor: NewAppColors.gray,
           pickedColor: NewAppColors.white,
         ),
-        ThemeColors(textPrimary: NewAppColors.black, tile: NewAppColors.white),
+        ThemeColors(
+          textPrimary: NewAppColors.black,
+          tile: NewAppColors.white,
+          hint: NewAppColors.gray,
+          red: NewAppColors.errorsWarnings,
+        ),
       ],
     );
   }

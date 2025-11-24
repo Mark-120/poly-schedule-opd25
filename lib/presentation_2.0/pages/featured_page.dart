@@ -230,7 +230,7 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
               final hasFavorites = items.isNotEmpty;
 
               if (!editMode.value && hasFavorites) {
-                _showEditModeFab();
+                _showEditStartFab();
               } else if (!hasFavorites) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   context.read<ScaffoldUiStateController>().clearFAB();
@@ -260,7 +260,7 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
     );
   }
 
-  void _showEditModeFab() {
+  void _showEditStartFab() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ScaffoldUiStateController>().add(
         ScaffoldUiState(
@@ -269,7 +269,7 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
               _lockNavigation();
               _showEditDoneFab();
             },
-            child: Icon(Icons.edit),
+            child: SvgPicture.asset(AppVectors.pencil),
           ),
         ),
       );
@@ -291,9 +291,9 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               _unlockNavigation();
-              _showEditModeFab();
+              _showEditStartFab();
             },
-            child: Icon(Icons.check),
+            child: SvgPicture.asset(AppVectors.chechMark),
           ),
         ),
       );
@@ -572,7 +572,6 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
                     EditableFeaturedCard(
                       key: ValueKey(widget.items[i]),
                       title: widget.items[i],
-                      dragHandle: Icon(Icons.drag_handle, color: Colors.grey),
                       onDelete: () => _deleteItem(i),
                     ),
                 ],

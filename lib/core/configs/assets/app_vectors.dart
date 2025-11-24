@@ -11,4 +11,7 @@ class AppVectors {
   static const starOutlined = '${_basePath}star_outlined$_format';
 
   static const chechMark = '${_basePath}check_mark$_format';
+  static const pencil = '${_basePath}pencil$_format';
+  static const burger = '${_basePath}burger$_format';
+  static const trash = '${_basePath}trash$_format';
 }
