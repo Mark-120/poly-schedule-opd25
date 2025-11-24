@@ -27,13 +27,9 @@ import '../widgets/schedule_day_card.dart';
 class SchedulePage extends StatefulWidget {
   static const route = '/schedule';
 
-  final Featured featured;
+  final Featured? featured;
   final DateTime dayTime;
-  const SchedulePage({
-    super.key,
-    required this.dayTime,
-    required this.featured,
-  });
+  const SchedulePage({super.key, required this.dayTime, this.featured});
 
   @override
   State<SchedulePage> createState() => _SchedulePageState();
@@ -45,9 +41,9 @@ class _SchedulePageState extends State<SchedulePage> {
   final List<GlobalKey> _pageKeys = [];
   late final ValueNotifier<DateTime> _weekNotifier;
   int _savedPageIndex = 49;
-  late final EntityId entityId;
-  late final String bottomTitle;
-  late bool isFeatured;
+  late final EntityId? entityId;
+  late final String? bottomTitle;
+  late bool? isFeatured;
 
   @override
   void initState() {
@@ -56,24 +52,26 @@ class _SchedulePageState extends State<SchedulePage> {
     _pageKeys.addAll([for (int i = 0; i < 100; i++) GlobalKey()]);
     _pageController.addListener(_onPageChanged);
     _weekNotifier = ValueNotifier(widget.dayTime);
-    entityId = _getEntityIdBySectionType(widget.featured.entity);
-    bottomTitle = _getEntityBottomTitleByType(widget.featured.entity);
-    isFeatured = widget.featured.isFeatured;
+    entityId = _getEntityIdBySectionType(widget.featured?.entity);
+    bottomTitle = _getEntityBottomTitleByType(widget.featured?.entity);
+    isFeatured = widget.featured?.isFeatured;
   }
 
-  EntityId _getEntityIdBySectionType(Entity entity) {
+  EntityId? _getEntityIdBySectionType(Entity? entity) {
     if (entity is Group) return EntityId.group(entity.id);
     if (entity is Teacher) return EntityId.teacher(entity.id);
     if (entity is Room) return EntityId.room(entity.getId());
+    if (entity == null) return null;
     throw UnimplementedError();
   }
 
-  String _getEntityBottomTitleByType(Entity entity) {
+  String? _getEntityBottomTitleByType(Entity? entity) {
     if (entity is Group) return entity.name;
     if (entity is Teacher) {
       return AppStrings.fullNameToAbbreviation(entity.fullName);
     }
     if (entity is Room) return AppStrings.fullNameOfRoom(entity);
+    if (entity == null) return null;
     throw UnimplementedError();
   }
 
@@ -124,20 +122,24 @@ class _SchedulePageState extends State<SchedulePage> {
             controller: _pageController,
             itemCount: _weekDates.length,
             itemBuilder: (context, index) {
-              return BlocProvider(
-                create:
-                    (context) =>
-                        sl<NewScheduleBloc>()
-                          ..add(_createEvent(entityId, _weekDates[index])),
-                child: _SchedulePage(key: _pageKeys[index]),
-              );
+              return widget.featured != null
+                  ? BlocProvider(
+                    create:
+                        (context) =>
+                            sl<NewScheduleBloc>()
+                              ..add(_createEvent(entityId!, _weekDates[index])),
+                    child: _SchedulePage(key: _pageKeys[index]),
+                  )
+                  : _EmptySchedulePage();
             },
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: _bottomBar(context, title: bottomTitle),
-        ),
+        bottomTitle != null
+            ? Align(
+              alignment: Alignment.bottomCenter,
+              child: _bottomBar(context, title: bottomTitle!),
+            )
+            : SizedBox(),
       ],
     );
   }
@@ -172,18 +174,18 @@ class _SchedulePageState extends State<SchedulePage> {
                 ),
                 IconButton(
                   icon: Icon(
-                    isFeatured ? Icons.star : Icons.star_outline_outlined,
+                    isFeatured! ? Icons.star : Icons.star_outline_outlined,
                     color: Theme.of(context).primaryColor,
                   ),
                   iconSize: 28,
                   onPressed: () {
-                    if (!isFeatured) {
+                    if (!isFeatured!) {
                       context.read<NewScheduleBloc>().add(
-                        SaveToFeatured(widget.featured.entity),
+                        SaveToFeatured(widget.featured!.entity),
                       );
                     }
                     setState(() {
-                      isFeatured = !isFeatured;
+                      isFeatured = !isFeatured!;
                     });
                   },
                 ),
@@ -323,6 +325,13 @@ class _SchedulePage extends StatelessWidget {
         }
       },
     );
+  }
+}
+
+class _EmptySchedulePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Нет сохранёнок!'));
   }
 }
 

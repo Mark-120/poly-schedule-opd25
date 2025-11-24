@@ -7,27 +7,27 @@ import 'core/presentation/uikit/app_text_styles.dart';
 import 'core/presentation/uikit_2.0/app_colors.dart';
 import 'core/presentation/uikit_2.0/app_themes.dart';
 import 'core/services/app_initialization_service.dart';
-import 'core/services/last_schedule_service.dart';
-import 'data/models/last_schedule.dart';
+import 'core/services/last_featured_service.dart';
+import 'domain/entities/featured.dart';
 import 'presentation_2.0/pages/scaffold_ui_wrapper.dart';
 import 'service_locator.dart';
 
 void main() async {
   await AppInitializationService.initializeApplication();
-  final lastSchedule = await sl<LastScheduleService>().load();
+  final lastSchedule = await sl<LastFeaturedService>().load();
 
   runApp(
-    Provider<LastScheduleService>(
-      create: (context) => sl<LastScheduleService>(),
-      child: MainApp(lastSchedule: lastSchedule),
+    Provider<LastFeaturedService>(
+      create: (context) => sl<LastFeaturedService>(),
+      child: MainApp(lastFeatured: lastSchedule),
     ),
   );
 }
 
 class MainApp extends StatelessWidget {
-  final LastSchedule? lastSchedule;
+  final Featured? lastFeatured;
 
-  const MainApp({super.key, this.lastSchedule});
+  const MainApp({super.key, this.lastFeatured});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class MainApp extends StatelessWidget {
   Widget _buildHomeScreen() {
     return ChangeNotifierProvider<ScaffoldUiStateController>(
       create: (_) => ScaffoldUiStateController(),
-      child: ScaffoldUiWrapper(),
+      child: ScaffoldUiWrapper(lastFeatured: lastFeatured),
     );
   }
 }

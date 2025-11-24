@@ -5,14 +5,13 @@ import 'package:provider/provider.dart';
 import '../../core/configs/assets/app_vectors.dart';
 import '../../core/presentation/navigation/page_wrapper.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/global_navigation_ontroller.dart';
-import '../../data/models/teacher.dart';
 import '../../domain/entities/featured.dart';
-import '../../domain/entities/teacher.dart';
 import 'featured_page.dart';
 import 'schedule_page.dart';
 
 class ScaffoldUiWrapper extends StatefulWidget {
-  const ScaffoldUiWrapper({super.key});
+  final Featured? lastFeatured;
+  const ScaffoldUiWrapper({super.key, this.lastFeatured});
 
   @override
   State<ScaffoldUiWrapper> createState() => ScaffoldUiWrapperState();
@@ -34,18 +33,13 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
     for (var i = 0; i < navigatorKeys.length; i++) {
       navController.registerNavigatorKey(i, navigatorKeys[i]);
     }
+
+    final lastFeatured = widget.lastFeatured;
+
     screens = [
       PageWrapper(
         navigatorKey: navigatorKeys[0],
-        child: SchedulePage(
-          featured: Featured(
-            TeacherModel(
-              fullName: 'Щукин Александр Валентинович',
-              id: TeacherId(13445),
-            ),
-          ),
-          dayTime: DateTime.now(),
-        ),
+        child: SchedulePage(featured: lastFeatured, dayTime: DateTime.now()),
       ),
       PageWrapper(navigatorKey: navigatorKeys[1], child: FeaturedPage()),
       PageWrapper(

@@ -4,12 +4,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 
 import 'core/logger.dart';
-import 'core/services/last_schedule_service.dart';
+import 'core/services/last_featured_service.dart';
 import 'data/adapters/building.dart';
 import 'data/adapters/date.dart';
 import 'data/adapters/entity_id.dart';
+import 'data/adapters/featured.dart';
 import 'data/adapters/group.dart';
-import 'data/adapters/last_schedule.dart';
 import 'data/adapters/room.dart';
 import 'data/adapters/schedule/day.dart';
 import 'data/adapters/schedule/lesson.dart';
@@ -22,18 +22,18 @@ import 'data/data_sources/local/local.dart';
 import 'data/data_sources/local/schedule_key.dart';
 import 'data/data_sources/remote/fetch_impl.dart';
 import 'data/data_sources/remote/schedule_impl.dart';
-import 'data/models/last_schedule.dart';
 import 'data/repository/featured_repository.dart';
 import 'data/repository/fetch_repository.dart';
-import 'data/repository/last_schedule_repository.dart';
+import 'data/repository/last_featured_repository.dart';
 import 'data/repository/schedule_repository.dart';
+import 'domain/entities/featured.dart';
 import 'domain/entities/group.dart';
 import 'domain/entities/room.dart';
 import 'domain/entities/schedule/week.dart';
 import 'domain/entities/teacher.dart';
 import 'domain/repositories/featured_repository.dart';
 import 'domain/repositories/fetch_repository.dart';
-import 'domain/repositories/last_schedule_repository.dart';
+import 'domain/repositories/last_featured_repository.dart';
 import 'domain/repositories/schedule_repository.dart';
 import 'domain/usecases/featured_usecases/featured_groups/add_featured_group.dart';
 import 'domain/usecases/featured_usecases/featured_groups/get_featured_groups.dart';
@@ -45,7 +45,7 @@ import 'domain/usecases/featured_usecases/featured_teachers/add_featured_teacher
 import 'domain/usecases/featured_usecases/featured_teachers/get_featured_teachers.dart';
 import 'domain/usecases/featured_usecases/featured_teachers/set_featured_teachers.dart';
 import 'domain/usecases/featured_usecases/is_featured.dart';
-import 'domain/usecases/last_schedule_usecases/save_last_schedule.dart';
+import 'domain/usecases/last_featured_usecases/save_last_featured.dart';
 import 'domain/usecases/schedule_usecases/find_groups.dart';
 import 'domain/usecases/schedule_usecases/find_teachers.dart';
 import 'domain/usecases/schedule_usecases/get_all_buildings.dart';
@@ -83,9 +83,9 @@ Future<void> init() async {
   Hive.registerAdapter(DayAdapter());
   Hive.registerAdapter(WeekAdapter());
   Hive.registerAdapter(WeekDateAdapter());
-  Hive.registerAdapter(LastScheduleAdapter());
+  Hive.registerAdapter(FeaturedAdapter());
 
-  await Hive.openBox<LastSchedule>('last_schedule');
+  await Hive.openBox<Featured>('last_featured');
 
   await Hive.openBox<Week>('schedule_local');
   await Hive.openBox<(Week, DateTime)>('schedule_cache');
@@ -114,8 +114,8 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => IsSavedInFeatured(sl()));
 
-  sl.registerLazySingleton(() => SaveLastSchedule(sl()));
-  sl.registerLazySingleton(() => GetLastSchedule(sl()));
+  sl.registerLazySingleton(() => SaveLastFeatured(sl()));
+  sl.registerLazySingleton(() => GetLastFeatured(sl()));
 
   //Featured Repository
   sl.registerSingleton<FeaturedRepository>(
@@ -175,9 +175,9 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerSingleton<LastScheduleRepository>(
-    LastScheduleRepositoryImpl(
-      Hive.box<LastSchedule>('last_schedule'),
+  sl.registerSingleton<LastFeaturedRepository>(
+    LastFeaturedRepositoryImpl(
+      Hive.box<Featured>('last_featured'),
       logger: sl(),
     ),
   );
@@ -231,7 +231,7 @@ Future<void> init() async {
   );
 
   // Services
-  sl.registerSingleton<LastScheduleService>(
-    LastScheduleService(saveLastSchedule: sl(), getLastSchedule: sl()),
+  sl.registerSingleton<LastFeaturedService>(
+    LastFeaturedService(saveLastFeatured: sl(), getLastFeatured: sl()),
   );
 }
