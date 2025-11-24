@@ -9,6 +9,7 @@ import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_c
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../core/presentation/uikit_2.0/theme_colors.dart';
+import '../../core/services/last_featured_service.dart';
 import '../../domain/entities/building.dart';
 import '../../domain/entities/entity.dart';
 import '../../domain/entities/featured.dart';
@@ -713,6 +714,8 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
                   0,
                   route,
                 );
+                _saveLastOpenedItem(item);
+
                 // сбросить FeaturedPage (она находится в табе 1)
                 final resetRoute = MaterialPageRoute(
                   builder: (_) => const FeaturedPage(),
@@ -732,6 +735,10 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         context.read<ScaffoldUiStateController>().clearFAB();
       });
     }
+  }
+
+  void _saveLastOpenedItem(Featured<Entity> item) {
+    context.read<LastScheduleService>().save(featured: item);
   }
 
   String _getInitialSearchText(FeaturedSubpages type) {

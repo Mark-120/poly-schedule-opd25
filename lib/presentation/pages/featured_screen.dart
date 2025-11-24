@@ -5,8 +5,9 @@ import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
 import '../../core/services/error_handling_service.dart';
-import '../../core/services/last_schedule_service.dart';
+import '../../core/services/last_featured_service.dart';
 import '../../domain/entities/entity_id.dart';
+import '../../domain/entities/featured.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/room.dart';
 import '../../domain/entities/teacher.dart';
@@ -448,22 +449,19 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
 
   void onSaveRoom(Room room) {
     context.read<LastScheduleService>().save(
-      id: EntityId.room(room.getId()),
-      title: AppStrings.fullNameOfRoom(room),
+      featured: Featured(room, isFeatured: true),
     );
   }
 
   void onSaveGroup(Group group) {
     context.read<LastScheduleService>().save(
-      id: EntityId.group(group.id),
-      title: group.name,
+      featured: Featured(group, isFeatured: true),
     );
   }
 
   void onSaveTeacher(Teacher teacher) {
     context.read<LastScheduleService>().save(
-      id: EntityId.teacher(teacher.id),
-      title: teacher.fullName,
+      featured: Featured(teacher, isFeatured: true),
     );
   }
 }
