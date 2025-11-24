@@ -59,8 +59,8 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
   @override
   Future<void> setFeaturedGroups(List<Group> newGroups) async {
     logger.debug('[Featured] FeaturedGroups - SET $newGroups');
-    featuredGroups.clear();
-    featuredGroups.putAll(
+    await featuredGroups.clear();
+    await featuredGroups.putAll(
       Map.fromIterables(newGroups.map((x) => x.id.id), newGroups),
     );
   }
@@ -68,8 +68,8 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
   @override
   Future<void> setFeaturedRooms(List<Room> newRooms) async {
     logger.debug('[Featured] FeaturedRooms - SET $newRooms');
-    featuredRooms.clear();
-    featuredRooms.putAll(
+    await featuredRooms.clear();
+    await featuredRooms.putAll(
       Map.fromIterables(newRooms.map((x) => x.getId().toString()), newRooms),
     );
   }
@@ -77,8 +77,8 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
   @override
   Future<void> setFeaturedTeachers(List<Teacher> newTeachers) async {
     logger.debug('[Featured] FeaturedTeachers - SET $newTeachers');
-    featuredTeachers.clear();
-    featuredTeachers.putAll(
+    await featuredTeachers.clear();
+    await featuredTeachers.putAll(
       Map.fromIterables(newTeachers.map((x) => x.id.id), newTeachers),
     );
   }
@@ -98,17 +98,11 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
   @override
   Future<void> deleteFeatured(EntityId id) async {
     if (id.isTeacher) {
-      return (await getFeaturedGroups()).removeWhere(
-        (elem) => elem.id == id.asGroup,
-      );
+      return featuredTeachers.delete(id.asTeacher.id);
     } else if (id.isRoom) {
-      return (await getFeaturedRooms()).removeWhere(
-        (elem) => elem.getId() == id.asRoom,
-      );
+      return featuredRooms.delete(id.asRoom.toString());
     } else if (id.isGroup) {
-      return (await getFeaturedGroups()).removeWhere(
-        (elem) => elem.id == id.asGroup,
-      );
+      return featuredGroups.delete(id.asGroup.id);
     }
   }
 }
