@@ -35,7 +35,7 @@ import 'domain/repositories/featured_repository.dart';
 import 'domain/repositories/fetch_repository.dart';
 import 'domain/repositories/last_featured_repository.dart';
 import 'domain/repositories/schedule_repository.dart';
-import 'domain/usecases/featured_usecases/delete_fetured.dart';
+import 'domain/usecases/featured_usecases/delete_featured.dart';
 import 'domain/usecases/featured_usecases/featured_groups/add_featured_group.dart';
 import 'domain/usecases/featured_usecases/featured_groups/get_featured_groups.dart';
 import 'domain/usecases/featured_usecases/featured_groups/set_featured_groups.dart';
@@ -229,6 +229,7 @@ Future<void> init() async {
       addFeaturedGroup: sl(),
       addFeaturedTeacher: sl(),
       addFeaturedRoom: sl(),
+      deleteFeatured: sl(),
     ),
   );
 

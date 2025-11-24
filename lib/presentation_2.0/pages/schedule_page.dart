@@ -52,17 +52,9 @@ class _SchedulePageState extends State<SchedulePage> {
     _pageKeys.addAll([for (int i = 0; i < 100; i++) GlobalKey()]);
     _pageController.addListener(_onPageChanged);
     _weekNotifier = ValueNotifier(widget.dayTime);
-    entityId = _getEntityIdBySectionType(widget.featured?.entity);
+    entityId = widget.featured?.getEntityId();
     bottomTitle = _getEntityBottomTitleByType(widget.featured?.entity);
     isFeatured = widget.featured?.isFeatured;
-  }
-
-  EntityId? _getEntityIdBySectionType(Entity? entity) {
-    if (entity is Group) return EntityId.group(entity.id);
-    if (entity is Teacher) return EntityId.teacher(entity.id);
-    if (entity is Room) return EntityId.room(entity.getId());
-    if (entity == null) return null;
-    throw UnimplementedError();
   }
 
   String? _getEntityBottomTitleByType(Entity? entity) {
@@ -182,6 +174,10 @@ class _SchedulePageState extends State<SchedulePage> {
                     if (!isFeatured!) {
                       context.read<NewScheduleBloc>().add(
                         SaveToFeatured(widget.featured!.entity),
+                      );
+                    } else {
+                      context.read<NewScheduleBloc>().add(
+                        DeleteFromFeatured(widget.featured!.entity),
                       );
                     }
                     setState(() {

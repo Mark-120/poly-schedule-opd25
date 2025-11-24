@@ -20,6 +20,14 @@ class SaveToFeatured extends ScheduleEvent {
   List<Object> get props => [];
 }
 
+class DeleteFromFeatured extends ScheduleEvent {
+  final Entity entity;
+  const DeleteFromFeatured(this.entity);
+
+  @override
+  List<Object> get props => [];
+}
+
 class LoadScheduleByGroup extends ScheduleEvent {
   final GroupId groupId;
   final DateTime dayTime;
