@@ -73,7 +73,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
                       arguments: ScheduleScreenArguments(
                         id: EntityId.room(state.selectedRoom!.getId()),
                         dayTime: DateTime.now(),
-                        bottomTitle: AppStrings.fullNameOfRoom(
+                        bottomTitle: AppStrings.shortNameOfRoom(
                           state.selectedRoom!,
                         ),
                       ),

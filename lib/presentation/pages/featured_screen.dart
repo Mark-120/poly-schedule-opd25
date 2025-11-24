@@ -119,7 +119,7 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
                       items:
                           state is FeaturedLoaded
                               ? state.rooms
-                                  .map((r) => AppStrings.fullNameOfRoom(r))
+                                  .map((r) => AppStrings.shortNameOfRoom(r))
                                   .toList()
                               : [],
                       onReorder: (oldIndex, newIndex) {
@@ -439,7 +439,7 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
             arguments: ScheduleScreenArguments(
               id: EntityId.room(room.getId()),
               dayTime: DateTime.now(),
-              bottomTitle: AppStrings.fullNameOfRoom(room),
+              bottomTitle: AppStrings.shortNameOfRoom(room),
             ),
           );
         }

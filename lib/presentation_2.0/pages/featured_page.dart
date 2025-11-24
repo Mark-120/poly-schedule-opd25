@@ -219,17 +219,23 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
   Widget build(BuildContext context) {
     return BlocBuilder<FeaturedBloc, FeaturedState>(
       builder: (context, state) {
-        final List<String> groupFeatured =
+        final List<Featured<Group>> groupFeatured =
             state is FeaturedLoaded
-                ? state.groups.map((g) => g.name).toList()
+                ? state.groups
+                    .map((e) => Featured<Group>(e, isFeatured: true))
+                    .toList()
                 : [];
-        final List<String> teacherFeatured =
+        final List<Featured<Teacher>> teacherFeatured =
             state is FeaturedLoaded
-                ? state.teachers.map((g) => g.fullName).toList()
+                ? state.teachers
+                    .map((e) => Featured<Teacher>(e, isFeatured: true))
+                    .toList()
                 : [];
-        final List<String> classFeatured =
+        final List<Featured<Room>> classFeatured =
             state is FeaturedLoaded
-                ? state.rooms.map((g) => g.name).toList()
+                ? state.rooms
+                    .map((e) => Featured<Room>(e, isFeatured: true))
+                    .toList()
                 : [];
         final allFeatured = [groupFeatured, teacherFeatured, classFeatured];
 
@@ -330,7 +336,7 @@ class _FeaturedPageViewState extends State<_FeaturedPageView> {
 
 class _FeaturedSection extends StatelessWidget {
   final FeaturedSubpages sectionType;
-  final List<String> items;
+  final List<Featured> items;
   const _FeaturedSection(this.sectionType, {required this.items, super.key});
 
   @override
@@ -341,12 +347,18 @@ class _FeaturedSection extends StatelessWidget {
             ?.editMode
             .value ??
         false;
-    return BlocProvider(
-      create: (context) => sl<NewSearchBloc>(),
-      child: _FeaturedSectionBody(
-        sectionType,
-        items: items,
-        editMode: editMode,
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: BlocProvider(
+        create: (context) => sl<NewSearchBloc>(),
+        child: _FeaturedSectionBody(
+          sectionType,
+          items: items,
+          editMode: editMode,
+        ),
       ),
     );
   }
@@ -354,7 +366,7 @@ class _FeaturedSection extends StatelessWidget {
 
 class _FeaturedSectionBody extends StatefulWidget {
   final FeaturedSubpages sectionType;
-  final List<String> items;
+  final List<Featured> items;
   final bool editMode;
   const _FeaturedSectionBody(
     this.sectionType, {
@@ -547,7 +559,6 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
           );
         } else if (state is SearchResultsLoaded) {
           print('came here');
-          _createFAB(state.selectedItem);
           return ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: state.results.length,
@@ -564,6 +575,7 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
                   context.read<NewSearchBloc>().add(
                     SearchItemSelected(item, widget.sectionType),
                   );
+                  _createFAB(item);
                   setState(() {});
                 },
               );
@@ -592,16 +604,18 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
             )
             : widget.editMode
             ? Expanded(
-              child: ReorderableListView(
+              child: ReorderableListView.builder(
                 onReorder: _onReorder,
-                children: [
-                  for (int i = 0; i < widget.items.length; i++)
-                    EditableFeaturedCard(
+                itemCount: widget.items.length,
+                itemBuilder:
+                    (context, i) => EditableFeaturedCard(
                       key: ValueKey(widget.items[i]),
-                      title: widget.items[i],
+                      title: _getEntityTextByType(widget.items[i]),
                       onDelete: () => _deleteItem(i),
                     ),
-                ],
+                proxyDecorator:
+                    (child, index, animation) =>
+                        Material(elevation: 0, child: child),
               ),
             )
             : Expanded(
@@ -611,7 +625,12 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
                 physics: const ClampingScrollPhysics(),
                 itemCount: items.length,
                 itemBuilder:
-                    (_, index) => FeaturedCard(items[index], onTap: () {}),
+                    (_, index) => FeaturedCard(
+                      _getEntityFeaturedTextByType(items[index]),
+                      onTap: () {
+                        _redirectToSchedulePage(items[index]);
+                      },
+                    ),
                 separatorBuilder: (_, __) => SizedBox(height: 10),
               ),
             ),
@@ -659,6 +678,12 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         if (state is SearchInitial) {
           return Center(child: Text(_getInitialSearchText(widget.sectionType)));
         } else if (state is SearchLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is SearchResultsLoaded &&
+            state.results is List<Featured<Room>>) {
+          context.read<NewSearchBloc>().add(
+            SearchQueryChanged(_searchController.text, widget.sectionType),
+          );
           return const Center(child: CircularProgressIndicator());
         } else if (state is SearchError) {
           return Center(
@@ -727,30 +752,7 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         context.read<ScaffoldUiStateController>().add(
           ScaffoldUiState(
             floatingActionButton: FloatingActionButton(
-              onPressed: () async {
-                final route = MaterialPageRoute(
-                  builder: (_) {
-                    return SchedulePage(
-                      dayTime: DateTime.now(),
-                      featured: item,
-                    );
-                  },
-                );
-                await context.read<GlobalNavigationController>().pushToTab(
-                  0,
-                  route,
-                );
-                _saveLastOpenedItem(item);
-
-                // сбросить FeaturedPage (она находится в табе 1)
-                final resetRoute = MaterialPageRoute(
-                  builder: (_) => const FeaturedPage(),
-                );
-                await context.read<GlobalNavigationController>().resetRootInTab(
-                  1,
-                  resetRoute,
-                );
-              },
+              onPressed: () => _redirectToSchedulePage(item),
               child: SvgPicture.asset(AppVectors.chechMark),
             ),
           ),
@@ -761,6 +763,23 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         context.read<ScaffoldUiStateController>().clearFAB();
       });
     }
+  }
+
+  void _redirectToSchedulePage(Featured<Entity> item) async {
+    final route = MaterialPageRoute(
+      builder: (_) {
+        return SchedulePage(dayTime: DateTime.now(), featured: item);
+      },
+    );
+    await context.read<GlobalNavigationController>().pushToTab(0, route);
+    _saveLastOpenedItem(item);
+
+    // сбросить FeaturedPage (она находится в табе 1)
+    final resetRoute = MaterialPageRoute(builder: (_) => const FeaturedPage());
+    await context.read<GlobalNavigationController>().resetRootInTab(
+      1,
+      resetRoute,
+    );
   }
 
   void _saveLastOpenedItem(Featured<Entity> item) {
@@ -799,6 +818,17 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
         return item.entity is Building
             ? (item as Featured<Building>).entity.name
             : (item as Featured<Room>).entity.name;
+    }
+  }
+
+  String _getEntityFeaturedTextByType(Featured<Entity> item) {
+    switch (widget.sectionType) {
+      case FeaturedSubpages.groups:
+        return (item as Featured<Group>).entity.name;
+      case FeaturedSubpages.teachers:
+        return (item as Featured<Teacher>).entity.fullName;
+      case FeaturedSubpages.classes:
+        return AppStrings.fullNameOfRoom(item.entity as Room);
     }
   }
 }

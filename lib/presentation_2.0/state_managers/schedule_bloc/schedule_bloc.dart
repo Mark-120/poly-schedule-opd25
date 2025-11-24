@@ -56,9 +56,18 @@ class NewScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     final entity = event.entity;
 
     try {
-      if (entity is Group) await addFeaturedGroup(entity);
-      if (entity is Teacher) await addFeaturedTeacher(entity);
-      if (entity is Room) await addFeaturedRoom(entity);
+      if (entity is Group) {
+        await addFeaturedGroup(entity);
+        return;
+      }
+      if (entity is Teacher) {
+        await addFeaturedTeacher(entity);
+        return;
+      }
+      if (entity is Room) {
+        await addFeaturedRoom(entity);
+        return;
+      }
       throw UnimplementedError();
     } catch (e) {
       emit(ScheduleError('Error saving to featured: $e'));
