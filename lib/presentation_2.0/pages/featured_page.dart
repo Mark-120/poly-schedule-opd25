@@ -610,7 +610,7 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
                 itemBuilder:
                     (context, i) => EditableFeaturedCard(
                       key: ValueKey(widget.items[i]),
-                      title: _getEntityTextByType(widget.items[i]),
+                      title: _getEntityFeaturedTextByType(widget.items[i]),
                       onDelete: () => _deleteItem(i),
                     ),
                 proxyDecorator:
