@@ -91,9 +91,10 @@ Future<void> init() async {
   await Hive.openBox<Week>('schedule_local');
   await Hive.openBox<(Week, DateTime)>('schedule_cache');
 
-  await Hive.openBox<Group>('featured_groups');
-  await Hive.openBox<Teacher>('featured_teachers');
-  await Hive.openBox<Room>('featured_rooms');
+  await Hive.openBox<int>('featured_groups');
+  await Hive.openBox<OrderedEntity<Group>>('featured_groups');
+  await Hive.openBox<OrderedEntity<Teacher>>('featured_teachers');
+  await Hive.openBox<OrderedEntity<Room>>('featured_rooms');
 
   // UseCases
   sl.registerLazySingleton(() => GetSchedule(sl()));
@@ -122,9 +123,10 @@ Future<void> init() async {
   //Featured Repository
   sl.registerSingleton<FeaturedRepository>(
     FeaturedRepositorySourceImpl(
-      featuredGroups: Hive.box<Group>('featured_groups'),
-      featuredTeachers: Hive.box<Teacher>('featured_teachers'),
-      featuredRooms: Hive.box<Room>('featured_rooms'),
+      indexBox: Hive.box<int>('featured_ids'),
+      featuredGroups: Hive.box<OrderedEntity<Group>>('featured_groups'),
+      featuredTeachers: Hive.box<OrderedEntity<Teacher>>('featured_teachers'),
+      featuredRooms: Hive.box<OrderedEntity<Room>>('featured_rooms'),
       logger: sl(),
     ),
   );

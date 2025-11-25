@@ -8,8 +8,8 @@ import 'package:poly_scheduler/data/adapters/date.dart';
 import 'package:poly_scheduler/data/adapters/entity_id.dart';
 import 'package:poly_scheduler/data/adapters/featured.dart';
 import 'package:poly_scheduler/data/adapters/group.dart';
+import 'package:poly_scheduler/data/adapters/ordered/ordered.dart';
 import 'package:poly_scheduler/data/adapters/room.dart';
-import 'package:poly_scheduler/data/adapters/schedule/lesson.dart';
 import 'package:poly_scheduler/data/adapters/teacher.dart';
 import 'package:poly_scheduler/data/models/building.dart';
 import 'package:poly_scheduler/data/models/group.dart';
@@ -25,9 +25,10 @@ import 'package:poly_scheduler/domain/repositories/featured_repository.dart';
 
 void main() {
   late FeaturedRepository repo;
-  late Box<Group> groupBox;
-  late Box<Room> roomBox;
-  late Box<Teacher> teacherBox;
+  late Box<OrderedEntity<Group>> groupBox;
+  late Box<OrderedEntity<Room>> roomBox;
+  late Box<OrderedEntity<Teacher>> teacherBox;
+  late Box<int> indexBox;
   setUpAll(() async {
     Hive.registerAdapter(EntityIdAdapter());
     Hive.registerAdapter(DateAdapter());
@@ -37,16 +38,19 @@ void main() {
     Hive.registerAdapter(BuildingAdapter());
     Hive.registerAdapter(GroupAdapter());
     Hive.registerAdapter(FeaturedAdapter());
+    Hive.registerAdapter(OrderedEntityAdapter());
   });
 
   setUp(() async {
     await setUpTestHive(); // creates an isolated temp directory
 
-    groupBox = await Hive.openBox<Group>('groups');
-    roomBox = await Hive.openBox<Room>('rooms');
-    teacherBox = await Hive.openBox<Teacher>('teachers');
+    groupBox = await Hive.openBox<OrderedEntity<Group>>('groups');
+    roomBox = await Hive.openBox<OrderedEntity<Room>>('rooms');
+    teacherBox = await Hive.openBox<OrderedEntity<Teacher>>('teachers');
+    indexBox = await Hive.openBox<int>('id');
 
     repo = FeaturedRepositorySourceImpl(
+      indexBox: indexBox,
       featuredGroups: groupBox,
       featuredRooms: roomBox,
       featuredTeachers: teacherBox,
@@ -78,7 +82,7 @@ void main() {
 
       await repo.addFeaturedGroup(g);
 
-      expect(groupBox.get(1)!.id.id, 1);
+      expect(groupBox.get(1)!.value.id.id, 1);
     });
 
     test('addFeaturedRoom adds a room to Hive', () async {
@@ -86,8 +90,8 @@ void main() {
 
       await repo.addFeaturedRoom(r);
 
-      expect(roomBox.get(r.getId().toString())!.getId().roomId, 2);
-      expect(roomBox.get(r.getId().toString())!.getId().buildingId, 12);
+      expect(roomBox.get(r.getId().toString())!.value.getId().roomId, 2);
+      expect(roomBox.get(r.getId().toString())!.value.getId().buildingId, 12);
     });
 
     test('addFeaturedTeacher adds a teacher to Hive', () async {
@@ -95,12 +99,15 @@ void main() {
 
       await repo.addFeaturedTeacher(t);
 
-      expect(teacherBox.get(3)!.id.id, 3);
+      expect(teacherBox.get(3)!.value.id.id, 3);
     });
   });
   group('get from Featured Repository', () {
     test('getFeaturedGroups returns all groups', () async {
-      await groupBox.putAll({'1': buildGroup(1), '2': buildGroup(2)});
+      await groupBox.putAll({
+        '1': OrderedEntity(buildGroup(1), 0),
+        '2': OrderedEntity(buildGroup(2), 0),
+      });
 
       final result = await repo.getFeaturedGroups();
       expect(result.length, 2);
@@ -109,10 +116,13 @@ void main() {
 
     test('getFeaturedRooms returns all rooms', () async {
       final building = buildBuilding(10);
-      final rooms = [buildRoom(1, building), buildRoom(2, building)];
+      final rooms = [
+        OrderedEntity(buildRoom(1, building), 0),
+        OrderedEntity(buildRoom(2, building), 0),
+      ];
 
       await roomBox.putAll(
-        Map.fromIterables(rooms.map((x) => x.getId().toString()), rooms),
+        Map.fromIterables(rooms.map((x) => x.value.getId().toString()), rooms),
       );
 
       final result = await repo.getFeaturedRooms();
@@ -122,7 +132,10 @@ void main() {
     });
 
     test('getFeaturedTeachers returns all teachers', () async {
-      await teacherBox.putAll({'1': buildTeacher(1), '2': buildTeacher(2)});
+      await teacherBox.putAll({
+        '1': OrderedEntity(buildTeacher(1), 0),
+        '2': OrderedEntity(buildTeacher(2), 1),
+      });
 
       final result = await repo.getFeaturedTeachers();
       expect(result.length, 2);
@@ -151,30 +164,30 @@ void main() {
   });
   group('set Featured', () {
     test('setFeaturedGroups replaces all groups', () async {
-      await groupBox.put(0, buildGroup(0));
+      await groupBox.put(0, OrderedEntity(buildGroup(0), 0));
 
       await repo.setFeaturedGroups([buildGroup(1), buildGroup(2)]);
 
       expect(groupBox.length, 2);
-      expect(groupBox.get(2)!.id.id, 2);
+      expect(groupBox.get(2)!.value.id.id, 2);
     });
 
     test('setFeaturedRooms replaces all rooms', () async {
-      await roomBox.put(0, buildRoomDefault(0));
+      await roomBox.put(0, OrderedEntity(buildRoomDefault(0), 1));
       var roomId = RoomId(roomId: 1, buildingId: 0);
       await repo.setFeaturedRooms([buildRoomDefault(1), buildRoomDefault(2)]);
 
       expect(roomBox.length, 2);
-      expect(roomBox.get(roomId.toString())!.getId(), roomId);
+      expect(roomBox.get(roomId.toString())!.value.getId(), roomId);
     });
 
     test('setFeaturedTeachers replaces all teachers', () async {
-      await teacherBox.put(0, buildTeacher(0));
+      await teacherBox.put(0, OrderedEntity(buildTeacher(0), 0));
 
       await repo.setFeaturedTeachers([buildTeacher(1), buildTeacher(2)]);
 
       expect(teacherBox.length, 2);
-      expect(teacherBox.get(1)!.id.id, 1);
+      expect(teacherBox.get(1)!.value.id.id, 1);
     });
   });
   group('delete from Featured', () {
@@ -217,6 +230,52 @@ void main() {
       final result = await repo.getFeaturedRooms();
       expect(result.length, 1);
       expect(result.first.id, 2);
+    });
+  });
+
+  group('order of Entities', () {
+    test('set List Order - 1', () async {
+      final t1 = buildTeacher(2);
+      final t2 = buildTeacher(1);
+
+      await repo.setFeaturedTeachers([t1, t2]);
+
+      final result = await repo.getFeaturedTeachers();
+      expect(result.first.id.id, 2);
+    });
+    test('set List Order - 2', () async {
+      final t1 = buildTeacher(1);
+      final t2 = buildTeacher(2);
+
+      await repo.setFeaturedTeachers([t1, t2]);
+
+      final result = await repo.getFeaturedTeachers();
+      expect(result.first.id.id, 1);
+    });
+    test('add Featured Order - 1', () async {
+      final t1 = buildTeacher(3);
+      final t2 = buildTeacher(2);
+      final t3 = buildTeacher(1);
+
+      await repo.setFeaturedTeachers([t1, t2]);
+
+      await repo.addFeaturedTeacher(t3);
+
+      final result = await repo.getFeaturedTeachers();
+      expect(result.last.id.id, 1);
+    });
+    test('remove Featured Order - 1', () async {
+      final t1 = buildTeacher(3);
+      final t2 = buildTeacher(2);
+      final t3 = buildTeacher(1);
+
+      await repo.setFeaturedTeachers([t1, t2, t3]);
+
+      await repo.deleteFeatured(EntityId.teacher(t2.id));
+
+      final result = await repo.getFeaturedTeachers();
+      expect(result.first.id.id, 3);
+      expect(result.last.id.id, 1);
     });
   });
 }
