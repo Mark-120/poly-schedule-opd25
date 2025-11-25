@@ -153,6 +153,8 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
 
   @override
   Future<bool> isSavedInFeatured(EntityId id) async {
+    logger.debug('[Featured] FeaturedRooms - isSavedInFeatured');
+
     if (id.isTeacher) {
       return featuredTeachers.containsKey(id.asTeacher.id);
     } else if (id.isRoom) {
@@ -165,6 +167,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
 
   @override
   Future<void> deleteFeatured(EntityId id) async {
+    logger.debug('[Featured] FeaturedRooms - deleteFeatured');
     if (id.isTeacher) {
       return featuredTeachers.delete(id.asTeacher.id);
     } else if (id.isRoom) {

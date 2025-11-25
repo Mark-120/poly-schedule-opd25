@@ -10,6 +10,7 @@ import 'data/adapters/date.dart';
 import 'data/adapters/entity_id.dart';
 import 'data/adapters/featured.dart';
 import 'data/adapters/group.dart';
+import 'data/adapters/ordered/ordered.dart';
 import 'data/adapters/room.dart';
 import 'data/adapters/schedule/day.dart';
 import 'data/adapters/schedule/lesson.dart';
@@ -85,6 +86,7 @@ Future<void> init() async {
   Hive.registerAdapter(WeekAdapter());
   Hive.registerAdapter(WeekDateAdapter());
   Hive.registerAdapter(FeaturedAdapter());
+  Hive.registerAdapter(OrderedEntityAdapter());
 
   await Hive.openBox<Featured>('last_featured');
 
