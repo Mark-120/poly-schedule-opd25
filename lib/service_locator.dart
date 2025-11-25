@@ -91,7 +91,7 @@ Future<void> init() async {
   await Hive.openBox<Week>('schedule_local');
   await Hive.openBox<(Week, DateTime)>('schedule_cache');
 
-  await Hive.openBox<int>('featured_groups');
+  await Hive.openBox<int>('featured_id');
   await Hive.openBox<OrderedEntity<Group>>('featured_groups');
   await Hive.openBox<OrderedEntity<Teacher>>('featured_teachers');
   await Hive.openBox<OrderedEntity<Room>>('featured_rooms');
@@ -123,7 +123,7 @@ Future<void> init() async {
   //Featured Repository
   sl.registerSingleton<FeaturedRepository>(
     FeaturedRepositorySourceImpl(
-      indexBox: Hive.box<int>('featured_ids'),
+      indexBox: Hive.box<int>('featured_id'),
       featuredGroups: Hive.box<OrderedEntity<Group>>('featured_groups'),
       featuredTeachers: Hive.box<OrderedEntity<Teacher>>('featured_teachers'),
       featuredRooms: Hive.box<OrderedEntity<Room>>('featured_rooms'),
