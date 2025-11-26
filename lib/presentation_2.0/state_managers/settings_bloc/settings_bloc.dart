@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../domain/usecases/settings_usecases/saved_theme.dart';
+import '../../../domain/usecases/settings_usecases/theme_setting.dart';
 import '../../../domain/usecases/settings_usecases/update_constraints.dart';
 import 'settings_event.dart';
 import 'settings_state.dart';
@@ -8,10 +8,10 @@ import 'settings_state.dart';
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final GetLoadingConstraints getLoading;
   final GetKeepingConstraints getKeeping;
-  final GetSavedTheme getSavedTheme;
+  final GetThemeSettingsConstraints getSavedTheme;
   final UpdateLoadingConstraints updateLoading;
   final UpdateKeepingConstraints updateKeeping;
-  final SetSavedTheme setSavedTheme;
+  final UpdateThemeSettingsConstraints updateSavedTheme;
 
   SettingsBloc({
     required this.getLoading,
@@ -19,7 +19,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     required this.getSavedTheme,
     required this.updateLoading,
     required this.updateKeeping,
-    required this.setSavedTheme,
+    required this.updateSavedTheme,
   }) : super(SettingsInitial()) {
     on<LoadSettings>(_onLoadSettings);
     on<UpdateLoadingConstraintsEvent>(_onUpdateLoading);
@@ -117,9 +117,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     // сохраняем новую тему и затем возвращаем обновлённый SettingsLoaded
     emit(SettingsLoading());
     try {
-      await setSavedTheme(
-        SetSavedThemeParams(newTheme: event.themeSetting),
-      );
+      await updateSavedTheme(event.themeSetting);
       final loadingParams = await getLoading();
       final keepingParams = await getKeeping();
       final theme = await getSavedTheme();

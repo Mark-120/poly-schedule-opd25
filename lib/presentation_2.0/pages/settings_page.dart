@@ -7,8 +7,6 @@ import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_c
 import '../../core/presentation/uikit_2.0/app_colors.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../domain/entities/theme_setting.dart';
-import '../../domain/usecases/settings_usecases/saved_theme.dart';
-import '../../domain/usecases/settings_usecases/update_constraints.dart';
 import '../../service_locator.dart';
 import '../state_managers/settings_bloc/settings_bloc.dart';
 import '../state_managers/settings_bloc/settings_event.dart';

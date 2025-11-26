@@ -55,6 +55,7 @@ import 'domain/usecases/schedule_usecases/get_all_buildings.dart';
 import 'domain/usecases/schedule_usecases/get_rooms_of_building.dart';
 import 'domain/usecases/schedule_usecases/get_schedule_usecases.dart';
 import 'domain/usecases/schedule_usecases/on_app_start.dart';
+import 'domain/usecases/settings_usecases/theme_setting.dart';
 import 'domain/usecases/settings_usecases/update_constraints.dart';
 import 'presentation/state_managers/building_search_screen_bloc/building_search_bloc.dart';
 import 'presentation/state_managers/class_search_screen_bloc/class_search_bloc.dart';
@@ -139,10 +140,10 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => UpdateKeepingConstraints(sl(), sl()));
   sl.registerLazySingleton(() => UpdateLoadingConstraints(sl(), sl()));
+  sl.registerLazySingleton(() => UpdateThemeSettingsConstraints(sl()));
   sl.registerLazySingleton(() => GetKeepingConstraints(sl()));
   sl.registerLazySingleton(() => GetLoadingConstraints(sl()));
-  sl.registerLazySingleton(() => GetKeepingConstraints(sl()));
-  sl.registerLazySingleton(() => GetLoadingConstraints(sl()));
+  sl.registerLazySingleton(() => GetThemeSettingsConstraints(sl()));
 
   //Featured Repository
   sl.registerSingleton<FeaturedRepository>(
@@ -268,10 +269,10 @@ Future<void> init() async {
     () => SettingsBloc(
       getLoading: sl(),
       getKeeping: sl(),
+      getSavedTheme: sl(),
       updateLoading: sl(),
       updateKeeping: sl(),
-      getSavedTheme: sl(),
-      setSavedTheme: sl(),
+      updateSavedTheme: sl(),
     ),
   );
 
