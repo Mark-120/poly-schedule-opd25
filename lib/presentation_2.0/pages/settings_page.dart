@@ -20,8 +20,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  String preloadValue = PreloadWeeks.oneWeek.title;
-  String storeValue = StoreWeeks.oneMonth.title;
 
   @override
   void initState() {
@@ -76,39 +74,59 @@ class _SettingsPageState extends State<SettingsPage> {
                     style: textStyles.settingsPageSectionTitle,
                   ),
                   const SizedBox(height: 20),
-                  _buildDropdownRow(
-                    context,
-                    label: 'Подгружать расписание вперед на:',
-                    value: preloadValue,
-                    items: PreloadWeeks.values.map((e) => e.title).toList(),
-                    onChanged: (v) {
-                      if (v == null) return;
-                      final enumValue = PreloadWeeks.values.firstWhere(
-                        (e) => e.title == v,
-                      );
-                      context.read<SettingsBloc>().add(
-                        UpdateLoadingConstraintsEvent(enumValue.weeks),
-                      );
-                    },
-                    textStyles: textStyles,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Подгружать расписание вперед на:',
+                          style: textStyles.settingsPageItem,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      _buildStyledDropdown(
+                        value: preloadValue,
+                        items: PreloadWeeks.values.map((e) => e.title).toList(),
+                        onChanged: (v) {
+                          if (v == null) return;
+                          final enumValue = PreloadWeeks.values.firstWhere(
+                            (e) => e.title == v,
+                          );
+                          context.read<SettingsBloc>().add(
+                            UpdateLoadingConstraintsEvent(enumValue.weeks),
+                          );
+                        },
+                        textStyles: textStyles,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
 
-                  _buildDropdownRow(
-                    context,
-                    label: 'Хранить расписание в течение:',
-                    value: storeValue,
-                    items: StoreWeeks.values.map((e) => e.title).toList(),
-                    onChanged: (v) {
-                      if (v == null) return;
-                      final enumValue = StoreWeeks.values.firstWhere(
-                        (e) => e.title == v,
-                      );
-                      context.read<SettingsBloc>().add(
-                        UpdateKeepingConstraintsEvent(enumValue.weeks),
-                      );
-                    },
-                    textStyles: textStyles,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'Хранить расписание в течение:',
+                          style: textStyles.settingsPageItem,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      _buildStyledDropdown(
+                        value: storeValue,
+                        items: StoreWeeks.values.map((e) => e.title).toList(),
+                        onChanged: (v) {
+                          if (v == null) return;
+                          final enumValue = StoreWeeks.values.firstWhere(
+                            (e) => e.title == v,
+                          );
+                          context.read<SettingsBloc>().add(
+                            UpdateKeepingConstraintsEvent(enumValue.weeks),
+                          );
+                        },
+                        textStyles: textStyles,
+                      ),
+                    ],
                   ),
 
                   const SizedBox(height: 56),
@@ -165,6 +183,41 @@ class _SettingsPageState extends State<SettingsPage> {
   // -------------------- THEME SELECTOR --------------------
 
   ThemeSetting? selectedSetting;
+
+  Widget _buildStyledDropdown({
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+    required AppTypography textStyles,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      width: 120,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(50), // полу-круги
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          menuWidth: 112,
+          value: value,
+          // icon: const Icon(Icons.add), // ← ИКОНКА ПЛЮСА
+          isDense: true,
+          items:
+              items
+                  .map(
+                    (e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(e, style: textStyles.settingsPageItem),
+                    ),
+                  )
+                  .toList(),
+          onChanged: onChanged,
+          dropdownColor: Colors.white,
+        ),
+      ),
+    );
+  }
 
   List<Widget> _buildThemeRows(
     BuildContext context,
