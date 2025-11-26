@@ -31,7 +31,9 @@ class RemoteDataSource {
 
     final uri = 'https://ruz.spbstu.ru/api/v1/ruz/$endpoint';
     _logEndpointCall(uri);
-    final futureResponse = client.get(Uri.parse(uri));
+    final futureResponse = client
+        .get(Uri.parse(uri))
+        .timeout(Duration(seconds: 3));
 
     pendingRequests[endpoint] = futureResponse;
     try {
