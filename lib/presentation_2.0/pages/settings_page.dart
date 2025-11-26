@@ -26,9 +26,9 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _setupAppBar() {
-    final textStyles = Theme.of(context).extension<AppTypography>()!;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
       context.read<ScaffoldUiStateController>().update(
         ScaffoldUiState(
           appBar: AppBar(
