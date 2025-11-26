@@ -8,6 +8,7 @@ import '../../core/presentation/navigation/scaffold_ui_state/global_navigation_o
 import '../../domain/entities/featured.dart';
 import 'featured_page.dart';
 import 'schedule_page.dart';
+import 'settings_page.dart';
 
 class ScaffoldUiWrapper extends StatefulWidget {
   final Featured? lastFeatured;
@@ -42,10 +43,7 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
         child: SchedulePage(featured: lastFeatured, dayTime: DateTime.now()),
       ),
       PageWrapper(navigatorKey: navigatorKeys[1], child: FeaturedPage()),
-      PageWrapper(
-        navigatorKey: navigatorKeys[2],
-        child: Center(child: Text('Settings')),
-      ),
+      PageWrapper(navigatorKey: navigatorKeys[2], child: SettingsPage()),
     ];
   }
 

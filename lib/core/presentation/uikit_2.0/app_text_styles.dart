@@ -21,7 +21,6 @@ class AppTypography extends ThemeExtension<AppTypography> {
   //// THEMES FOR PAGES
 
   // SchedulePage
-
   TextStyle get appBarTitle => TextStyle(
     fontSize: 19,
     fontWeight: FontWeight.bold,
@@ -51,8 +50,7 @@ class AppTypography extends ThemeExtension<AppTypography> {
   TextStyle get emptySchedule =>
       TextStyle(fontSize: 22, color: _textPrimaryColor);
 
-  // Featured page
-
+  // FeaturedPage
   TextStyle get navigationBarItem => TextStyle(fontSize: 14, color: _hintColor);
   TextStyle get navigationBarItemChosen =>
       TextStyle(fontSize: 14, color: NewAppColors.white);
@@ -64,6 +62,16 @@ class AppTypography extends ThemeExtension<AppTypography> {
       TextStyle(fontSize: 14, color: _textPrimaryColor);
   TextStyle get featuredPageSubtitle =>
       TextStyle(fontSize: 16, color: _textPrimaryColor);
+
+  // SettingsPage
+  TextStyle get settingsPageSectionTitle =>
+      TextStyle(fontSize: 18, color: _textPrimaryColor);
+  TextStyle get settingsPageSectionSubtitle =>
+      TextStyle(fontSize: 14, color: _textPrimaryColor);
+  TextStyle get settingsPageItem =>
+      TextStyle(fontSize: 14, color: _textPrimaryColor);
+  TextStyle get clickableLink =>
+      TextStyle(fontSize: 18, color: _textPrimaryColor);
 
   // Methods to override ThemeExtension
 
