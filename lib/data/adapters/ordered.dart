@@ -1,18 +1,52 @@
 import 'package:hive/hive.dart';
-import '../repository/featured_repository.dart';
+import '../models/ordered/ordered.dart';
 
-class OrderedEntityAdapter extends TypeAdapter<OrderedEntity> {
+class OrderedTeacherAdapter extends TypeAdapter<OrderedTeacher> {
   @override
-  final typeId = 2;
+  final typeId = 100;
   @override
-  OrderedEntity read(BinaryReader reader) {
+  OrderedTeacher read(BinaryReader reader) {
     var value = reader.read();
     var id = reader.readInt();
-    return OrderedEntity(value, id);
+    return OrderedTeacher(value, id);
   }
 
   @override
-  void write(BinaryWriter writer, OrderedEntity obj) {
+  void write(BinaryWriter writer, OrderedTeacher obj) {
+    writer.write(obj.value);
+    writer.writeInt(obj.order);
+  }
+}
+
+class OrderedGroupAdapter extends TypeAdapter<OrderedGroup> {
+  @override
+  final typeId = 101;
+  @override
+  OrderedGroup read(BinaryReader reader) {
+    var value = reader.read();
+    var id = reader.readInt();
+    return OrderedGroup(value, id);
+  }
+
+  @override
+  void write(BinaryWriter writer, OrderedGroup obj) {
+    writer.write(obj.value);
+    writer.writeInt(obj.order);
+  }
+}
+
+class OrderedRoomAdapter extends TypeAdapter<OrderedRoom> {
+  @override
+  final typeId = 102;
+  @override
+  OrderedRoom read(BinaryReader reader) {
+    var value = reader.read();
+    var id = reader.readInt();
+    return OrderedRoom(value, id);
+  }
+
+  @override
+  void write(BinaryWriter writer, OrderedRoom obj) {
     writer.write(obj.value);
     writer.writeInt(obj.order);
   }

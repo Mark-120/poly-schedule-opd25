@@ -9,14 +9,14 @@ abstract class EntityId {
   String toUniqueString();
 
   factory EntityId.parseUnique(String string) {
-    var strings = string.split(',');
-    switch (strings[1]) {
+    var subString = string.substring(1);
+    switch (string[0]) {
       case 'g':
-        return GroupId(int.parse(strings[0]));
+        return GroupId(int.parse(subString));
       case 'r':
-        return RoomId.parse(strings[0]);
+        return RoomId.parse(subString);
       case 't':
-        return TeacherId(int.parse(strings[0]));
+        return TeacherId(int.parse(subString));
       default:
         throw LocalException('Incorrect format of EntityId');
     }

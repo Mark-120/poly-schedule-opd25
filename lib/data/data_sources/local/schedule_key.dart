@@ -16,8 +16,8 @@ class ScheduleKey extends Equatable {
     int split = string.lastIndexOf(',');
 
     return ScheduleKey(
-      EntityId.parseUnique(string.substring(0, split - 1)),
-      DateTime.parse(string.substring(split)),
+      EntityId.parseUnique(string.substring(0, split)),
+      DateTime.parse(string.substring(split + 1)),
     );
   }
 

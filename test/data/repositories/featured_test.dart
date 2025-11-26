@@ -1,18 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_test/hive_test.dart';
-
 import 'package:poly_scheduler/core/logger.dart';
-import 'package:poly_scheduler/data/adapters/scheduleEntities/building.dart';
 import 'package:poly_scheduler/data/adapters/date.dart';
-import 'package:poly_scheduler/data/adapters/scheduleEntities/entity_id.dart';
 import 'package:poly_scheduler/data/adapters/featured.dart';
-import 'package:poly_scheduler/data/adapters/scheduleEntities/group.dart';
 import 'package:poly_scheduler/data/adapters/ordered.dart';
+import 'package:poly_scheduler/data/adapters/scheduleEntities/building.dart';
+import 'package:poly_scheduler/data/adapters/scheduleEntities/entity_id.dart';
+import 'package:poly_scheduler/data/adapters/scheduleEntities/group.dart';
 import 'package:poly_scheduler/data/adapters/scheduleEntities/room.dart';
 import 'package:poly_scheduler/data/adapters/scheduleEntities/teacher.dart';
 import 'package:poly_scheduler/data/models/building.dart';
 import 'package:poly_scheduler/data/models/group.dart';
+import 'package:poly_scheduler/data/models/ordered/ordered.dart';
 import 'package:poly_scheduler/data/models/room.dart';
 import 'package:poly_scheduler/data/models/teacher.dart';
 import 'package:poly_scheduler/data/repository/featured_repository.dart';
@@ -24,9 +24,9 @@ import 'package:poly_scheduler/domain/repositories/featured_repository.dart';
 
 void main() {
   late FeaturedRepository repo;
-  late Box<OrderedEntity<Group>> groupBox;
-  late Box<OrderedEntity<Room>> roomBox;
-  late Box<OrderedEntity<Teacher>> teacherBox;
+  late Box<OrderedGroup> groupBox;
+  late Box<OrderedRoom> roomBox;
+  late Box<OrderedTeacher> teacherBox;
   late Box<int> indexBox;
   setUpAll(() async {
     Hive.registerAdapter(RoomIdAdapter());
@@ -39,15 +39,18 @@ void main() {
     Hive.registerAdapter(BuildingAdapter());
     Hive.registerAdapter(GroupAdapter());
     Hive.registerAdapter(FeaturedAdapter());
-    Hive.registerAdapter(OrderedEntityAdapter());
+
+    Hive.registerAdapter(OrderedGroupAdapter());
+    Hive.registerAdapter(OrderedRoomAdapter());
+    Hive.registerAdapter(OrderedTeacherAdapter());
   });
 
   setUp(() async {
     await setUpTestHive(); // creates an isolated temp directory
 
-    groupBox = await Hive.openBox<OrderedEntity<Group>>('groups');
-    roomBox = await Hive.openBox<OrderedEntity<Room>>('rooms');
-    teacherBox = await Hive.openBox<OrderedEntity<Teacher>>('teachers');
+    groupBox = await Hive.openBox<OrderedGroup>('groups');
+    roomBox = await Hive.openBox<OrderedRoom>('rooms');
+    teacherBox = await Hive.openBox<OrderedTeacher>('teachers');
     indexBox = await Hive.openBox<int>('id');
 
     repo = FeaturedRepositorySourceImpl(
@@ -106,8 +109,8 @@ void main() {
   group('get from Featured Repository', () {
     test('getFeaturedGroups returns all groups', () async {
       await groupBox.putAll({
-        '1': OrderedEntity(buildGroup(1), 0),
-        '2': OrderedEntity(buildGroup(2), 0),
+        '1': OrderedGroup(buildGroup(1), 0),
+        '2': OrderedGroup(buildGroup(2), 0),
       });
 
       final result = await repo.getFeaturedGroups();
@@ -118,8 +121,8 @@ void main() {
     test('getFeaturedRooms returns all rooms', () async {
       final building = buildBuilding(10);
       final rooms = [
-        OrderedEntity(buildRoom(1, building), 0),
-        OrderedEntity(buildRoom(2, building), 0),
+        OrderedRoom(buildRoom(1, building), 0),
+        OrderedRoom(buildRoom(2, building), 0),
       ];
 
       await roomBox.putAll(
@@ -134,8 +137,8 @@ void main() {
 
     test('getFeaturedTeachers returns all teachers', () async {
       await teacherBox.putAll({
-        '1': OrderedEntity(buildTeacher(1), 0),
-        '2': OrderedEntity(buildTeacher(2), 1),
+        '1': OrderedTeacher(buildTeacher(1), 0),
+        '2': OrderedTeacher(buildTeacher(2), 1),
       });
 
       final result = await repo.getFeaturedTeachers();
@@ -165,7 +168,7 @@ void main() {
   });
   group('set Featured', () {
     test('setFeaturedGroups replaces all groups', () async {
-      await groupBox.put(0, OrderedEntity(buildGroup(0), 0));
+      await groupBox.put(0, OrderedGroup(buildGroup(0), 0));
 
       await repo.setFeaturedGroups([buildGroup(1), buildGroup(2)]);
 
@@ -174,7 +177,7 @@ void main() {
     });
 
     test('setFeaturedRooms replaces all rooms', () async {
-      await roomBox.put(0, OrderedEntity(buildRoomDefault(0), 1));
+      await roomBox.put(0, OrderedRoom(buildRoomDefault(0), 1));
       var roomId = RoomId(roomId: 1, buildingId: 0);
       await repo.setFeaturedRooms([buildRoomDefault(1), buildRoomDefault(2)]);
 
@@ -183,7 +186,7 @@ void main() {
     });
 
     test('setFeaturedTeachers replaces all teachers', () async {
-      await teacherBox.put(0, OrderedEntity(buildTeacher(0), 0));
+      await teacherBox.put(0, OrderedTeacher(buildTeacher(0), 0));
 
       await repo.setFeaturedTeachers([buildTeacher(1), buildTeacher(2)]);
 

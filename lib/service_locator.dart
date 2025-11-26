@@ -5,16 +5,16 @@ import 'package:http/http.dart' as http;
 
 import 'core/logger.dart';
 import 'core/services/last_featured_service.dart';
-import 'data/adapters/scheduleEntities/building.dart';
 import 'data/adapters/date.dart';
-import 'data/adapters/scheduleEntities/entity_id.dart';
 import 'data/adapters/featured.dart';
-import 'data/adapters/scheduleEntities/group.dart';
 import 'data/adapters/ordered.dart';
-import 'data/adapters/scheduleEntities/room.dart';
 import 'data/adapters/schedule/day.dart';
 import 'data/adapters/schedule/lesson.dart';
 import 'data/adapters/schedule/week.dart';
+import 'data/adapters/scheduleEntities/building.dart';
+import 'data/adapters/scheduleEntities/entity_id.dart';
+import 'data/adapters/scheduleEntities/group.dart';
+import 'data/adapters/scheduleEntities/room.dart';
 import 'data/adapters/scheduleEntities/teacher.dart';
 import 'data/adapters/theme.dart';
 import 'data/data_sources/intermediate/prefetch.dart';
@@ -24,15 +24,13 @@ import 'data/data_sources/local/local.dart';
 import 'data/data_sources/local/schedule_key.dart';
 import 'data/data_sources/remote/fetch_impl.dart';
 import 'data/data_sources/remote/schedule_impl.dart';
+import 'data/models/ordered/ordered.dart';
 import 'data/repository/featured_repository.dart';
 import 'data/repository/fetch_repository.dart';
 import 'data/repository/last_featured_repository.dart';
 import 'data/repository/schedule_repository.dart';
 import 'domain/entities/featured.dart';
-import 'domain/entities/group.dart';
-import 'domain/entities/room.dart';
 import 'domain/entities/schedule/week.dart';
-import 'domain/entities/teacher.dart';
 import 'domain/repositories/featured_repository.dart';
 import 'domain/repositories/fetch_repository.dart';
 import 'domain/repositories/last_featured_repository.dart';
@@ -79,16 +77,21 @@ Future<void> init() async {
   Hive.registerAdapter(TeacherAdapter());
   Hive.registerAdapter(RoomAdapter());
   Hive.registerAdapter(RoomIdAdapter());
+
   Hive.registerAdapter(TeacherIdAdapter());
   Hive.registerAdapter(GroupIdAdapter());
   Hive.registerAdapter(BuildingAdapter());
+
   Hive.registerAdapter(GroupAdapter());
   Hive.registerAdapter(LessonAdapter());
   Hive.registerAdapter(DayAdapter());
   Hive.registerAdapter(WeekAdapter());
   Hive.registerAdapter(WeekDateAdapter());
   Hive.registerAdapter(FeaturedAdapter());
-  Hive.registerAdapter(OrderedEntityAdapter());
+
+  Hive.registerAdapter(OrderedGroupAdapter());
+  Hive.registerAdapter(OrderedRoomAdapter());
+  Hive.registerAdapter(OrderedTeacherAdapter());
 
   Hive.registerAdapter(ThemeSettingAdapter());
   Hive.registerAdapter(ColorAdapter());
@@ -99,9 +102,9 @@ Future<void> init() async {
   await Hive.openBox<(Week, DateTime)>('schedule_cache');
 
   await Hive.openBox<int>('featured_id');
-  await Hive.openBox<OrderedEntity<Group>>('featured_groups');
-  await Hive.openBox<OrderedEntity<Teacher>>('featured_teachers');
-  await Hive.openBox<OrderedEntity<Room>>('featured_rooms');
+  await Hive.openBox<OrderedGroup>('featured_groups');
+  await Hive.openBox<OrderedTeacher>('featured_teachers');
+  await Hive.openBox<OrderedRoom>('featured_rooms');
 
   // UseCases
   sl.registerLazySingleton(() => GetSchedule(sl()));
@@ -131,9 +134,9 @@ Future<void> init() async {
   sl.registerSingleton<FeaturedRepository>(
     FeaturedRepositorySourceImpl(
       indexBox: Hive.box<int>('featured_id'),
-      featuredGroups: Hive.box<OrderedEntity<Group>>('featured_groups'),
-      featuredTeachers: Hive.box<OrderedEntity<Teacher>>('featured_teachers'),
-      featuredRooms: Hive.box<OrderedEntity<Room>>('featured_rooms'),
+      featuredGroups: Hive.box<OrderedGroup>('featured_groups'),
+      featuredTeachers: Hive.box<OrderedTeacher>('featured_teachers'),
+      featuredRooms: Hive.box<OrderedRoom>('featured_rooms'),
       logger: sl(),
     ),
   );
