@@ -7,9 +7,6 @@ abstract class ScheduleRepository {
 
   Future<Week> invalidateSchedule(EntityId entityId, DateTime dayTime);
 
-  Future<void> updateLoadingConstraints(int numOfWeeks);
-  Future<void> updateKeepingConstraints(int numOfWeeks);
-
   Future<void> onAppStart();
   Future<void> onFeaturedChanged();
 }

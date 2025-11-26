@@ -29,12 +29,14 @@ import 'data/repository/featured_repository.dart';
 import 'data/repository/fetch_repository.dart';
 import 'data/repository/last_featured_repository.dart';
 import 'data/repository/schedule_repository.dart';
+import 'data/repository/settings_repository.dart';
 import 'domain/entities/featured.dart';
 import 'domain/entities/schedule/week.dart';
 import 'domain/repositories/featured_repository.dart';
 import 'domain/repositories/fetch_repository.dart';
 import 'domain/repositories/last_featured_repository.dart';
 import 'domain/repositories/schedule_repository.dart';
+import 'domain/repositories/settings_repository.dart';
 import 'domain/usecases/featured_usecases/delete_featured.dart';
 import 'domain/usecases/featured_usecases/featured_groups/add_featured_group.dart';
 import 'domain/usecases/featured_usecases/featured_groups/get_featured_groups.dart';
@@ -96,6 +98,8 @@ Future<void> init() async {
   Hive.registerAdapter(ThemeSettingAdapter());
   Hive.registerAdapter(ColorAdapter());
 
+  await Hive.openBox('settings');
+
   await Hive.openBox<Featured>('last_featured');
 
   await Hive.openBox<Week>('schedule_local');
@@ -142,6 +146,10 @@ Future<void> init() async {
   );
 
   // Data Sources
+  sl.registerSingleton<SettingsRepository>(
+    SettingsRepositoryImpl(settings: Hive.box('settings')),
+  );
+
   sl.registerSingleton(
     RemoteScheduleDataSourceImpl(client: sl(), logger: sl()),
   );
@@ -169,6 +177,7 @@ Future<void> init() async {
     LocalDataSource(
       prevDataSource: sl<CacheDataSource>(),
       localBox: Hive.box<Week>('schedule_local'),
+      settingsRepository: sl<SettingsRepository>(),
       featuredRepository: sl<FeaturedRepository>(),
       logger: sl(),
     ),
