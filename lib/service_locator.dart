@@ -55,6 +55,7 @@ import 'domain/usecases/schedule_usecases/get_all_buildings.dart';
 import 'domain/usecases/schedule_usecases/get_rooms_of_building.dart';
 import 'domain/usecases/schedule_usecases/get_schedule_usecases.dart';
 import 'domain/usecases/schedule_usecases/on_app_start.dart';
+import 'domain/usecases/settings_usecases/update_constraints.dart';
 import 'presentation/state_managers/building_search_screen_bloc/building_search_bloc.dart';
 import 'presentation/state_managers/class_search_screen_bloc/class_search_bloc.dart';
 import 'presentation/state_managers/featured_screen_bloc/featured_bloc.dart';
@@ -112,11 +113,12 @@ Future<void> init() async {
 
   // UseCases
   sl.registerLazySingleton(() => GetSchedule(sl()));
+  sl.registerLazySingleton(() => OnAppStart(sl()));
+
   sl.registerLazySingleton(() => FindGroups(sl()));
   sl.registerLazySingleton(() => FindTeachers(sl()));
   sl.registerLazySingleton(() => GetBuildings(sl()));
   sl.registerLazySingleton(() => GetRoomsOfBuilding(sl()));
-  sl.registerLazySingleton(() => OnAppStart(sl()));
 
   sl.registerLazySingleton(() => GetFeaturedGroups(sl()));
   sl.registerLazySingleton(() => SetFeaturedGroups(sl(), sl()));
@@ -133,6 +135,13 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => SaveLastFeatured(sl()));
   sl.registerLazySingleton(() => GetLastFeatured(sl()));
+
+  sl.registerLazySingleton(() => UpdateKeepingConstraints(sl(), sl()));
+  sl.registerLazySingleton(() => UpdateLoadingConstraints(sl(), sl()));
+  sl.registerLazySingleton(() => GetKeepingConstraints(sl()));
+  sl.registerLazySingleton(() => GetLoadingConstraints(sl()));
+  sl.registerLazySingleton(() => GetKeepingConstraints(sl()));
+  sl.registerLazySingleton(() => GetLoadingConstraints(sl()));
 
   //Featured Repository
   sl.registerSingleton<FeaturedRepository>(

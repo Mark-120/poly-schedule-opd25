@@ -11,7 +11,7 @@ class SettingsRepositoryImpl extends SettingsRepository {
   static const loadingKey = 'LoadingConstraint';
 
   @override
-  Future<ThemeSetting> getSavedTheme() {
+  Future<ThemeSetting?> getSavedTheme() {
     return settings.get(themeKey);
   }
 
