@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/extensions/list_extension.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
 import '../../core/presentation/uikit_2.0/app_colors.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
-import '../../core/presentation/uikit_2.0/theme_colors.dart';
 import '../../domain/entities/theme_setting.dart';
+import '../../domain/usecases/settings_usecases/saved_theme.dart';
+import '../../domain/usecases/settings_usecases/update_constraints.dart';
+import '../../service_locator.dart';
+import '../state_managers/settings_bloc/settings_bloc.dart';
+import '../state_managers/settings_bloc/settings_event.dart';
+import '../state_managers/settings_bloc/settings_state.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -44,47 +49,86 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     final textStyles = Theme.of(context).extension<AppTypography>()!;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // -------------------- ХРАНЕНИЕ РАСПИСАНИЯ --------------------
-          Text(
-            'Хранение расписания',
-            style: textStyles.settingsPageSectionTitle,
-          ),
-          const SizedBox(height: 20),
-          _buildDropdownRow(
-            context,
-            label: 'Подгружать расписание вперед на:',
-            value: preloadValue,
-            items: PreloadWeeks.values.map((e) => e.title).toList(),
-            onChanged: (v) => setState(() => preloadValue = v!),
-            textStyles: textStyles,
-          ),
-          const SizedBox(height: 8),
+    return BlocProvider<SettingsBloc>(
+      create: (_) => sl<SettingsBloc>()..add(LoadSettings()),
+      child: BlocBuilder<SettingsBloc, SettingsState>(
+        builder: (context, state) {
+          if (state is SettingsLoading || state is SettingsInitial) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-          _buildDropdownRow(
-            context,
-            label: 'Хранить расписание в течение:',
-            value: storeValue,
-            items: StoreWeeks.values.map((e) => e.title).toList(),
-            onChanged: (v) => setState(() => storeValue = v!),
-            textStyles: textStyles,
-          ),
+          if (state is SettingsError) {
+            return Center(child: Text('Ошибка: ${state.message}'));
+          }
+          if (state is SettingsLoaded) {
+            final preloadWeeks = state.preloadWeeks;
+            final storeWeeks = state.storeWeeks;
+            final selectedTheme = state.selectedTheme;
 
-          const SizedBox(height: 56),
+            final preloadValue = _preloadTitleFromWeeks(preloadWeeks);
+            final storeValue = _storeTitleFromWeeks(storeWeeks);
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // -------------------- ХРАНЕНИЕ РАСПИСАНИЯ --------------------
+                  Text(
+                    'Хранение расписания',
+                    style: textStyles.settingsPageSectionTitle,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildDropdownRow(
+                    context,
+                    label: 'Подгружать расписание вперед на:',
+                    value: preloadValue,
+                    items: PreloadWeeks.values.map((e) => e.title).toList(),
+                    onChanged: (v) {
+                      if (v == null) return;
+                      final enumValue = PreloadWeeks.values.firstWhere(
+                        (e) => e.title == v,
+                      );
+                      context.read<SettingsBloc>().add(
+                        UpdateLoadingConstraintsEvent(enumValue.weeks),
+                      );
+                    },
+                    textStyles: textStyles,
+                  ),
+                  const SizedBox(height: 8),
 
-          // -------------------- ВЫБОР ТЕМЫ --------------------
-          Text(
-            'Выбор темы интерфейса',
-            style: textStyles.settingsPageSectionTitle,
-          ),
-          const SizedBox(height: 24),
+                  _buildDropdownRow(
+                    context,
+                    label: 'Хранить расписание в течение:',
+                    value: storeValue,
+                    items: StoreWeeks.values.map((e) => e.title).toList(),
+                    onChanged: (v) {
+                      if (v == null) return;
+                      final enumValue = StoreWeeks.values.firstWhere(
+                        (e) => e.title == v,
+                      );
+                      context.read<SettingsBloc>().add(
+                        UpdateKeepingConstraintsEvent(enumValue.weeks),
+                      );
+                    },
+                    textStyles: textStyles,
+                  ),
 
-          ..._buildThemeRows(context, textStyles),
-        ],
+                  const SizedBox(height: 56),
+
+                  // -------------------- ВЫБОР ТЕМЫ --------------------
+                  Text(
+                    'Выбор темы интерфейса',
+                    style: textStyles.settingsPageSectionTitle,
+                  ),
+                  const SizedBox(height: 24),
+
+                  ..._buildThemeRows(context, textStyles, selectedTheme),
+                ],
+              ),
+            );
+          }
+          return SizedBox.shrink();
+        },
       ),
     );
   }
@@ -124,7 +168,11 @@ class _SettingsPageState extends State<SettingsPage> {
 
   ThemeSetting? selectedSetting;
 
-  List<Widget> _buildThemeRows(BuildContext context, AppTypography textStyles) {
+  List<Widget> _buildThemeRows(
+    BuildContext context,
+    AppTypography textStyles,
+    ThemeSetting? active,
+  ) {
     final List<List<ThemeSetting>> dividedLists = themeSettings.chunk(7);
     return dividedLists.map((row) {
       return Padding(
@@ -133,7 +181,7 @@ class _SettingsPageState extends State<SettingsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children:
               row.map((setting) {
-                final isSelected = selectedSetting == setting;
+                final isSelected = active == setting;
                 final innerColor =
                     setting.isLightTheme
                         ? NewAppColors.bgLight
@@ -141,7 +189,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
                 return GestureDetector(
                   onTap: () {
-                    setState(() => selectedSetting = setting);
+                    context.read<SettingsBloc>().add(
+                      UpdateAppThemeEvent(setting),
+                    );
                   },
                   child: Container(
                     width: 32,
@@ -187,6 +237,22 @@ class _SettingsPageState extends State<SettingsPage> {
       );
     }).toList();
   }
+}
+
+String _preloadTitleFromWeeks(int weeks) {
+  final found = PreloadWeeks.values.firstWhere(
+    (e) => e.weeks == weeks,
+    orElse: () => PreloadWeeks.oneWeek,
+  );
+  return found.title;
+}
+
+String _storeTitleFromWeeks(int weeks) {
+  final found = StoreWeeks.values.firstWhere(
+    (e) => e.weeks == weeks,
+    orElse: () => StoreWeeks.oneMonth,
+  );
+  return found.title;
 }
 
 enum PreloadWeeks {

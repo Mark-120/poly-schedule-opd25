@@ -63,6 +63,7 @@ import 'presentation/state_managers/schedule_screen_bloc/schedule_bloc.dart';
 import 'presentation/state_managers/search_screen_bloc/search_bloc.dart';
 import 'presentation_2.0/state_managers/schedule_bloc/schedule_bloc.dart';
 import 'presentation_2.0/state_managers/search_screen_bloc/search_bloc.dart';
+import 'presentation_2.0/state_managers/settings_bloc/settings_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -260,6 +261,17 @@ Future<void> init() async {
       addFeaturedTeacher: sl(),
       addFeaturedRoom: sl(),
       deleteFeatured: sl(),
+    ),
+  );
+
+  sl.registerFactory<SettingsBloc>(
+    () => SettingsBloc(
+      getLoading: sl(),
+      getKeeping: sl(),
+      updateLoading: sl(),
+      updateKeeping: sl(),
+      getSavedTheme: sl(),
+      setSavedTheme: sl(),
     ),
   );
 
