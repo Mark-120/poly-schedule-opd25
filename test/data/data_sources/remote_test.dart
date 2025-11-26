@@ -244,7 +244,10 @@ void main() {
         logger: MockLogger(),
       );
 
-      final groups = await source.getScheduleByGroup(1, DateTime(2001, 1, 1));
+      final groups = await source.getScheduleByGroup(
+        GroupId(1),
+        DateTime(2001, 1, 1),
+      );
 
       expect(
         groups,

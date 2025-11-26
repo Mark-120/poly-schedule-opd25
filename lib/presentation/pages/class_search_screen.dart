@@ -5,7 +5,6 @@ import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
 import '../../core/services/error_handling_service.dart';
-import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/room.dart';
 import '../../service_locator.dart';
 import '../state_managers/class_search_screen_bloc/class_search_bloc.dart';
@@ -71,7 +70,7 @@ class _ClassSearchScreenState extends State<ClassSearchScreen> {
                       ScheduleScreen.route,
                       (route) => false,
                       arguments: ScheduleScreenArguments(
-                        id: EntityId.room(state.selectedRoom!.getId()),
+                        id: (state.selectedRoom!.getId()),
                         dayTime: DateTime.now(),
                         bottomTitle: AppStrings.shortNameOfRoom(
                           state.selectedRoom!,

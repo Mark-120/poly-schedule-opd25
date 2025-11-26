@@ -13,7 +13,7 @@ abstract class ScheduleEvent extends Equatable {
 }
 
 class SaveToFeatured extends ScheduleEvent {
-  final Entity entity;
+  final ScheduleEntity entity;
   const SaveToFeatured(this.entity);
 
   @override
@@ -21,7 +21,7 @@ class SaveToFeatured extends ScheduleEvent {
 }
 
 class DeleteFromFeatured extends ScheduleEvent {
-  final Entity entity;
+  final ScheduleEntity entity;
   const DeleteFromFeatured(this.entity);
 
   @override

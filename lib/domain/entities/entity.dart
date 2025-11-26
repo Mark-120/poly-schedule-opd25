@@ -1,7 +1,10 @@
+import 'entity_id.dart';
+
 class Entity {
   const Entity();
 }
 
-class ScheduleEntity extends Entity {
+abstract class ScheduleEntity extends Entity {
   const ScheduleEntity();
+  EntityId getId();
 }

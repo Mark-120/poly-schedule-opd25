@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/group.dart';
 import '../../../domain/entities/room.dart';
 import '../../../domain/entities/teacher.dart';
@@ -40,10 +39,7 @@ class NewScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   ) async {
     final entity = event.entity;
     try {
-      if (entity is Group) await deleteFeatured(EntityId.group(entity.id));
-      if (entity is Teacher) await deleteFeatured(EntityId.teacher(entity.id));
-      if (entity is Room) await deleteFeatured(EntityId.room(entity.getId()));
-      throw UnimplementedError();
+      await deleteFeatured(entity.getId());
     } catch (e) {
       emit(ScheduleError('Error deleting from featured: $e'));
     }
@@ -81,10 +77,7 @@ class NewScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     emit(const ScheduleLoading());
     try {
       final week = await getSchedule(
-        GetScheduleParams(
-          entityId: EntityId.group(event.groupId),
-          dayTime: event.dayTime,
-        ),
+        GetScheduleParams(entityId: event.groupId, dayTime: event.dayTime),
       );
       emit(ScheduleLoaded(week));
     } catch (e) {
@@ -99,10 +92,7 @@ class NewScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     emit(const ScheduleLoading());
     try {
       final week = await getSchedule(
-        GetScheduleParams(
-          entityId: EntityId.teacher(event.teacherId),
-          dayTime: event.dayTime,
-        ),
+        GetScheduleParams(entityId: event.teacherId, dayTime: event.dayTime),
       );
       emit(ScheduleLoaded(week));
     } catch (e) {
@@ -117,10 +107,7 @@ class NewScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     emit(const ScheduleLoading());
     try {
       final week = await getSchedule(
-        GetScheduleParams(
-          entityId: EntityId.room(event.roomId),
-          dayTime: event.dayTime,
-        ),
+        GetScheduleParams(entityId: event.roomId, dayTime: event.dayTime),
       );
       emit(ScheduleLoaded(week));
     } catch (e) {

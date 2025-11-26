@@ -7,8 +7,11 @@ import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
 import '../../core/services/error_handling_service.dart';
 import '../../domain/entities/entity_id.dart';
+import '../../domain/entities/group.dart';
+import '../../domain/entities/room.dart';
 import '../../domain/entities/schedule/day.dart';
 import '../../domain/entities/schedule/week.dart';
+import '../../domain/entities/teacher.dart';
 import '../../service_locator.dart';
 import '../state_managers/schedule_screen_bloc/schedule_bloc.dart';
 import '../state_managers/schedule_screen_bloc/schedule_event.dart';
@@ -123,12 +126,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   ScheduleEvent _createEvent(EntityId id, DateTime dayTime) {
-    if (id.isGroup) {
-      return LoadScheduleByGroup(groupId: id.asGroup, dayTime: dayTime);
-    } else if (id.isTeacher) {
-      return LoadScheduleByTeacher(teacherId: id.asTeacher, dayTime: dayTime);
-    } else if (id.isRoom) {
-      return LoadScheduleByRoom(roomId: id.asRoom, dayTime: dayTime);
+    if (id is GroupId) {
+      return LoadScheduleByGroup(groupId: id, dayTime: dayTime);
+    } else if (id is TeacherId) {
+      return LoadScheduleByTeacher(teacherId: id, dayTime: dayTime);
+    } else if (id is RoomId) {
+      return LoadScheduleByRoom(roomId: id, dayTime: dayTime);
     } else {
       throw UnimplementedError();
     }

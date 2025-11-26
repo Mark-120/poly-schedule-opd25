@@ -19,9 +19,9 @@ class Featured<T extends Entity> {
 
   EntityId getEntityId() {
     final entity = this.entity;
-    if (entity is Group) return EntityId.group(entity.id);
-    if (entity is Teacher) return EntityId.teacher(entity.id);
-    if (entity is Room) return EntityId.room(entity.getId());
+    if (entity is Group) return entity.getId();
+    if (entity is Teacher) return entity.getId();
+    if (entity is Room) return entity.getId();
     throw UnimplementedError();
   }
 }

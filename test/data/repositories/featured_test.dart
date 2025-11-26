@@ -17,7 +17,6 @@ import 'package:poly_scheduler/data/models/room.dart';
 import 'package:poly_scheduler/data/models/teacher.dart';
 import 'package:poly_scheduler/data/repository/featured_repository.dart';
 import 'package:poly_scheduler/domain/entities/building.dart';
-import 'package:poly_scheduler/domain/entities/entity_id.dart';
 import 'package:poly_scheduler/domain/entities/group.dart';
 import 'package:poly_scheduler/domain/entities/room.dart';
 import 'package:poly_scheduler/domain/entities/teacher.dart';
@@ -30,7 +29,10 @@ void main() {
   late Box<OrderedEntity<Teacher>> teacherBox;
   late Box<int> indexBox;
   setUpAll(() async {
-    Hive.registerAdapter(EntityIdAdapter());
+    Hive.registerAdapter(RoomIdAdapter());
+    Hive.registerAdapter(TeacherIdAdapter());
+    Hive.registerAdapter(GroupIdAdapter());
+
     Hive.registerAdapter(DateAdapter());
     Hive.registerAdapter(TeacherAdapter());
     Hive.registerAdapter(RoomAdapter());
@@ -148,7 +150,7 @@ void main() {
       final g = buildGroup(1);
       await repo.addFeaturedGroup(g);
 
-      final id = EntityId.group(GroupId(1));
+      final id = (GroupId(1));
 
       final result = await repo.isSavedInFeatured(id);
 
@@ -156,7 +158,7 @@ void main() {
     });
 
     test('isSavedInFeatured returns false for missing room', () async {
-      final id = EntityId.teacher(TeacherId(1));
+      final id = (TeacherId(1));
       final result = await repo.isSavedInFeatured(id);
 
       expect(result, false);
@@ -197,7 +199,7 @@ void main() {
 
       await repo.setFeaturedGroups([g1, g2]);
 
-      await repo.deleteFeatured(EntityId.group(GroupId(1)));
+      await repo.deleteFeatured((GroupId(1)));
 
       final result = await repo.getFeaturedGroups();
       expect(result.length, 1);
@@ -210,7 +212,7 @@ void main() {
 
       await repo.setFeaturedTeachers([t1, t2]);
 
-      await repo.deleteFeatured(EntityId.teacher(TeacherId(1)));
+      await repo.deleteFeatured((TeacherId(1)));
 
       final result = await repo.getFeaturedTeachers();
       expect(result.length, 1);
@@ -223,9 +225,7 @@ void main() {
 
       await repo.setFeaturedRooms([r1, r2]);
 
-      await repo.deleteFeatured(
-        EntityId.room(RoomId(roomId: 1, buildingId: 0)),
-      );
+      await repo.deleteFeatured((RoomId(roomId: 1, buildingId: 0)));
 
       final result = await repo.getFeaturedRooms();
       expect(result.length, 1);
@@ -271,7 +271,7 @@ void main() {
 
       await repo.setFeaturedTeachers([t1, t2, t3]);
 
-      await repo.deleteFeatured(EntityId.teacher(t2.id));
+      await repo.deleteFeatured((t2.id));
 
       final result = await repo.getFeaturedTeachers();
       expect(result.first.id.id, 3);

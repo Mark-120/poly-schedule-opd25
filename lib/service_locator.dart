@@ -74,11 +74,12 @@ Future<void> init() async {
   // Hive
   await Hive.initFlutter();
 
-  Hive.registerAdapter(EntityIdAdapter());
   Hive.registerAdapter(DateAdapter());
   Hive.registerAdapter(TeacherAdapter());
   Hive.registerAdapter(RoomAdapter());
   Hive.registerAdapter(RoomIdAdapter());
+  Hive.registerAdapter(TeacherIdAdapter());
+  Hive.registerAdapter(GroupIdAdapter());
   Hive.registerAdapter(BuildingAdapter());
   Hive.registerAdapter(GroupAdapter());
   Hive.registerAdapter(LessonAdapter());

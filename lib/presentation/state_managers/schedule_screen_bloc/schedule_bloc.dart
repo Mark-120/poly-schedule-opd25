@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/entities/entity_id.dart';
 import '../../../domain/usecases/schedule_usecases/get_schedule_usecases.dart';
 import 'schedule_event.dart';
 import 'schedule_state.dart';
@@ -22,10 +21,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     emit(const ScheduleLoading());
     try {
       final week = await getSchedule(
-        GetScheduleParams(
-          entityId: EntityId.group(event.groupId),
-          dayTime: event.dayTime,
-        ),
+        GetScheduleParams(entityId: (event.groupId), dayTime: event.dayTime),
       );
       emit(ScheduleLoaded(week));
     } catch (e) {
@@ -40,10 +36,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     emit(const ScheduleLoading());
     try {
       final week = await getSchedule(
-        GetScheduleParams(
-          entityId: EntityId.teacher(event.teacherId),
-          dayTime: event.dayTime,
-        ),
+        GetScheduleParams(entityId: (event.teacherId), dayTime: event.dayTime),
       );
       emit(ScheduleLoaded(week));
     } catch (e) {
@@ -58,10 +51,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     emit(const ScheduleLoading());
     try {
       final week = await getSchedule(
-        GetScheduleParams(
-          entityId: EntityId.room(event.roomId),
-          dayTime: event.dayTime,
-        ),
+        GetScheduleParams(entityId: (event.roomId), dayTime: event.dayTime),
       );
       emit(ScheduleLoaded(week));
     } catch (e) {

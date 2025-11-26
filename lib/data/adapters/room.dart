@@ -20,20 +20,3 @@ class RoomAdapter extends TypeAdapter<Room> {
     writer.write(obj.building);
   }
 }
-
-class RoomIdAdapter extends TypeAdapter<RoomId> {
-  @override
-  final typeId = 21;
-  @override
-  RoomId read(BinaryReader reader) {
-    var roomId = reader.readInt();
-    var buildingId = reader.readInt();
-    return RoomId(roomId: roomId, buildingId: buildingId);
-  }
-
-  @override
-  void write(BinaryWriter writer, RoomId obj) {
-    writer.writeInt(obj.roomId);
-    writer.writeInt(obj.buildingId);
-  }
-}

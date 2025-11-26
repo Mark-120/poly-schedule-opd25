@@ -173,11 +173,15 @@ class _SchedulePageState extends State<SchedulePage> {
                   onPressed: () {
                     if (!isFeatured!) {
                       context.read<NewScheduleBloc>().add(
-                        SaveToFeatured(widget.featured!.entity),
+                        SaveToFeatured(
+                          widget.featured!.entity as ScheduleEntity,
+                        ),
                       );
                     } else {
                       context.read<NewScheduleBloc>().add(
-                        DeleteFromFeatured(widget.featured!.entity),
+                        DeleteFromFeatured(
+                          widget.featured!.entity as ScheduleEntity,
+                        ),
                       );
                     }
                     setState(() {
@@ -206,12 +210,12 @@ class _SchedulePageState extends State<SchedulePage> {
   }
 
   ScheduleEvent _createEvent(EntityId id, DateTime dayTime) {
-    if (id.isGroup) {
-      return LoadScheduleByGroup(groupId: id.asGroup, dayTime: dayTime);
-    } else if (id.isTeacher) {
-      return LoadScheduleByTeacher(teacherId: id.asTeacher, dayTime: dayTime);
-    } else if (id.isRoom) {
-      return LoadScheduleByRoom(roomId: id.asRoom, dayTime: dayTime);
+    if (id is GroupId) {
+      return LoadScheduleByGroup(groupId: id, dayTime: dayTime);
+    } else if (id is TeacherId) {
+      return LoadScheduleByTeacher(teacherId: id, dayTime: dayTime);
+    } else if (id is RoomId) {
+      return LoadScheduleByRoom(roomId: id, dayTime: dayTime);
     } else {
       throw UnimplementedError();
     }

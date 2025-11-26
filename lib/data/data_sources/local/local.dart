@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 
 import '../../../core/logger.dart';
+import '../../../domain/entities/entity.dart';
 import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/schedule/week.dart';
 import '../../../domain/repositories/featured_repository.dart';
@@ -92,22 +93,17 @@ final class LocalDataSource extends PassThroughSource {
   Future<void> preLoadFeatured() {
     var futures = [
       featuredRepository.getFeaturedGroups().then(
-        (list) => preLoadEntity(list, (x) => EntityId.group(x.id)),
+        (list) => preLoadEntity(list),
       ),
-      featuredRepository.getFeaturedRooms().then(
-        (list) => preLoadEntity(list, (x) => EntityId.room(x.getId())),
-      ),
+      featuredRepository.getFeaturedRooms().then((list) => preLoadEntity(list)),
       featuredRepository.getFeaturedTeachers().then(
-        (list) => preLoadEntity(list, (x) => EntityId.teacher(x.id)),
+        (list) => preLoadEntity(list),
       ),
     ];
     return Future.wait(futures);
   }
 
-  Future<void> preLoadEntity<T>(
-    List<T> featured,
-    EntityId Function(T) convertToEntityId,
-  ) {
+  Future<void> preLoadEntity(List<ScheduleEntity> featured) {
     List<Future<void>> futures = [];
     for (final obj in featured) {
       for (
@@ -115,9 +111,7 @@ final class LocalDataSource extends PassThroughSource {
         !i.isAfter(getMax());
         i = i.add(Duration(days: 7))
       ) {
-        futures.add(
-          retrieveAndSaveSchedule(ScheduleKey(convertToEntityId(obj), i)),
-        );
+        futures.add(retrieveAndSaveSchedule(ScheduleKey(obj.getId(), i)));
       }
     }
     return Future.wait(futures);

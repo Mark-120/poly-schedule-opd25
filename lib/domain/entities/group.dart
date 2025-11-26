@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'entity.dart';
+import 'entity_id.dart';
 
-class GroupId extends Equatable {
+class GroupId extends EntityId with EquatableMixin {
   final int id;
 
   const GroupId(this.id);
@@ -15,6 +16,11 @@ class GroupId extends Equatable {
   String toString() {
     return '$id';
   }
+
+  @override
+  String toUniqueString() {
+    return 'g$id';
+  }
 }
 
 abstract class Group extends ScheduleEntity with EquatableMixin {
@@ -24,4 +30,9 @@ abstract class Group extends ScheduleEntity with EquatableMixin {
 
   @override
   List<Object?> get props => [id, name];
+
+  @override
+  GroupId getId() {
+    return id;
+  }
 }

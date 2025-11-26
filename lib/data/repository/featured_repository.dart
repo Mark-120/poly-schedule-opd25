@@ -155,12 +155,12 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
   Future<bool> isSavedInFeatured(EntityId id) async {
     logger.debug('[Featured] FeaturedRooms - isSavedInFeatured');
 
-    if (id.isTeacher) {
-      return featuredTeachers.containsKey(id.asTeacher.id);
-    } else if (id.isRoom) {
-      return featuredRooms.containsKey(id.asRoom.toString());
-    } else if (id.isGroup) {
-      return featuredGroups.containsKey(id.asGroup.id);
+    if (id is TeacherId) {
+      return featuredTeachers.containsKey(id.id);
+    } else if (id is RoomId) {
+      return featuredRooms.containsKey(id.toString());
+    } else if (id is GroupId) {
+      return featuredGroups.containsKey(id.id);
     }
     return throw LocalException('non valid id');
   }
@@ -168,12 +168,12 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
   @override
   Future<void> deleteFeatured(EntityId id) async {
     logger.debug('[Featured] FeaturedRooms - deleteFeatured');
-    if (id.isTeacher) {
-      return featuredTeachers.delete(id.asTeacher.id);
-    } else if (id.isRoom) {
-      return featuredRooms.delete(id.asRoom.toString());
-    } else if (id.isGroup) {
-      return featuredGroups.delete(id.asGroup.id);
+    if (id is TeacherId) {
+      return featuredTeachers.delete(id.id);
+    } else if (id is RoomId) {
+      return featuredRooms.delete(id.toString());
+    } else if (id is GroupId) {
+      return featuredGroups.delete(id.id);
     }
   }
 }
