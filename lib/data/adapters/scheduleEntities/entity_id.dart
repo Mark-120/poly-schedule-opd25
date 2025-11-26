@@ -1,11 +1,11 @@
 import 'package:hive/hive.dart';
-import '../../domain/entities/group.dart';
-import '../../domain/entities/room.dart';
-import '../../domain/entities/teacher.dart';
+import '../../../domain/entities/group.dart';
+import '../../../domain/entities/room.dart';
+import '../../../domain/entities/teacher.dart';
 
 class RoomIdAdapter extends TypeAdapter<RoomId> {
   @override
-  final typeId = 2;
+  final typeId = 3;
   @override
   RoomId read(BinaryReader reader) {
     var buildingId = reader.readInt();
@@ -22,7 +22,7 @@ class RoomIdAdapter extends TypeAdapter<RoomId> {
 
 class GroupIdAdapter extends TypeAdapter<GroupId> {
   @override
-  final typeId = 3;
+  final typeId = 4;
   @override
   GroupId read(BinaryReader reader) {
     var id = reader.readInt();
@@ -37,7 +37,7 @@ class GroupIdAdapter extends TypeAdapter<GroupId> {
 
 class TeacherIdAdapter extends TypeAdapter<TeacherId> {
   @override
-  final typeId = 4;
+  final typeId = 5;
   @override
   TeacherId read(BinaryReader reader) {
     var id = reader.readInt();

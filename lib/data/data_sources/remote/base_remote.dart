@@ -1,8 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
+import '../../../core/connectivity.dart';
+import '../../../core/exception/no_connection_exception.dart';
+import '../../../core/exception/remote_exception.dart';
 import '../../../core/logger.dart';
 
 class RemoteDataSource {
@@ -26,15 +31,27 @@ class RemoteDataSource {
 
     final uri = 'https://ruz.spbstu.ru/api/v1/ruz/$endpoint';
     _logEndpointCall(uri);
-    final futureResponse = client.get(Uri.parse(uri));
+    final futureResponse = client
+        .get(Uri.parse(uri))
+        .timeout(const Duration(seconds: 10)); // optional timeout;
 
     pendingRequests[endpoint] = futureResponse;
-    final response = await futureResponse;
-    _logEndpointResult(uri, response);
+    try {
+      final response = await futureResponse;
+      _logEndpointResult(uri, response);
 
-    pendingRequests.remove(endpoint);
-
-    return response;
+      return response;
+    } on SocketException catch (e) {
+      return throwException(RemoteException('Socket error: ${e.message}'));
+    } on TimeoutException catch (_) {
+      return throwException(RemoteException('Request timed out'));
+    } on ClientException catch (e) {
+      return throwException(RemoteException('Client error: ${e.message}'));
+    } catch (e) {
+      return throwException(RemoteException('Unknown error: $e'));
+    } finally {
+      pendingRequests.remove(endpoint);
+    }
   }
 
   void _logEndpointCall(String endpoint) {
@@ -59,5 +76,12 @@ class RemoteDataSource {
         'Endpoint: $endpoint\nResponse: ${response.statusCode}\nBody:${response.body}',
       );
     }
+  }
+
+  Future<Never> throwException(RemoteException e) async {
+    if (await InternetConnectivity.hasInternet()) {
+      throw e;
+    }
+    throw NoConnectionException('No Connection ${e.message}');
   }
 }

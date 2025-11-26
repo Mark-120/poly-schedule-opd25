@@ -3,14 +3,14 @@ import 'package:hive/hive.dart';
 import 'package:hive_test/hive_test.dart';
 
 import 'package:poly_scheduler/core/logger.dart';
-import 'package:poly_scheduler/data/adapters/building.dart';
+import 'package:poly_scheduler/data/adapters/scheduleEntities/building.dart';
 import 'package:poly_scheduler/data/adapters/date.dart';
-import 'package:poly_scheduler/data/adapters/entity_id.dart';
+import 'package:poly_scheduler/data/adapters/scheduleEntities/entity_id.dart';
 import 'package:poly_scheduler/data/adapters/featured.dart';
-import 'package:poly_scheduler/data/adapters/group.dart';
-import 'package:poly_scheduler/data/adapters/ordered/ordered.dart';
-import 'package:poly_scheduler/data/adapters/room.dart';
-import 'package:poly_scheduler/data/adapters/teacher.dart';
+import 'package:poly_scheduler/data/adapters/scheduleEntities/group.dart';
+import 'package:poly_scheduler/data/adapters/ordered.dart';
+import 'package:poly_scheduler/data/adapters/scheduleEntities/room.dart';
+import 'package:poly_scheduler/data/adapters/scheduleEntities/teacher.dart';
 import 'package:poly_scheduler/data/models/building.dart';
 import 'package:poly_scheduler/data/models/group.dart';
 import 'package:poly_scheduler/data/models/room.dart';
@@ -36,7 +36,6 @@ void main() {
     Hive.registerAdapter(DateAdapter());
     Hive.registerAdapter(TeacherAdapter());
     Hive.registerAdapter(RoomAdapter());
-    Hive.registerAdapter(RoomIdAdapter());
     Hive.registerAdapter(BuildingAdapter());
     Hive.registerAdapter(GroupAdapter());
     Hive.registerAdapter(FeaturedAdapter());

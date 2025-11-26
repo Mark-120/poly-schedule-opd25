@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
-import '../../domain/entities/group.dart';
-import '../models/group.dart';
+import '../../../domain/entities/group.dart';
+import '../../models/group.dart';
 
 class GroupAdapter extends TypeAdapter<Group> {
   @override

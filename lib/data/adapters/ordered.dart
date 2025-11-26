@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../../repository/featured_repository.dart';
+import '../repository/featured_repository.dart';
 
 class OrderedEntityAdapter extends TypeAdapter<OrderedEntity> {
   @override

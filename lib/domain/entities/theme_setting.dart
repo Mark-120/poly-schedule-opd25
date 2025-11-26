@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
 
-abstract class ThemeSetting with EquatableMixin {
+class ThemeSetting with EquatableMixin {
   final Color color;
   final bool isLightTheme;
   const ThemeSetting({required this.color, required this.isLightTheme});

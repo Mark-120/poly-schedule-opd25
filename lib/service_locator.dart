@@ -5,17 +5,18 @@ import 'package:http/http.dart' as http;
 
 import 'core/logger.dart';
 import 'core/services/last_featured_service.dart';
-import 'data/adapters/building.dart';
+import 'data/adapters/scheduleEntities/building.dart';
 import 'data/adapters/date.dart';
-import 'data/adapters/entity_id.dart';
+import 'data/adapters/scheduleEntities/entity_id.dart';
 import 'data/adapters/featured.dart';
-import 'data/adapters/group.dart';
-import 'data/adapters/ordered/ordered.dart';
-import 'data/adapters/room.dart';
+import 'data/adapters/scheduleEntities/group.dart';
+import 'data/adapters/ordered.dart';
+import 'data/adapters/scheduleEntities/room.dart';
 import 'data/adapters/schedule/day.dart';
 import 'data/adapters/schedule/lesson.dart';
 import 'data/adapters/schedule/week.dart';
-import 'data/adapters/teacher.dart';
+import 'data/adapters/scheduleEntities/teacher.dart';
+import 'data/adapters/theme.dart';
 import 'data/data_sources/intermediate/prefetch.dart';
 import 'data/data_sources/local/cache.dart';
 import 'data/data_sources/local/hive_cache.dart';
@@ -88,6 +89,9 @@ Future<void> init() async {
   Hive.registerAdapter(WeekDateAdapter());
   Hive.registerAdapter(FeaturedAdapter());
   Hive.registerAdapter(OrderedEntityAdapter());
+
+  Hive.registerAdapter(ThemeSettingAdapter());
+  Hive.registerAdapter(ColorAdapter());
 
   await Hive.openBox<Featured>('last_featured');
 

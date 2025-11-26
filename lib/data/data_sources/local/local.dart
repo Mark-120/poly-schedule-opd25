@@ -118,17 +118,19 @@ final class LocalDataSource extends PassThroughSource {
   }
 
   Future<void> removeExtra() async {
-    //TODO: Add real parallel execution
-    for (var x in localBox.keys) {
-      var isOld = ScheduleKey.parse(x).dateTime.isBefore(getMin());
-      var isFeatured = await featuredRepository.isSavedInFeatured(
-        ScheduleKey.parse(x).id,
-      );
-      if (isOld || !isFeatured) {
-        logger.debug('[Local] Schedule - Delete from cache key: $x');
-        localBox.delete(x);
-      }
-    }
+    await Future.wait(
+      localBox.keys.map((x) async {
+        final key = ScheduleKey.parse(x);
+        final isOld = key.dateTime.isBefore(getMin());
+
+        final isFeatured = await featuredRepository.isSavedInFeatured(key.id);
+
+        if (isOld || !isFeatured) {
+          logger.debug('[Local] Schedule - Delete from cache key: $x');
+          await localBox.delete(x);
+        }
+      }),
+    );
   }
 
   DateTime getMin() {

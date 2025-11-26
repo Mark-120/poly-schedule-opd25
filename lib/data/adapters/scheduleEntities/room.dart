@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
-import '../../domain/entities/room.dart';
-import '../models/room.dart';
+import '../../../domain/entities/room.dart';
+import '../../models/room.dart';
 
 class RoomAdapter extends TypeAdapter<Room> {
   @override

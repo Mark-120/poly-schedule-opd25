@@ -22,8 +22,8 @@ final class FetchRemoteDataSourceImpl extends RemoteDataSource
           .map((teacher) => TeacherModel.fromJson(teacher))
           .toList();
     } else {
-      throw RemoteException(
-        'Failed to load teachers from server query is $query',
+      return throw (
+        RemoteException('Failed to load teachers from server query is $query'),
       );
     }
   }
@@ -36,8 +36,8 @@ final class FetchRemoteDataSourceImpl extends RemoteDataSource
           .map((group) => GroupModel.fromJson(group))
           .toList();
     } else {
-      throw RemoteException(
-        'Failed to load groups from server, query is $query',
+      return throw (
+        RemoteException('Failed to load groups from server, query is $query'),
       );
     }
   }
@@ -58,7 +58,7 @@ final class FetchRemoteDataSourceImpl extends RemoteDataSource
 
       return buildings;
     } else {
-      throw RemoteException('Failed to load buildings from server');
+      return throw (RemoteException('Failed to load buildings from server'),);
     }
   }
 
@@ -83,8 +83,10 @@ final class FetchRemoteDataSourceImpl extends RemoteDataSource
 
       return rooms;
     } else {
-      throw RemoteException(
-        'Failed to load rooms from server from building $building',
+      return throw (
+        RemoteException(
+          'Failed to load rooms from server from building $building',
+        ),
       );
     }
   }

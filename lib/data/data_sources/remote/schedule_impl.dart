@@ -31,7 +31,8 @@ final class RemoteScheduleDataSourceImpl extends RemoteDataSource
         dayTime,
       ).then((x) => (x, StorageType.remote));
     }
-    throw RemoteException('Invalid Id type');
+
+    return throw (RemoteException('Invalid Id type'));
   }
 
   Future<Week> getScheduleByTeacher(
@@ -41,39 +42,45 @@ final class RemoteScheduleDataSourceImpl extends RemoteDataSource
     final response = await getRespone(
       'teachers/$teacherId/scheduler?date=${DateFormater.getStringFromDayTime(dayTime)}',
     );
-    if (response.statusCode == 200) {
-      return WeekModel.fromJson(decodeToJson(response));
-    } else {
-      throw RemoteException(
-        'Failed to load schedule from server from teacher $teacherId, date $dayTime',
+    if (response.statusCode != 200) {
+      return throw (
+        RemoteException(
+          'Failed to load schedule from server from teacher $teacherId, date $dayTime',
+        ),
       );
     }
+    return WeekModel.fromJson(decodeToJson(response));
   }
 
   Future<Week> getScheduleByGroup(GroupId groupId, DateTime dayTime) async {
     final response = await getRespone(
       'scheduler/$groupId?date=${DateFormater.getStringFromDayTime(dayTime)}',
     );
-    if (response.statusCode == 200) {
-      return WeekModel.fromJson(decodeToJson(response));
-    } else {
-      throw RemoteException(
-        'Failed to load schedule from server from teacher $groupId, date $dayTime',
+
+    if (response.statusCode != 200) {
+      return throw (
+        RemoteException(
+          'Failed to load schedule from server from teacher $groupId, date $dayTime',
+        ),
       );
     }
+
+    return WeekModel.fromJson(decodeToJson(response));
   }
 
   Future<Week> getScheduleByRoom(RoomId roomId, DateTime dayTime) async {
     final response = await getRespone(
       'buildings/${roomId.buildingId}/rooms/${roomId.roomId}/scheduler?date=${DateFormater.getStringFromDayTime(dayTime)}',
     );
-    if (response.statusCode == 200) {
-      return WeekModel.fromJson(decodeToJson(response));
-    } else {
-      throw RemoteException(
-        'Failed to load schedule from server from room $roomId, date $dayTime',
+
+    if (response.statusCode != 200) {
+      return throw (
+        RemoteException(
+          'Failed to load schedule from server from room $roomId, date $dayTime',
+        ),
       );
     }
+    return WeekModel.fromJson(decodeToJson(response));
   }
 
   @override

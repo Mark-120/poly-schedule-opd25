@@ -16,7 +16,15 @@ class AppInitializationService {
   static Future<void> initializeApplication() async {
     await initializeDateFormatting('ru', null);
     await di.init();
-    await sl<OnAppStart>()();
+
+    sl<OnAppStart>()()
+        .catchError((Object a) {
+          //TODO - error that schedule failed to be loaded
+        })
+        .then((_) {
+          //TODO - message that schedule updated
+        });
+
     Bloc.observer = BlocLogger(sl<AppLogger>());
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp(
