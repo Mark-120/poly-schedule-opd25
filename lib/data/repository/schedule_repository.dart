@@ -31,16 +31,4 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
   Future<void> onFeaturedChanged() async {
     scheduleDataSource.onAppStart();
   }
-
-  @override
-  Future<void> updateKeepingConstraints(int numOfWeeks) {
-    // TODO: implement updateKeepingConstraints
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> updateLoadingConstraints(int numOfWeeks) {
-    // TODO: implement updateLoadingConstraints
-    throw UnimplementedError();
-  }
 }
