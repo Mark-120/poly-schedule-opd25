@@ -8,6 +8,7 @@ import '../../domain/entities/group.dart';
 import '../../domain/entities/room.dart';
 import '../../domain/entities/teacher.dart';
 import '../../domain/repositories/featured_repository.dart';
+import '../models/ordered/ordered.dart';
 
 class OrderedEntity<T extends ScheduleEntity> {
   T value;
@@ -24,9 +25,9 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
   static int teacherKey = 0;
   static int groupKey = 0;
 
-  Box<OrderedEntity<Room>> featuredRooms;
-  Box<OrderedEntity<Teacher>> featuredTeachers;
-  Box<OrderedEntity<Group>> featuredGroups;
+  Box<OrderedRoom> featuredRooms;
+  Box<OrderedTeacher> featuredTeachers;
+  Box<OrderedGroup> featuredGroups;
 
   FeaturedRepositorySourceImpl({
     required this.indexBox,
@@ -52,7 +53,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
 
     var id = await incrimentId(groupKey);
 
-    await featuredGroups.put(group.id.id, OrderedEntity(group, id));
+    await featuredGroups.put(group.id.id, OrderedGroup(group, id));
   }
 
   @override
@@ -63,7 +64,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
 
     await featuredRooms.put(
       newRoom.getId().toString(),
-      OrderedEntity(newRoom, id),
+      OrderedRoom(newRoom, id),
     );
   }
 
@@ -73,14 +74,21 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
 
     var id = await incrimentId(teacherKey);
 
-    await featuredTeachers.put(newTeacher.id.id, OrderedEntity(newTeacher, id));
+    await featuredTeachers.put(
+      newTeacher.id.id,
+      OrderedTeacher(newTeacher, id),
+    );
   }
 
   @override
   Future<List<Group>> getFeaturedGroups() async {
     logger.debug('[Featured] FeaturedGroups - GET');
 
-    var list = featuredGroups.values.toList();
+    List<OrderedEntity<Group>> list =
+        featuredGroups.values
+            .map((x) => OrderedEntity<Group>(x.value, x.order))
+            .toList();
+
     list.sort((a, b) => a.order.compareTo(b.order));
 
     return list.map((x) => x.value).toList();
@@ -100,7 +108,10 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
   Future<List<Teacher>> getFeaturedTeachers() async {
     logger.debug('[Featured] FeaturedTeachers - GET');
 
-    var list = featuredTeachers.values.toList();
+    var list =
+        featuredTeachers.values
+            .map((x) => OrderedEntity<Teacher>(x.value, x.order))
+            .toList();
     list.sort((a, b) => a.order.compareTo(b.order));
 
     return list.map((x) => x.value).toList();
@@ -116,7 +127,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
     await featuredGroups.putAll(
       Map.fromIterables(
         newGroups.map((x) => x.id.id),
-        newGroups.indexed.map((x) => OrderedEntity(x.$2, x.$1)),
+        newGroups.indexed.map((x) => OrderedGroup(x.$2, x.$1)),
       ),
     );
   }
@@ -131,7 +142,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
     await featuredRooms.putAll(
       Map.fromIterables(
         newRooms.map((x) => x.getId().toString()),
-        newRooms.indexed.map((x) => OrderedEntity(x.$2, x.$1)),
+        newRooms.indexed.map((x) => OrderedRoom(x.$2, x.$1)),
       ),
     );
   }
@@ -146,7 +157,7 @@ class FeaturedRepositorySourceImpl implements FeaturedRepository {
     await featuredTeachers.putAll(
       Map.fromIterables(
         newTeachers.map((x) => x.id.id),
-        newTeachers.indexed.map((x) => OrderedEntity(x.$2, x.$1)),
+        newTeachers.indexed.map((x) => OrderedTeacher(x.$2, x.$1)),
       ),
     );
   }

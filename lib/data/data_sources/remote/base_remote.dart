@@ -31,9 +31,7 @@ class RemoteDataSource {
 
     final uri = 'https://ruz.spbstu.ru/api/v1/ruz/$endpoint';
     _logEndpointCall(uri);
-    final futureResponse = client
-        .get(Uri.parse(uri))
-        .timeout(const Duration(seconds: 10)); // optional timeout;
+    final futureResponse = client.get(Uri.parse(uri));
 
     pendingRequests[endpoint] = futureResponse;
     try {
@@ -79,6 +77,7 @@ class RemoteDataSource {
   }
 
   Future<Never> throwException(RemoteException e) async {
+    logger.debug('[Remote Data Source] called throwException', error: e);
     if (await InternetConnectivity.hasInternet()) {
       throw e;
     }

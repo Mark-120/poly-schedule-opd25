@@ -18,7 +18,7 @@ class AppInitializationService {
     await di.init();
 
     sl<OnAppStart>()()
-        .catchError((Object a) {
+        .catchError((Object exception) {
           //TODO - error that schedule failed to be loaded
         })
         .then((_) {
