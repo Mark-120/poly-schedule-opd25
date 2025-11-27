@@ -104,7 +104,6 @@ class NewSearchBloc extends Bloc<SearchEvent, SearchState> {
     if (state is SearchResultsLoaded) {
       final currentState = state as SearchResultsLoaded;
       if (currentState.selectedItem == event.selectedItem) {
-        print('came in');
         emit(currentState.unchooseItem());
       } else {
         emit(currentState.copyWith(selectedItem: event.selectedItem));

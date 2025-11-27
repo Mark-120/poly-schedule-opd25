@@ -23,7 +23,6 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _setupAppBar();
   }
@@ -148,39 +147,6 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
-
-  Widget _buildDropdownRow(
-    BuildContext context, {
-    required String label,
-    required String value,
-    required List<String> items,
-    required ValueChanged<String?> onChanged,
-    required AppTypography textStyles,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(child: Text(label, style: textStyles.settingsPageItem)),
-        const SizedBox(width: 12),
-        DropdownButton<String>(
-          dropdownColor: NewAppColors.white,
-          value: value,
-          items:
-              items
-                  .map(
-                    (e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(e, style: textStyles.settingsPageItem),
-                    ),
-                  )
-                  .toList(),
-          onChanged: onChanged,
-        ),
-      ],
-    );
-  }
-
-  // -------------------- THEME SELECTOR --------------------
 
   ThemeSetting? selectedSetting;
 
@@ -333,35 +299,35 @@ enum StoreWeeks {
 
 // Использование:
 final List<ThemeSetting> themeSettings = [
-  ThemeSetting(color: NewAppColors.Vshmop, isLightTheme: true),
-  ThemeSetting(color: NewAppColors.Ie, isLightTheme: true),
-  ThemeSetting(color: NewAppColors.Gi, isLightTheme: true),
-  ThemeSetting(color: NewAppColors.Ifksit, isLightTheme: true),
-  ThemeSetting(color: NewAppColors.Ryae, isLightTheme: true),
-  ThemeSetting(color: NewAppColors.Ibsib, isLightTheme: true),
-  ThemeSetting(color: NewAppColors.Ispo, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.vshmop, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.ie, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.gi, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.ifksit, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.ryae, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.ibsib, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.ispo, isLightTheme: true),
 
-  ThemeSetting(color: NewAppColors.Vshmop, isLightTheme: false),
-  ThemeSetting(color: NewAppColors.Ie, isLightTheme: false),
-  ThemeSetting(color: NewAppColors.Gi, isLightTheme: false),
-  ThemeSetting(color: NewAppColors.Ifksit, isLightTheme: false),
-  ThemeSetting(color: NewAppColors.Ryae, isLightTheme: false),
-  ThemeSetting(color: NewAppColors.Ibsib, isLightTheme: false),
-  ThemeSetting(color: NewAppColors.Ispo, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.vshmop, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.ie, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.gi, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.ifksit, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.ryae, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.ibsib, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.ispo, isLightTheme: false),
 
-  ThemeSetting(color: NewAppColors.Fmi, isLightTheme: true),
-  ThemeSetting(color: NewAppColors.Ipmeit, isLightTheme: true),
-  ThemeSetting(color: NewAppColors.Iknik, isLightTheme: true),
-  ThemeSetting(color: NewAppColors.Ifim, isLightTheme: true),
-  ThemeSetting(color: NewAppColors.Immit, isLightTheme: true),
-  ThemeSetting(color: NewAppColors.Ieit, isLightTheme: true),
-  ThemeSetting(color: NewAppColors.Ici, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.fmi, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.ipmeit, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.iknik, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.ifim, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.immit, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.ieit, isLightTheme: true),
+  ThemeSetting(color: NewAppColors.ici, isLightTheme: true),
 
-  ThemeSetting(color: NewAppColors.Fmi, isLightTheme: false),
-  ThemeSetting(color: NewAppColors.Ipmeit, isLightTheme: false),
-  ThemeSetting(color: NewAppColors.Iknik, isLightTheme: false),
-  ThemeSetting(color: NewAppColors.Ifim, isLightTheme: false),
-  ThemeSetting(color: NewAppColors.Immit, isLightTheme: false),
-  ThemeSetting(color: NewAppColors.Ieit, isLightTheme: false),
-  ThemeSetting(color: NewAppColors.Ici, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.fmi, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.ipmeit, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.iknik, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.ifim, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.immit, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.ieit, isLightTheme: false),
+  ThemeSetting(color: NewAppColors.ici, isLightTheme: false),
 ];

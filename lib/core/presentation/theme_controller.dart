@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/theme_setting.dart';
-import 'uikit/app_colors.dart';
-import 'uikit/theme_extension.dart';
 import 'uikit_2.0/app_colors.dart';
 import 'uikit_2.0/app_text_styles.dart';
 import 'uikit_2.0/theme_colors.dart';

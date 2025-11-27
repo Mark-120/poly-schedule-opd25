@@ -558,7 +558,6 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
             ),
           );
         } else if (state is SearchResultsLoaded) {
-          print('came here');
           return ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: state.results.length,
@@ -748,7 +747,6 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
   void _createFAB(Featured? item) {
     if (item != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        print('added');
         context.read<ScaffoldUiStateController>().add(
           ScaffoldUiState(
             floatingActionButton: FloatingActionButton(
@@ -776,6 +774,7 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
 
     // сбросить FeaturedPage (она находится в табе 1)
     final resetRoute = MaterialPageRoute(builder: (_) => const FeaturedPage());
+    // ignore: use_build_context_synchronously
     await context.read<GlobalNavigationController>().resetRootInTab(
       1,
       resetRoute,
