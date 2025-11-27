@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../core/configs/assets/app_vectors.dart';
 import '../../core/presentation/navigation/page_wrapper.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/global_navigation_ontroller.dart';
+import '../../core/presentation/uikit_2.0/app_colors.dart';
 import '../../domain/entities/featured.dart';
 import 'featured_page.dart';
 import 'schedule_page.dart';
@@ -131,10 +132,8 @@ class RootNavigationWrapperState extends State<RootNavigationWrapper> {
             svg,
             colorFilter: ColorFilter.mode(
               controller.currentIndex == index
-                  ? Theme.of(context).colorScheme.surface
-                  : Theme.of(
-                    context,
-                  ).colorScheme.surface.withValues(alpha: 0.6),
+                  ? NewAppColors.white
+                  : NewAppColors.white.withValues(alpha: 0.6),
               BlendMode.srcIn,
             ),
           ),

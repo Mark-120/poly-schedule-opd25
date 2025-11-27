@@ -6,6 +6,7 @@ import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state.d
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
 import '../../core/presentation/uikit_2.0/app_colors.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
+import '../../core/presentation/uikit_2.0/theme_colors.dart';
 import '../../domain/entities/theme_setting.dart';
 import '../../service_locator.dart';
 import '../state_managers/settings_bloc/settings_bloc.dart';
@@ -20,7 +21,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-
   @override
   void initState() {
     // TODO: implement initState
@@ -194,7 +194,7 @@ class _SettingsPageState extends State<SettingsPage> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       width: 120,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).extension<ThemeColors>()!.tile,
         borderRadius: BorderRadius.circular(50), // полу-круги
       ),
       child: DropdownButtonHideUnderline(
@@ -213,7 +213,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   )
                   .toList(),
           onChanged: onChanged,
-          dropdownColor: Colors.white,
+          dropdownColor: Theme.of(context).extension<ThemeColors>()!.tile,
         ),
       ),
     );

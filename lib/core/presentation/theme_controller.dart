@@ -21,10 +21,13 @@ class AppThemeController extends ChangeNotifier {
 
   static ThemeData _createTheme(ThemeSetting setting) {
     final primaryColor = setting.color;
+    final isLightTheme = setting.isLightTheme;
     return ThemeData(
       canvasColor: Colors.transparent,
       primaryColor: primaryColor,
-      scaffoldBackgroundColor: NewAppColors.bgLight,
+      brightness: isLightTheme ? Brightness.light : Brightness.dark,
+      scaffoldBackgroundColor:
+          isLightTheme ? NewAppColors.bgLight : NewAppColors.bgDark,
       appBarTheme: AppBarTheme(
         shadowColor: Colors.black,
         backgroundColor: primaryColor,
@@ -33,7 +36,7 @@ class AppThemeController extends ChangeNotifier {
         toolbarHeight: 70,
       ),
       cardTheme: CardTheme(
-        color: NewAppColors.white,
+        color: isLightTheme ? NewAppColors.white : NewAppColors.superDarkGray,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         elevation: 0,
         margin: const EdgeInsets.only(bottom: 12),
@@ -45,26 +48,32 @@ class AppThemeController extends ChangeNotifier {
       ),
       bottomAppBarTheme: BottomAppBarTheme(color: primaryColor),
       extensions: <ThemeExtension<dynamic>>[
-        CustomThemeExtension(
-          primaryColor: AppColors.primaryColor,
-          secondaryColor: AppColors.secondaryColor,
-          firstLayerCardBackgroundColor: AppColors.lightGreenColor,
-          secondLayerCardBackgroundColor: AppColors.lightGrayGreenColor,
-          iconColor: AppColors.white,
-          searchFieldBackgroundColor: AppColors.white,
-        ),
-        AppTypography(
-          textPrimaryColor: NewAppColors.black,
-          textSecondaryColor: NewAppColors.darkGray,
-          hintColor: NewAppColors.gray,
-          pickedColor: NewAppColors.white,
-        ),
-        ThemeColors(
-          textPrimary: NewAppColors.black,
-          tile: NewAppColors.white,
-          hint: NewAppColors.gray,
-          red: NewAppColors.errorsWarnings,
-        ),
+        isLightTheme
+            ? AppTypography(
+              textPrimaryColor: NewAppColors.black,
+              textSecondaryColor: NewAppColors.darkGray,
+              hintColor: NewAppColors.gray,
+              pickedColor: NewAppColors.white,
+            )
+            : AppTypography(
+              textPrimaryColor: NewAppColors.white,
+              textSecondaryColor: NewAppColors.gray,
+              hintColor: NewAppColors.gray,
+              pickedColor: NewAppColors.white,
+            ),
+        isLightTheme
+            ? ThemeColors(
+              textPrimary: NewAppColors.black,
+              tile: NewAppColors.white,
+              hint: NewAppColors.gray,
+              red: NewAppColors.errorsWarnings,
+            )
+            : ThemeColors(
+              textPrimary: NewAppColors.white,
+              tile: NewAppColors.superDarkGray,
+              hint: NewAppColors.gray,
+              red: NewAppColors.errorsWarnings,
+            ),
       ],
     );
   }
