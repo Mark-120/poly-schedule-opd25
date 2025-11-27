@@ -2,6 +2,7 @@ class AppVectors {
   static const _basePath = 'assets/vectors/';
   static const _format = '.svg';
 
+  static const smile = '${_basePath}smile$_format';
   static const schedule = '${_basePath}schedule$_format';
   static const search = '${_basePath}search$_format';
   static const settings = '${_basePath}settings$_format';

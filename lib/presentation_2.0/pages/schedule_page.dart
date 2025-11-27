@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/configs/assets/app_vectors.dart';
 import '../../core/date_formater.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
@@ -329,7 +331,25 @@ class _SchedulePage extends StatelessWidget {
 class _EmptySchedulePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Нет сохранёнок!'));
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            AppVectors.smile,
+            colorFilter: ColorFilter.mode(
+              Theme.of(context).primaryColor.withValues(alpha: 0.25),
+              BlendMode.srcIn,
+            ),
+          ),
+          SizedBox(height: 30,),
+          Text(
+            'Расписание не загружено',
+            style: Theme.of(context).extension<AppTypography>()!.emptySchedule,
+          )
+        ],
+      ),
+    );
   }
 }
 
