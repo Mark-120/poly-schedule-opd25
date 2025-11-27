@@ -10,6 +10,7 @@ import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_c
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../core/presentation/uikit_2.0/theme_colors.dart';
+import '../../core/services/error_handling_service.dart';
 import '../../core/services/last_featured_service.dart';
 import '../../domain/entities/building.dart';
 import '../../domain/entities/entity.dart';
@@ -685,6 +686,7 @@ class _FeaturedSectionBodyState extends State<_FeaturedSectionBody> {
           );
           return const Center(child: CircularProgressIndicator());
         } else if (state is SearchError) {
+          ErrorHandlingService.handleError(context, state.message);
           return Center(
             child: Text(
               'Ошибка: ${state.message}',

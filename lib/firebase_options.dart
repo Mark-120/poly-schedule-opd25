@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyD2s3-EmYobaFEa5rGb3qJkqJOb0DfMJBc',
-    appId: '1:810368120535:android:cd45ec4cebd0441e2f6292',
+    appId: '1:810368120535:android:5210a3348f3f02732f6292',
     messagingSenderId: '810368120535',
     projectId: 'poly-schedule',
     storageBucket: 'poly-schedule.firebasestorage.app',
@@ -59,10 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBXdLMDNfZTTPwf4WthnVkyQYbEn0IJpUo',
-    appId: '1:810368120535:ios:55efdba081f8ed562f6292',
+    appId: '1:810368120535:ios:7a84a4f3548761942f6292',
     messagingSenderId: '810368120535',
     projectId: 'poly-schedule',
     storageBucket: 'poly-schedule.firebasestorage.app',
-    iosBundleId: 'com.example.polyScheduler',
+    iosBundleId: 'com.schedule-lovers.poly-schedule',
   );
+
 }
