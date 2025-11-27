@@ -6,7 +6,6 @@ import '../../core/date_formater.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
 import '../../core/presentation/uikit/app_strings.dart';
-import '../../core/presentation/uikit/theme_extension.dart';
 import '../../core/presentation/uikit_2.0/app_colors.dart';
 import '../../core/presentation/uikit_2.0/app_shadows.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';

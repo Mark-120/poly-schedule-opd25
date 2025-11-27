@@ -21,7 +21,7 @@ class GetThemeSettingsConstraints {
 
   Future<ThemeSetting> call() {
     return repository.getSavedTheme().then(
-      (x) => x ?? ThemeSetting(color: NewAppColors.Ryae, isLightTheme: true),
+      (x) => x ?? ThemeSetting(color: NewAppColors.ryae, isLightTheme: true),
     );
   }
 }
