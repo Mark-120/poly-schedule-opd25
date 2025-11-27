@@ -1,6 +1,5 @@
-import 'package:flutter/painting.dart';
-
 import '../../../common/usecases/usecase.dart';
+import '../../../core/presentation/uikit_2.0/app_colors.dart';
 import '../../entities/theme_setting.dart';
 import '../../repositories/settings_repository.dart';
 
@@ -22,7 +21,7 @@ class GetThemeSettingsConstraints {
 
   Future<ThemeSetting> call() {
     return repository.getSavedTheme().then(
-      (x) => x ?? ThemeSetting(color: Color(0xFF522878), isLightTheme: true),
+      (x) => x ?? ThemeSetting(color: NewAppColors.Ryae, isLightTheme: true),
     );
   }
 }

@@ -5,19 +5,21 @@ import 'package:provider/provider.dart';
 import '../../core/configs/assets/app_vectors.dart';
 import '../../core/presentation/navigation/page_wrapper.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/global_navigation_ontroller.dart';
+import '../../core/presentation/uikit_2.0/app_colors.dart';
 import '../../domain/entities/featured.dart';
 import 'featured_page.dart';
 import 'schedule_page.dart';
+import 'settings_page.dart';
 
-class ScaffoldUiWrapper extends StatefulWidget {
+class RootNavigationWrapper extends StatefulWidget {
   final Featured? lastFeatured;
-  const ScaffoldUiWrapper({super.key, this.lastFeatured});
+  const RootNavigationWrapper({super.key, this.lastFeatured});
 
   @override
-  State<ScaffoldUiWrapper> createState() => ScaffoldUiWrapperState();
+  State<RootNavigationWrapper> createState() => RootNavigationWrapperState();
 }
 
-class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
+class RootNavigationWrapperState extends State<RootNavigationWrapper> {
   final navController = GlobalNavigationController();
 
   late final List<GlobalKey<NavigatorState>> navigatorKeys;
@@ -42,10 +44,7 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
         child: SchedulePage(featured: lastFeatured, dayTime: DateTime.now()),
       ),
       PageWrapper(navigatorKey: navigatorKeys[1], child: FeaturedPage()),
-      PageWrapper(
-        navigatorKey: navigatorKeys[2],
-        child: Center(child: Text('Settings')),
-      ),
+      PageWrapper(navigatorKey: navigatorKeys[2], child: SettingsPage()),
     ];
   }
 
@@ -133,10 +132,8 @@ class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
             svg,
             colorFilter: ColorFilter.mode(
               controller.currentIndex == index
-                  ? Theme.of(context).colorScheme.surface
-                  : Theme.of(
-                    context,
-                  ).colorScheme.surface.withValues(alpha: 0.6),
+                  ? NewAppColors.white
+                  : NewAppColors.white.withValues(alpha: 0.6),
               BlendMode.srcIn,
             ),
           ),

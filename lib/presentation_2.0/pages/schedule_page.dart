@@ -7,8 +7,10 @@ import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state.d
 import '../../core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
 import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
+import '../../core/presentation/uikit_2.0/app_colors.dart';
 import '../../core/presentation/uikit_2.0/app_shadows.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
+import '../../core/presentation/uikit_2.0/theme_colors.dart';
 import '../../core/services/error_handling_service.dart';
 import '../../domain/entities/entity.dart';
 import '../../domain/entities/entity_id.dart';
@@ -143,7 +145,7 @@ class _SchedulePageState extends State<SchedulePage> {
       builder:
           (context, state) => Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
+              color: Theme.of(context).extension<ThemeColors>()!.tile,
               boxShadow: [AppShadows.menuShadow],
             ),
             padding: EdgeInsets.zero,
@@ -264,7 +266,7 @@ class _ScheduleAppBarWrapperState extends State<_ScheduleAppBarWrapper> {
       ScaffoldUiState(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: context.appTheme.iconColor),
+            icon: Icon(Icons.arrow_back_ios, color: NewAppColors.white),
             onPressed: widget.onSwipeRight,
           ),
           title: Column(
@@ -281,10 +283,7 @@ class _ScheduleAppBarWrapperState extends State<_ScheduleAppBarWrapper> {
           ),
           actions: [
             IconButton(
-              icon: Icon(
-                Icons.arrow_forward_ios,
-                color: context.appTheme.iconColor,
-              ),
+              icon: Icon(Icons.arrow_forward_ios, color: NewAppColors.white),
               onPressed: widget.onSwipeLeft,
             ),
           ],

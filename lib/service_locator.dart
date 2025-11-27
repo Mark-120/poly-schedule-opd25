@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 
 import 'core/logger.dart';
+import 'core/presentation/theme_controller.dart';
 import 'core/services/last_featured_service.dart';
 import 'data/adapters/date.dart';
 import 'data/adapters/featured.dart';
@@ -55,6 +56,7 @@ import 'domain/usecases/schedule_usecases/get_all_buildings.dart';
 import 'domain/usecases/schedule_usecases/get_rooms_of_building.dart';
 import 'domain/usecases/schedule_usecases/get_schedule_usecases.dart';
 import 'domain/usecases/schedule_usecases/on_app_start.dart';
+import 'domain/usecases/settings_usecases/theme_setting.dart';
 import 'domain/usecases/settings_usecases/update_constraints.dart';
 import 'presentation/state_managers/building_search_screen_bloc/building_search_bloc.dart';
 import 'presentation/state_managers/class_search_screen_bloc/class_search_bloc.dart';
@@ -63,6 +65,7 @@ import 'presentation/state_managers/schedule_screen_bloc/schedule_bloc.dart';
 import 'presentation/state_managers/search_screen_bloc/search_bloc.dart';
 import 'presentation_2.0/state_managers/schedule_bloc/schedule_bloc.dart';
 import 'presentation_2.0/state_managers/search_screen_bloc/search_bloc.dart';
+import 'presentation_2.0/state_managers/settings_bloc/settings_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -138,10 +141,10 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => UpdateKeepingConstraints(sl(), sl()));
   sl.registerLazySingleton(() => UpdateLoadingConstraints(sl(), sl()));
+  sl.registerLazySingleton(() => UpdateThemeSettingsConstraints(sl()));
   sl.registerLazySingleton(() => GetKeepingConstraints(sl()));
   sl.registerLazySingleton(() => GetLoadingConstraints(sl()));
-  sl.registerLazySingleton(() => GetKeepingConstraints(sl()));
-  sl.registerLazySingleton(() => GetLoadingConstraints(sl()));
+  sl.registerLazySingleton(() => GetThemeSettingsConstraints(sl()));
 
   //Featured Repository
   sl.registerSingleton<FeaturedRepository>(
@@ -263,8 +266,25 @@ Future<void> init() async {
     ),
   );
 
+  sl.registerFactory<SettingsBloc>(
+    () => SettingsBloc(
+      getLoading: sl(),
+      getKeeping: sl(),
+      getSavedTheme: sl(),
+      updateLoading: sl(),
+      updateKeeping: sl(),
+      updateSavedTheme: sl(),
+    ),
+  );
+
   // Services
   sl.registerSingleton<LastFeaturedService>(
     LastFeaturedService(saveLastFeatured: sl(), getLastFeatured: sl()),
   );
+
+  final loadTheme = sl<GetThemeSettingsConstraints>();
+  final savedTheme = await loadTheme();
+
+  // Регистрируем ThemeController как singleton
+  sl.registerSingleton<AppThemeController>(AppThemeController(savedTheme));
 }
