@@ -10,15 +10,15 @@ import 'featured_page.dart';
 import 'schedule_page.dart';
 import 'settings_page.dart';
 
-class ScaffoldUiWrapper extends StatefulWidget {
+class RootNavigationWrapper extends StatefulWidget {
   final Featured? lastFeatured;
-  const ScaffoldUiWrapper({super.key, this.lastFeatured});
+  const RootNavigationWrapper({super.key, this.lastFeatured});
 
   @override
-  State<ScaffoldUiWrapper> createState() => ScaffoldUiWrapperState();
+  State<RootNavigationWrapper> createState() => RootNavigationWrapperState();
 }
 
-class ScaffoldUiWrapperState extends State<ScaffoldUiWrapper> {
+class RootNavigationWrapperState extends State<RootNavigationWrapper> {
   final navController = GlobalNavigationController();
 
   late final List<GlobalKey<NavigatorState>> navigatorKeys;

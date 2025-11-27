@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 
 import 'core/logger.dart';
+import 'core/presentation/theme_controller.dart';
 import 'core/services/last_featured_service.dart';
 import 'data/adapters/date.dart';
 import 'data/adapters/featured.dart';
@@ -280,4 +281,10 @@ Future<void> init() async {
   sl.registerSingleton<LastFeaturedService>(
     LastFeaturedService(saveLastFeatured: sl(), getLastFeatured: sl()),
   );
+
+  final loadTheme = sl<GetThemeSettingsConstraints>();
+  final savedTheme = await loadTheme();
+
+  // Регистрируем ThemeController как singleton
+  sl.registerSingleton<AppThemeController>(AppThemeController(savedTheme));
 }

@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/presentation/theme_controller.dart';
 import '../../../domain/usecases/settings_usecases/theme_setting.dart';
 import '../../../domain/usecases/settings_usecases/update_constraints.dart';
+import '../../../service_locator.dart';
 import 'settings_event.dart';
 import 'settings_state.dart';
 
@@ -129,6 +131,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           selectedTheme: theme,
         ),
       );
+
+      sl<AppThemeController>().updateTheme(event.themeSetting);
     } catch (e) {
       emit(SettingsError(message: e.toString()));
     }
