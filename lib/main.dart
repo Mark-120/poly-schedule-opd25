@@ -2,60 +2,65 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/presentation/navigation/app_navigation.dart';
-import 'core/presentation/uikit/app_strings.dart';
+import 'core/presentation/navigation/scaffold_ui_state/scaffold_ui_state_controller.dart';
+import 'core/presentation/theme_controller.dart';
 import 'core/presentation/uikit/app_text_styles.dart';
-import 'core/presentation/uikit/app_theme.dart';
 import 'core/services/app_initialization_service.dart';
-import 'core/services/last_schedule_service.dart';
-import 'data/models/last_schedule.dart';
-import 'presentation/pages/empty_schedule_screen.dart';
-import 'presentation/pages/schedule_screen.dart';
+import 'core/services/last_featured_service.dart';
+import 'domain/entities/featured.dart';
+import 'domain/repositories/featured_repository.dart';
+import 'presentation_2.0/pages/root_navigation_wrapper.dart';
 import 'service_locator.dart';
 
 void main() async {
   await AppInitializationService.initializeApplication();
-  final lastSchedule = await sl<LastScheduleService>().load();
+  final lastFeatured = await sl<LastFeaturedService>().load();
+  final featured = lastFeatured?.copyWith(
+    isFeatured: await sl<FeaturedRepository>().isSavedInFeatured(
+      lastFeatured.getEntityId(),
+    ),
+  );
 
   runApp(
-    Provider<LastScheduleService>(
-      create: (context) => sl<LastScheduleService>(),
-      child: MainApp(lastSchedule: lastSchedule),
+    Provider<LastFeaturedService>(
+      create: (context) => sl<LastFeaturedService>(),
+      child: MainApp(lastFeatured: featured),
     ),
   );
 }
 
 class MainApp extends StatelessWidget {
-  final LastSchedule? lastSchedule;
+  final Featured? lastFeatured;
 
-  const MainApp({super.key, this.lastSchedule});
+  const MainApp({super.key, this.lastFeatured});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      onGenerateRoute: AppNavigation.onGeneretaRoute,
-      routes: AppNavigation.routes,
-      builder: (context, child) {
-        return AppTextStylesProvider(
-          styles: AppTextStyles(context),
-          child: child!,
+    final themeController = sl<AppThemeController>();
+
+    return AnimatedBuilder(
+      animation: themeController,
+      builder: (_, __) {
+        return MaterialApp(
+          theme: themeController.currentTheme,
+          onGenerateRoute: AppNavigation.onGenerateRoute,
+          routes: AppNavigation.routes,
+          builder: (context, child) {
+            return AppTextStylesProvider(
+              styles: AppTextStyles(context),
+              child: child!,
+            );
+          },
+          home: _buildHomeScreen(),
         );
       },
-      home: _buildHomeScreen(),
     );
   }
 
   Widget _buildHomeScreen() {
-    if (lastSchedule == null) return EmptyScheduleScreen();
-    return ScheduleScreen(
-      id: lastSchedule!.id,
-      dayTime: DateTime.now(),
-      bottomTitle:
-          (lastSchedule!.id.isTeacher)
-              ? AppStrings.fullNameToAbbreviation(lastSchedule!.title)
-              : lastSchedule!.title,
+    return ChangeNotifierProvider<ScaffoldUiStateController>(
+      create: (_) => ScaffoldUiStateController(),
+      child: RootNavigationWrapper(lastFeatured: lastFeatured),
     );
   }
 }

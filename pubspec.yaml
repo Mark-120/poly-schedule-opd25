@@ -22,11 +22,14 @@ dependencies:
   firebase_core: ^4.2.0
   firebase_crashlytics: ^5.0.3
   firebase_analytics: ^12.0.3
+  flutter_svg: ^2.2.1
+  connectivity_plus: ^6.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  hive_test: ^1.0.1
 
 flutter:
   uses-material-design: true
@@ -36,3 +39,4 @@ flutter:
     - assets/icons/2.0x/drag_icon.png
     - assets/icons/3.0x/drag_icon.png
     - assets/icons/mingcute_sad-line.png
+    - assets/vectors/

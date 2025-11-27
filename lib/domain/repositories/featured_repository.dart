@@ -17,4 +17,5 @@ abstract class FeaturedRepository {
   Future<void> addFeaturedRoom(Room newRoom);
 
   Future<bool> isSavedInFeatured(EntityId id);
+  Future<void> deleteFeatured(EntityId id);
 }

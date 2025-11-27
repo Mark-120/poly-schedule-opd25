@@ -5,8 +5,8 @@ import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
 import '../../core/services/error_handling_service.dart';
-import '../../core/services/last_schedule_service.dart';
-import '../../domain/entities/entity_id.dart';
+import '../../core/services/last_featured_service.dart';
+import '../../domain/entities/featured.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/room.dart';
 import '../../domain/entities/teacher.dart';
@@ -118,7 +118,7 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
                       items:
                           state is FeaturedLoaded
                               ? state.rooms
-                                  .map((r) => AppStrings.fullNameOfRoom(r))
+                                  .map((r) => AppStrings.shortNameOfRoom(r))
                                   .toList()
                               : [],
                       onReorder: (oldIndex, newIndex) {
@@ -406,7 +406,7 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
             ScheduleScreen.route,
             (route) => false,
             arguments: ScheduleScreenArguments(
-              id: EntityId.group(group.id),
+              id: (group.id),
               dayTime: DateTime.now(),
               bottomTitle: group.name,
             ),
@@ -421,7 +421,7 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
             ScheduleScreen.route,
             (route) => false,
             arguments: ScheduleScreenArguments(
-              id: EntityId.teacher(teacher.id),
+              id: (teacher.id),
               dayTime: DateTime.now(),
               bottomTitle: AppStrings.fullNameToAbbreviation(teacher.fullName),
             ),
@@ -436,9 +436,9 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
             ScheduleScreen.route,
             (route) => false,
             arguments: ScheduleScreenArguments(
-              id: EntityId.room(room.getId()),
+              id: (room.getId()),
               dayTime: DateTime.now(),
-              bottomTitle: AppStrings.fullNameOfRoom(room),
+              bottomTitle: AppStrings.shortNameOfRoom(room),
             ),
           );
         }
@@ -447,23 +447,20 @@ class _FeaturedScreenBodyState extends State<_FeaturedScreenBody> {
   }
 
   void onSaveRoom(Room room) {
-    context.read<LastScheduleService>().save(
-      id: EntityId.room(room.getId()),
-      title: AppStrings.fullNameOfRoom(room),
+    context.read<LastFeaturedService>().save(
+      featured: Featured(room, isFeatured: true),
     );
   }
 
   void onSaveGroup(Group group) {
-    context.read<LastScheduleService>().save(
-      id: EntityId.group(group.id),
-      title: group.name,
+    context.read<LastFeaturedService>().save(
+      featured: Featured(group, isFeatured: true),
     );
   }
 
   void onSaveTeacher(Teacher teacher) {
-    context.read<LastScheduleService>().save(
-      id: EntityId.teacher(teacher.id),
-      title: teacher.fullName,
+    context.read<LastFeaturedService>().save(
+      featured: Featured(teacher, isFeatured: true),
     );
   }
 }

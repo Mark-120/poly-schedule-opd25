@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
-import '../../domain/entities/teacher.dart';
-import '../models/teacher.dart';
+import '../../../domain/entities/teacher.dart';
+import '../../models/teacher.dart';
 
 class TeacherAdapter extends TypeAdapter<Teacher> {
   @override

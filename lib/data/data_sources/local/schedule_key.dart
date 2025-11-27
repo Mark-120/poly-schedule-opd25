@@ -9,15 +9,15 @@ class ScheduleKey extends Equatable {
 
   @override
   String toString() {
-    return '${id.toShortString()},${dateTime.toString()}';
+    return '${id.toUniqueString()},${dateTime.toString()}';
   }
 
   factory ScheduleKey.parse(String string) {
     int split = string.lastIndexOf(',');
 
     return ScheduleKey(
-      EntityId.parseShort(string.substring(0, split - 1)),
-      DateTime.parse(string.substring(split)),
+      EntityId.parseUnique(string.substring(0, split)),
+      DateTime.parse(string.substring(split + 1)),
     );
   }
 

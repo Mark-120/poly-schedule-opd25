@@ -1,9 +1,11 @@
 import 'package:hive/hive.dart';
 
 import '../../../core/logger.dart';
+import '../../../domain/entities/entity.dart';
 import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/schedule/week.dart';
 import '../../../domain/repositories/featured_repository.dart';
+import '../../../domain/repositories/settings_repository.dart';
 import '../interface/schedule.dart';
 import '../intermediate/pass_through.dart';
 import 'schedule_key.dart';
@@ -11,11 +13,13 @@ import 'schedule_key.dart';
 final class LocalDataSource extends PassThroughSource {
   final AppLogger logger;
   final FeaturedRepository featuredRepository;
+  final SettingsRepository settingsRepository;
   final Box<Week> localBox;
 
   LocalDataSource({
     required super.prevDataSource,
     required this.featuredRepository,
+    required this.settingsRepository,
     required this.localBox,
     required this.logger,
   });
@@ -81,7 +85,7 @@ final class LocalDataSource extends PassThroughSource {
 
     //Featured are saved on disk
     if (schedule.$2 != StorageType.local && featured) {
-      if (isBetween(key.dateTime)) {
+      if (await isBetween(key.dateTime)) {
         final a = localBox.put(key.toString(), schedule.$1);
         final b = prevDataSource.removeSchedule(key.id, key.dateTime);
         await (a, b).wait;
@@ -92,60 +96,59 @@ final class LocalDataSource extends PassThroughSource {
   Future<void> preLoadFeatured() {
     var futures = [
       featuredRepository.getFeaturedGroups().then(
-        (list) => preLoadEntity(list, (x) => EntityId.group(x.id)),
+        (list) => preLoadEntity(list),
       ),
-      featuredRepository.getFeaturedRooms().then(
-        (list) => preLoadEntity(list, (x) => EntityId.room(x.getId())),
-      ),
+      featuredRepository.getFeaturedRooms().then((list) => preLoadEntity(list)),
       featuredRepository.getFeaturedTeachers().then(
-        (list) => preLoadEntity(list, (x) => EntityId.teacher(x.id)),
+        (list) => preLoadEntity(list),
       ),
     ];
     return Future.wait(futures);
   }
 
-  Future<void> preLoadEntity<T>(
-    List<T> featured,
-    EntityId Function(T) convertToEntityId,
-  ) {
+  Future<void> preLoadEntity(List<ScheduleEntity> featured) async {
     List<Future<void>> futures = [];
     for (final obj in featured) {
       for (
-        DateTime i = getMin();
-        !i.isAfter(getMax());
+        DateTime i = await getMin();
+        !i.isAfter(await getMax());
         i = i.add(Duration(days: 7))
       ) {
-        futures.add(
-          retrieveAndSaveSchedule(ScheduleKey(convertToEntityId(obj), i)),
-        );
+        futures.add(retrieveAndSaveSchedule(ScheduleKey(obj.getId(), i)));
       }
     }
-    return Future.wait(futures);
+    await Future.wait(futures);
   }
 
   Future<void> removeExtra() async {
-    //TODO: Add real parallel execution
-    for (var x in localBox.keys) {
-      var isOld = ScheduleKey.parse(x).dateTime.isBefore(getMin());
-      var isFeatured = await featuredRepository.isSavedInFeatured(
-        ScheduleKey.parse(x).id,
-      );
-      if (isOld || !isFeatured) {
-        logger.debug('[Local] Schedule - Delete from cache key: $x');
-        localBox.delete(x);
-      }
-    }
+    await Future.wait(
+      localBox.keys.map((x) async {
+        final key = ScheduleKey.parse(x);
+        final isOld = key.dateTime.isBefore(await getMin());
+
+        final isFeatured = await featuredRepository.isSavedInFeatured(key.id);
+
+        if (isOld || !isFeatured) {
+          logger.debug('[Local] Schedule - Delete from cache key: $x');
+          await localBox.delete(x);
+        }
+      }),
+    );
   }
 
-  DateTime getMin() {
-    return getCurrentDate().subtract(Duration(days: 7));
+  Future<DateTime> getMin() async {
+    return getCurrentDate().subtract(
+      Duration(days: await settingsRepository.getKeepingConstraints() * 7),
+    );
   }
 
-  DateTime getMax() {
-    return getCurrentDate().add(Duration(days: 28));
+  Future<DateTime> getMax() async {
+    return getCurrentDate().add(
+      Duration(days: await settingsRepository.getLoadingConstraints() * 7),
+    );
   }
 
-  bool isBetween(DateTime time) {
-    return !time.isAfter(getMax()) && !time.isBefore(getMin());
+  Future<bool> isBetween(DateTime time) async {
+    return !time.isAfter(await getMax()) && !time.isBefore(await getMin());
   }
 }

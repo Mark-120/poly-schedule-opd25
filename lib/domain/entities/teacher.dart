@@ -1,6 +1,9 @@
 import 'package:equatable/equatable.dart';
 
-class TeacherId extends Equatable {
+import 'entity.dart';
+import 'entity_id.dart';
+
+class TeacherId extends EntityId with EquatableMixin {
   final int id;
 
   const TeacherId(this.id);
@@ -14,13 +17,23 @@ class TeacherId extends Equatable {
   String toString() {
     return '$id';
   }
+
+  @override
+  String toUniqueString() {
+    return 't${toString()}';
+  }
 }
 
-abstract class Teacher with EquatableMixin {
+abstract class Teacher extends ScheduleEntity with EquatableMixin {
   final TeacherId id;
   final String fullName;
   const Teacher({required this.id, required this.fullName});
 
   @override
   List<Object?> get props => [id, fullName];
+
+  @override
+  TeacherId getId() {
+    return id;
+  }
 }

@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'building.dart';
+import 'entity.dart';
+import 'entity_id.dart';
 
-class RoomId extends Equatable {
+class RoomId extends EntityId with EquatableMixin {
   final int roomId;
   final int buildingId;
 
@@ -21,15 +23,21 @@ class RoomId extends Equatable {
   String toString() {
     return '${roomId}_$buildingId';
   }
+
+  @override
+  String toUniqueString() {
+    return 'r${toString()}';
+  }
 }
 
-abstract class Room with EquatableMixin {
+abstract class Room extends ScheduleEntity with EquatableMixin {
   final int id;
   final String name;
   final Building building;
 
   const Room({required this.id, required this.building, required this.name});
 
+  @override
   RoomId getId() {
     return RoomId(roomId: id, buildingId: building.id);
   }

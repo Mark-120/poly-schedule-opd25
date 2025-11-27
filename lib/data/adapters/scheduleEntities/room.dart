@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
-import '../../domain/entities/room.dart';
-import '../models/room.dart';
+import '../../../domain/entities/room.dart';
+import '../../models/room.dart';
 
 class RoomAdapter extends TypeAdapter<Room> {
   @override
@@ -18,22 +18,5 @@ class RoomAdapter extends TypeAdapter<Room> {
     writer.writeInt(obj.id);
     writer.writeString(obj.name);
     writer.write(obj.building);
-  }
-}
-
-class RoomIdAdapter extends TypeAdapter<RoomId> {
-  @override
-  final typeId = 21;
-  @override
-  RoomId read(BinaryReader reader) {
-    var roomId = reader.readInt();
-    var buildingId = reader.readInt();
-    return RoomId(roomId: roomId, buildingId: buildingId);
-  }
-
-  @override
-  void write(BinaryWriter writer, RoomId obj) {
-    writer.writeInt(obj.roomId);
-    writer.writeInt(obj.buildingId);
   }
 }

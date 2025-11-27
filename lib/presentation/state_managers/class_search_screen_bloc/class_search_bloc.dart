@@ -2,6 +2,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../domain/entities/featured.dart';
 import '../../../domain/entities/room.dart';
 import '../../../domain/usecases/featured_usecases/featured_rooms/add_featured_room.dart';
 import '../../../domain/usecases/schedule_usecases/get_rooms_of_building.dart';

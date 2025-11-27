@@ -2,96 +2,189 @@ import 'package:hive/hive.dart';
 
 import '../../core/exception/local_exception.dart';
 import '../../core/logger.dart';
+import '../../domain/entities/entity.dart';
 import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/room.dart';
 import '../../domain/entities/teacher.dart';
 import '../../domain/repositories/featured_repository.dart';
+import '../models/ordered/ordered.dart';
+
+class OrderedEntity<T extends ScheduleEntity> {
+  T value;
+  int order;
+  OrderedEntity(this.value, this.order);
+}
 
 class FeaturedRepositorySourceImpl implements FeaturedRepository {
   final AppLogger logger;
-  Box<Room> featuredRooms;
-  Box<Teacher> featuredTeachers;
-  Box<Group> featuredGroups;
+
+  Box<int> indexBox;
+
+  static int roomKey = 0;
+  static int teacherKey = 0;
+  static int groupKey = 0;
+
+  Box<OrderedRoom> featuredRooms;
+  Box<OrderedTeacher> featuredTeachers;
+  Box<OrderedGroup> featuredGroups;
+
   FeaturedRepositorySourceImpl({
+    required this.indexBox,
     required this.featuredRooms,
     required this.featuredTeachers,
     required this.featuredGroups,
     required this.logger,
   });
+  Future<int> incrimentId(int key) async {
+    final old = indexBox.get(key) ?? 0;
+    final next = old + 1;
+    await indexBox.put(key, next);
+    return next;
+  }
+
+  Future<void> setId(int key, int value) {
+    return indexBox.put(key, value);
+  }
 
   @override
   Future<void> addFeaturedGroup(Group group) async {
     logger.debug('[Featured] FeaturedGroup - SET $group');
-    await featuredGroups.put(group.id.id, group);
+
+    var id = await incrimentId(groupKey);
+
+    await featuredGroups.put(group.id.id, OrderedGroup(group, id));
   }
 
   @override
   Future<void> addFeaturedRoom(Room newRoom) async {
     logger.debug('[Featured] FeaturedRoom - SET $newRoom');
-    await featuredRooms.put(newRoom.getId().toString(), newRoom);
+
+    var id = await incrimentId(roomKey);
+
+    await featuredRooms.put(
+      newRoom.getId().toString(),
+      OrderedRoom(newRoom, id),
+    );
   }
 
   @override
   Future<void> addFeaturedTeacher(Teacher newTeacher) async {
     logger.debug('[Featured] FeaturedTeacher - SET $newTeacher');
-    await featuredTeachers.put(newTeacher.id.id, newTeacher);
+
+    var id = await incrimentId(teacherKey);
+
+    await featuredTeachers.put(
+      newTeacher.id.id,
+      OrderedTeacher(newTeacher, id),
+    );
   }
 
   @override
   Future<List<Group>> getFeaturedGroups() async {
     logger.debug('[Featured] FeaturedGroups - GET');
-    return featuredGroups.values.toList();
+
+    List<OrderedEntity<Group>> list =
+        featuredGroups.values
+            .map((x) => OrderedEntity<Group>(x.value, x.order))
+            .toList();
+
+    list.sort((a, b) => a.order.compareTo(b.order));
+
+    return list.map((x) => x.value).toList();
   }
 
   @override
   Future<List<Room>> getFeaturedRooms() async {
     logger.debug('[Featured] FeaturedRooms - GET');
-    return featuredRooms.values.toList();
+
+    var list = featuredRooms.values.toList();
+    list.sort((a, b) => a.order.compareTo(b.order));
+
+    return list.map((x) => x.value).toList();
   }
 
   @override
   Future<List<Teacher>> getFeaturedTeachers() async {
     logger.debug('[Featured] FeaturedTeachers - GET');
-    return featuredTeachers.values.toList();
+
+    var list =
+        featuredTeachers.values
+            .map((x) => OrderedEntity<Teacher>(x.value, x.order))
+            .toList();
+    list.sort((a, b) => a.order.compareTo(b.order));
+
+    return list.map((x) => x.value).toList();
   }
 
   @override
   Future<void> setFeaturedGroups(List<Group> newGroups) async {
     logger.debug('[Featured] FeaturedGroups - SET $newGroups');
-    featuredGroups.clear();
-    featuredGroups.putAll(
-      Map.fromIterables(newGroups.map((x) => x.id.id), newGroups),
+    await featuredGroups.clear();
+
+    setId(groupKey, newGroups.length);
+
+    await featuredGroups.putAll(
+      Map.fromIterables(
+        newGroups.map((x) => x.id.id),
+        newGroups.indexed.map((x) => OrderedGroup(x.$2, x.$1)),
+      ),
     );
   }
 
   @override
   Future<void> setFeaturedRooms(List<Room> newRooms) async {
     logger.debug('[Featured] FeaturedRooms - SET $newRooms');
-    featuredRooms.clear();
-    featuredRooms.putAll(
-      Map.fromIterables(newRooms.map((x) => x.getId().toString()), newRooms),
+    await featuredRooms.clear();
+
+    setId(roomKey, newRooms.length);
+
+    await featuredRooms.putAll(
+      Map.fromIterables(
+        newRooms.map((x) => x.getId().toString()),
+        newRooms.indexed.map((x) => OrderedRoom(x.$2, x.$1)),
+      ),
     );
   }
 
   @override
   Future<void> setFeaturedTeachers(List<Teacher> newTeachers) async {
     logger.debug('[Featured] FeaturedTeachers - SET $newTeachers');
-    featuredTeachers.clear();
-    featuredTeachers.putAll(
-      Map.fromIterables(newTeachers.map((x) => x.id.id), newTeachers),
+    await featuredTeachers.clear();
+
+    setId(teacherKey, newTeachers.length);
+
+    await featuredTeachers.putAll(
+      Map.fromIterables(
+        newTeachers.map((x) => x.id.id),
+        newTeachers.indexed.map((x) => OrderedTeacher(x.$2, x.$1)),
+      ),
     );
   }
 
   @override
   Future<bool> isSavedInFeatured(EntityId id) async {
-    if (id.isTeacher) {
-      return (await getFeaturedGroups()).any((x) => x.id == id.asTeacher);
-    } else if (id.isRoom) {
-      return (await getFeaturedRooms()).any((x) => x.getId() == id.asRoom);
-    } else if (id.isGroup) {
-      return (await getFeaturedGroups()).any((x) => x.id == id.asGroup);
+    logger.debug('[Featured] FeaturedRooms - isSavedInFeatured');
+
+    if (id is TeacherId) {
+      return featuredTeachers.containsKey(id.id);
+    } else if (id is RoomId) {
+      return featuredRooms.containsKey(id.toString());
+    } else if (id is GroupId) {
+      return featuredGroups.containsKey(id.id);
     }
     return throw LocalException('non valid id');
+  }
+
+  @override
+  Future<void> deleteFeatured(EntityId id) async {
+    logger.debug('[Featured] FeaturedRooms - deleteFeatured');
+    if (id is TeacherId) {
+      return featuredTeachers.delete(id.id);
+    } else if (id is RoomId) {
+      return featuredRooms.delete(id.toString());
+    } else if (id is GroupId) {
+      return featuredGroups.delete(id.id);
+    }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
-import '../../domain/entities/building.dart';
-import '../models/building.dart';
+import '../../../domain/entities/building.dart';
+import '../../models/building.dart';
 
 class BuildingAdapter extends TypeAdapter<Building> {
   @override

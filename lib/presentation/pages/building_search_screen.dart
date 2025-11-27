@@ -99,11 +99,11 @@ class _BuildingSearchScreenState extends State<BuildingSearchScreen> {
             itemBuilder: (context, index) {
               final building = state.buildings[index];
               return FeaturedCard(
-                building.name,
-                isChosen: building == state.selectedBuilding,
+                building.entity.name,
+                isChosen: building.entity == state.selectedBuilding,
                 onTap: () {
                   context.read<BuildingSearchBloc>().add(
-                    BuildingSelected(building),
+                    BuildingSelected(building.entity),
                   );
                 },
               );

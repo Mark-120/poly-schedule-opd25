@@ -5,7 +5,6 @@ import '../../core/presentation/uikit/app_strings.dart';
 import '../../core/presentation/uikit/app_text_styles.dart';
 import '../../core/presentation/uikit/theme_extension.dart';
 import '../../core/services/error_handling_service.dart';
-import '../../domain/entities/entity_id.dart';
 import '../../domain/entities/group.dart';
 import '../../domain/entities/teacher.dart';
 import '../../presentation/widgets/featured_card.dart';
@@ -97,7 +96,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       ScheduleScreen.route,
                       (route) => false,
                       arguments: ScheduleScreenArguments(
-                        id: EntityId.group(group.id),
+                        id: (group.id),
                         dayTime: DateTime.now(),
                         bottomTitle: group.name,
                       ),
@@ -109,7 +108,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       ScheduleScreen.route,
                       (route) => false,
                       arguments: ScheduleScreenArguments(
-                        id: EntityId.teacher(teacher.id),
+                        id: (teacher.id),
                         dayTime: DateTime.now(),
                         bottomTitle: AppStrings.fullNameToAbbreviation(
                           teacher.fullName,
