@@ -54,10 +54,12 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection>
     final timeStart = lesson.start;
     final timeEnd = lesson.end;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 1),
-      child: GestureDetector(
-        onTap: _onClassTap,
+    return InkWell(
+      onTap: _onClassTap,
+      overlayColor: WidgetStateProperty.all(Colors.transparent),
+
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 1),
         child: IntrinsicHeight(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -93,6 +95,7 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection>
         _controller.forward(from: 0.0);
       }
       _isExpanded = !_isExpanded;
+      print('pressed, $_isExpanded');
     });
   }
 
@@ -207,3 +210,8 @@ class _LectureInfo extends StatelessWidget {
         );
   }
 }
+/*
+1. Завтра мероприятие со Сбером
+2. Чат в ТГ
+3. Мб будут задания по UML
+*/ 
