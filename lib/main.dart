@@ -57,12 +57,6 @@ class MainApp extends StatelessWidget {
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   final theme = AppTheme(NewAppColors.Ryae);
-  //   return
-  // }
-
   Widget _buildHomeScreen() {
     return ChangeNotifierProvider<ScaffoldUiStateController>(
       create: (_) => ScaffoldUiStateController(),

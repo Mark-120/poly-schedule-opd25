@@ -41,9 +41,10 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection>
     final primaryColor = Theme.of(context).primaryColor;
 
     final lesson = widget.lesson;
-    final teachers = lesson.teachers
-        .map((teacher) => teacher.fullName)
-        .join(', ');
+    final teachers =
+        lesson.teachers.isNotEmpty
+            ? lesson.teachers.map((teacher) => teacher.fullName).join(', ')
+            : null;
     final auditories = lesson.auditories
         .map((room) => '${room.building.abbr}, ${room.name} ауд.')
         .join(';');
@@ -55,7 +56,7 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection>
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 1),
-      child: InkWell(
+      child: GestureDetector(
         onTap: _onClassTap,
         child: IntrinsicHeight(
           child: Row(
@@ -205,19 +206,4 @@ class _LectureInfo extends StatelessWidget {
           ],
         );
   }
-
-  // Future<void> _copySdoLink() async {
-  //   if (widget.sdoLink == null || widget.sdoLink!.isEmpty) return;
-
-  //   await Clipboard.setData(ClipboardData(text: widget.sdoLink!));
-
-  //   if (mounted) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text('Ссылка скопирована в буфер обмена'),
-  //         duration: Duration(seconds: 2),
-  //       ),
-  //     );
-  //   }
-  // }
 }
