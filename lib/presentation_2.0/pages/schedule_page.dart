@@ -123,7 +123,13 @@ class _SchedulePageState extends State<SchedulePage> {
                         (context) =>
                             sl<NewScheduleBloc>()
                               ..add(_createEvent(entityId!, _weekDates[index])),
-                    child: _SchedulePage(key: _pageKeys[index]),
+                    child: _SchedulePage(
+                      onRefresh:
+                          (context) => context.read<NewScheduleBloc>().add(
+                            RefreshScheduleEvent(entityId!, _weekDates[index]),
+                          ),
+                      key: _pageKeys[index],
+                    ),
                   )
                   : _EmptySchedulePage();
             },
@@ -300,31 +306,38 @@ class _ScheduleAppBarWrapperState extends State<_ScheduleAppBarWrapper> {
 }
 
 class _SchedulePage extends StatelessWidget {
-  const _SchedulePage({required Key key}) : super(key: key);
+  final Function(BuildContext) onRefresh;
+  const _SchedulePage({required Key key, required this.onRefresh})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final textStyles = Theme.of(context).extension<AppTypography>()!;
-
     return BlocBuilder<NewScheduleBloc, ScheduleState>(
       builder: (context, state) {
-        if (state is ScheduleLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is ScheduleError) {
-          ErrorHandlingService.handleError(context, state.message);
-          return Center(
-            child: Text(
-              AppStrings.errorMessage,
-              style: textStyles.emptySchedule,
-            ),
-          );
-        } else if (state is ScheduleLoaded) {
-          return _LoadedScheduleBody(week: state.week);
-        } else {
-          return const Center(child: CircularProgressIndicator());
-        }
+        return RefreshIndicator(
+          backgroundColor: Theme.of(context).extension<ThemeColors>()!.tile,
+          onRefresh: () async => await onRefresh(context),
+          child: getWidgetFromState(context, state),
+        );
       },
     );
+  }
+
+  Widget getWidgetFromState(BuildContext context, ScheduleState state) {
+    final textStyles = Theme.of(context).extension<AppTypography>()!;
+
+    if (state is ScheduleLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (state is ScheduleError) {
+      ErrorHandlingService.handleError(context, state.message);
+      return Center(
+        child: Text(AppStrings.errorMessage, style: textStyles.emptySchedule),
+      );
+    } else if (state is ScheduleLoaded) {
+      return _LoadedScheduleBody(week: state.week);
+    } else {
+      return const Center(child: CircularProgressIndicator());
+    }
   }
 }
 
@@ -342,11 +355,11 @@ class _EmptySchedulePage extends StatelessWidget {
               BlendMode.srcIn,
             ),
           ),
-          SizedBox(height: 30,),
+          SizedBox(height: 30),
           Text(
             'Расписание не загружено',
             style: Theme.of(context).extension<AppTypography>()!.emptySchedule,
-          )
+          ),
         ],
       ),
     );

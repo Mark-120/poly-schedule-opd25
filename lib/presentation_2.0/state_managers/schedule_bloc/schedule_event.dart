@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../domain/entities/entity.dart';
+import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/group.dart';
 import '../../../domain/entities/room.dart';
 import '../../../domain/entities/teacher.dart';
@@ -56,4 +57,13 @@ class LoadScheduleByRoom extends ScheduleEvent {
 
   @override
   List<Object> get props => [roomId, dayTime];
+}
+
+class RefreshScheduleEvent extends ScheduleEvent {
+  final EntityId entityId;
+  final DateTime dayTime;
+  const RefreshScheduleEvent(this.entityId, this.dayTime);
+
+  @override
+  List<Object> get props => [entityId, dayTime];
 }
