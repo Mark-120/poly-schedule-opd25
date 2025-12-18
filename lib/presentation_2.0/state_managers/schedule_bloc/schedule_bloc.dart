@@ -9,10 +9,12 @@ import '../../../domain/usecases/featured_usecases/featured_groups/add_featured_
 import '../../../domain/usecases/featured_usecases/featured_rooms/add_featured_room.dart';
 import '../../../domain/usecases/featured_usecases/featured_teachers/add_featured_teacher.dart';
 import '../../../domain/usecases/schedule_usecases/get_schedule_usecases.dart';
+import '../../../domain/usecases/schedule_usecases/refresh_schedule.dart';
 import 'schedule_event.dart';
 import 'schedule_state.dart';
 
 class NewScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
+  final RefreshSchedule refreshSchedule;
   final GetSchedule getSchedule;
   final AddFeaturedGroup addFeaturedGroup;
   final AddFeaturedTeacher addFeaturedTeacher;
@@ -25,12 +27,14 @@ class NewScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     required this.addFeaturedTeacher,
     required this.addFeaturedRoom,
     required this.deleteFeatured,
+    required this.refreshSchedule,
   }) : super(const ScheduleLoading()) {
     on<LoadScheduleByGroup>(_onLoadScheduleByGroup);
     on<LoadScheduleByTeacher>(_onLoadScheduleByTeacher);
     on<LoadScheduleByRoom>(_onLoadScheduleByRoom);
     on<SaveToFeatured>(_onSaveToFeatured);
     on<DeleteFromFeatured>(_onDeleteFromFeatured);
+    on<RefreshScheduleEvent>(_onRefreshSchedule);
   }
 
   Future<void> _onDeleteFromFeatured(
@@ -108,6 +112,21 @@ class NewScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     try {
       final week = await getSchedule(
         GetScheduleParams(entityId: event.roomId, dayTime: event.dayTime),
+      );
+      emit(ScheduleLoaded(week));
+    } catch (e) {
+      emit(ScheduleError(e.toString()));
+    }
+  }
+
+  Future<void> _onRefreshSchedule(
+    RefreshScheduleEvent event,
+    Emitter<ScheduleState> emit,
+  ) async {
+    emit(const ScheduleLoading());
+    try {
+      final week = await refreshSchedule(
+        RefreshScheduleParams(entityId: event.entityId, dayTime: event.dayTime),
       );
       emit(ScheduleLoaded(week));
     } catch (e) {
