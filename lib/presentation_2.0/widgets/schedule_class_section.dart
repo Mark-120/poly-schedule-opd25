@@ -54,10 +54,12 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection>
     final timeStart = lesson.start;
     final timeEnd = lesson.end;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 1),
-      child: GestureDetector(
-        onTap: _onClassTap,
+    return InkWell(
+      onTap: _onClassTap,
+      overlayColor: WidgetStateProperty.all(Colors.transparent),
+
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 1),
         child: IntrinsicHeight(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
