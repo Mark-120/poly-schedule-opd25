@@ -1,13 +1,13 @@
-import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/schedule/week.dart';
+import 'schedule_key.dart';
 
 enum StorageType { local, memory, remote }
 
 abstract class ScheduleDataSource {
-  Future<(Week, StorageType)> getSchedule(EntityId id, DateTime dayTime);
-  Future<(Week, StorageType)> invalidateSchedule(EntityId id, DateTime dayTime);
-  //Notify data source that it's data stored in another layer, and can be deleted
-  Future<void> removeSchedule(EntityId id, DateTime dayTime);
+  Future<Week> getSchedule(ScheduleKey key);
+  Future<Week> invalidateSchedule(ScheduleKey key);
+  //Save schedule in data layer if applicable
+  Future<bool> saveSchedule(ScheduleKey key, Week week);
 
   Future<void> onAppStart();
   Future<void> onFeaturedChanged();

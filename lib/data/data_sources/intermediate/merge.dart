@@ -10,16 +10,16 @@ import 'pass_through.dart';
 final class MergeDataSource extends PassThroughSource {
   MergeDataSource({required super.prevDataSource});
   @override
-  Future<(Week, StorageType)> getSchedule(EntityId id, DateTime dayTime) async {
+  Future<Week> getSchedule(EntityId id, DateTime dayTime) async {
     //Prefetch data
     var schedule = await prevDataSource.getSchedule(id, dayTime);
     var week = WeekModel(
-      dateEnd: schedule.$1.dateEnd,
-      dateStart: schedule.$1.dateStart,
-      isOdd: schedule.$1.isOdd,
-      days: schedule.$1.days.map(mergeDay).toList(),
+      dateEnd: schedule.dateEnd,
+      dateStart: schedule.dateStart,
+      isOdd: schedule.isOdd,
+      days: schedule.days.map(mergeDay).toList(),
     );
-    return (week, schedule.$2);
+    return week;
   }
 
   //Merging schedules in one day

@@ -7,6 +7,7 @@ import '../../../domain/entities/schedule/week.dart';
 import '../../../domain/entities/teacher.dart';
 import '../../models/schedule/week.dart';
 import '../interface/schedule.dart';
+import '../interface/schedule_key.dart';
 import 'base_remote.dart';
 
 final class RemoteScheduleDataSourceImpl extends RemoteDataSource
@@ -14,22 +15,14 @@ final class RemoteScheduleDataSourceImpl extends RemoteDataSource
   RemoteScheduleDataSourceImpl({required super.client, required super.logger});
 
   @override
-  Future<(Week, StorageType)> getSchedule(EntityId id, DateTime dayTime) async {
+  Future<Week> getSchedule(ScheduleKey key) async {
+    final id = key.id;
     if (id is TeacherId) {
-      return getScheduleByTeacher(
-        id,
-        dayTime,
-      ).then((x) => (x, StorageType.remote));
+      return getScheduleByTeacher(id, key.dateTime);
     } else if (id is GroupId) {
-      return getScheduleByGroup(
-        id,
-        dayTime,
-      ).then((x) => (x, StorageType.remote));
+      return getScheduleByGroup(id, key.dateTime);
     } else if (id is RoomId) {
-      return getScheduleByRoom(
-        id,
-        dayTime,
-      ).then((x) => (x, StorageType.remote));
+      return getScheduleByRoom(id, key.dateTime);
     }
 
     return throw (RemoteException('Invalid Id type'));
@@ -84,13 +77,12 @@ final class RemoteScheduleDataSourceImpl extends RemoteDataSource
   }
 
   @override
-  Future<(Week, StorageType)> invalidateSchedule(
-    EntityId id,
-    DateTime dayTime,
-  ) => getSchedule(id, dayTime);
+  Future<Week> invalidateSchedule(ScheduleKey key) => getSchedule(key);
 
   @override
-  Future<void> removeSchedule(EntityId id, DateTime dayTime) async {}
+  Future<bool> saveSchedule(ScheduleKey key, Week week) async {
+    return false;
+  }
 
   @override
   Future<void> onAppStart() async {}

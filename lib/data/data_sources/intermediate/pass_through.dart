@@ -1,25 +1,22 @@
 import '../../../core/date_formater.dart';
-import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/schedule/week.dart';
 import '../interface/schedule.dart';
+import '../interface/schedule_key.dart';
 
 class PassThroughSource extends ScheduleDataSource {
   final ScheduleDataSource prevDataSource;
   PassThroughSource({required this.prevDataSource});
 
   @override
-  Future<(Week, StorageType)> getSchedule(EntityId id, DateTime dayTime) =>
-      prevDataSource.getSchedule(id, dayTime);
+  Future<Week> getSchedule(ScheduleKey key) => prevDataSource.getSchedule(key);
 
   @override
-  Future<(Week, StorageType)> invalidateSchedule(
-    EntityId id,
-    DateTime dayTime,
-  ) => prevDataSource.invalidateSchedule(id, dayTime);
+  Future<Week> invalidateSchedule(ScheduleKey key) =>
+      prevDataSource.invalidateSchedule(key);
 
   @override
-  Future<void> removeSchedule(EntityId id, DateTime dayTime) =>
-      prevDataSource.removeSchedule(id, dayTime);
+  Future<bool> saveSchedule(ScheduleKey key, Week week) =>
+      prevDataSource.saveSchedule(key, week);
 
   DateTime getCurrentDate() {
     return DateFormater.truncDate(DateTime.now());

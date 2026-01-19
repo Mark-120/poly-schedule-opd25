@@ -2,13 +2,11 @@ import 'package:hive/hive.dart';
 
 import '../../../core/logger.dart';
 import '../../../domain/entities/entity.dart';
-import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/schedule/week.dart';
 import '../../../domain/repositories/featured_repository.dart';
 import '../../../domain/repositories/settings_repository.dart';
-import '../interface/schedule.dart';
+import '../interface/schedule_key.dart';
 import '../intermediate/pass_through.dart';
-import 'schedule_key.dart';
 
 final class LocalDataSource extends PassThroughSource {
   final AppLogger logger;
@@ -25,8 +23,15 @@ final class LocalDataSource extends PassThroughSource {
   });
 
   @override
-  Future<(Week, StorageType)> getSchedule(EntityId id, DateTime dayTime) async {
-    return retrieveAndSaveSchedule(ScheduleKey(id, dayTime));
+  Future<Week> getSchedule(ScheduleKey key) async {
+    var val = localBox.get(key.toString());
+    if (val != null) {
+      logger.debug('[Local] Schedule - LOCAL HIT for $key');
+      return val;
+    }
+
+    logger.debug('[Local] Schedule - LOCAL MISS for $key');
+    return prevDataSource.getSchedule(key);
   }
 
   @override
@@ -44,52 +49,23 @@ final class LocalDataSource extends PassThroughSource {
   }
 
   @override
-  Future<(Week, StorageType)> invalidateSchedule(
-    EntityId id,
-    DateTime dayTime,
-  ) async {
-    var newSchedule = await prevDataSource.invalidateSchedule(id, dayTime);
-    logger.debug(
-      '[Cache] Schedule - Invalidate for ${ScheduleKey(id, dayTime)}',
-    );
-    saveSchedule(ScheduleKey(id, dayTime), newSchedule);
-    return newSchedule;
-  }
-
-  Future<(Week, StorageType)> retrieveAndSaveSchedule(
-    ScheduleKey cacheKey,
-  ) async {
-    final schedule = await retrieveSchedule(cacheKey);
-    saveSchedule(cacheKey, schedule);
-    return schedule;
-  }
-
-  //Get Data from memory/local storage/remote connection
-  Future<(Week, StorageType)> retrieveSchedule(ScheduleKey cacheKey) async {
-    var val = localBox.get(cacheKey.toString());
-    if (val != null) {
-      logger.debug('[Local] Schedule - LOCAL HIT for $cacheKey');
-      return (val, StorageType.local);
-    }
-
-    logger.debug('[Local] Schedule - LOCAL MISS for $cacheKey');
-    return prevDataSource.getSchedule(cacheKey.id, cacheKey.dateTime);
+  Future<Week> invalidateSchedule(ScheduleKey key) async {
+    logger.debug('[Cache] Schedule - Invalidate for $key');
+    return prevDataSource.invalidateSchedule(key);
   }
 
   //Tries to save schedule in memory/local storage
-  Future<void> saveSchedule(
-    ScheduleKey key,
-    (Week, StorageType) schedule,
-  ) async {
+  @override
+  Future<bool> saveSchedule(ScheduleKey key, Week week) async {
     final featured = await featuredRepository.isSavedInFeatured(key.id);
+    final isInRange = await isBetween(key.dateTime);
 
     //Featured are saved on disk
-    if (schedule.$2 != StorageType.local && featured) {
-      if (await isBetween(key.dateTime)) {
-        final a = localBox.put(key.toString(), schedule.$1);
-        final b = prevDataSource.removeSchedule(key.id, key.dateTime);
-        await (a, b).wait;
-      }
+    if (featured && isInRange) {
+      await localBox.put(key.toString(), week);
+      return true;
+    } else {
+      return prevDataSource.saveSchedule(key, week);
     }
   }
 
@@ -114,10 +90,16 @@ final class LocalDataSource extends PassThroughSource {
         !i.isAfter(await getMax());
         i = i.add(Duration(days: 7))
       ) {
-        futures.add(retrieveAndSaveSchedule(ScheduleKey(obj.getId(), i)));
+        futures.add(getAndSaveSchedule(ScheduleKey(obj.getId(), i)));
       }
     }
     await Future.wait(futures);
+  }
+
+  Future<void> getAndSaveSchedule(ScheduleKey key) async {
+    final week = await getSchedule(key);
+    //Featured are saved on disk
+    await localBox.put(key.toString(), week);
   }
 
   Future<void> removeExtra() async {

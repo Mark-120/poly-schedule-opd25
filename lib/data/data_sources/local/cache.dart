@@ -1,10 +1,8 @@
 import '../../../core/logger.dart';
-import '../../../domain/entities/entity_id.dart';
 import '../../../domain/entities/schedule/week.dart';
-import '../interface/schedule.dart';
+import '../interface/schedule_key.dart';
 import '../intermediate/pass_through.dart';
 import 'hive_cache.dart';
-import 'schedule_key.dart';
 
 final class CacheDataSource extends PassThroughSource {
   final AppLogger logger;
@@ -18,72 +16,41 @@ final class CacheDataSource extends PassThroughSource {
   });
 
   @override
-  Future<(Week, StorageType)> getSchedule(EntityId id, DateTime dayTime) async {
-    return retrieveAndSaveSchedule(ScheduleKey(id, dayTime));
-  }
-
-  @override
-  Future<(Week, StorageType)> invalidateSchedule(
-    EntityId id,
-    DateTime dayTime,
-  ) async {
-    final cacheKey = ScheduleKey(id, dayTime);
-    logger.debug('[Cache] Schedule - Invalidate for $cacheKey');
-    final value = await prevDataSource.invalidateSchedule(id, dayTime);
-    saveSchedule(cacheKey, value);
-    return value;
-  }
-
-  @override
-  Future<void> removeSchedule(EntityId id, DateTime dayTime) async {
-    final cacheKey = ScheduleKey(id, dayTime);
-    logger.debug('[Cache] Schedule - Remove for $cacheKey');
-
-    memoryCache.remove(cacheKey);
-    localBox.removeValue(cacheKey);
-  }
-
-  Future<(Week, StorageType)> retrieveAndSaveSchedule(
-    ScheduleKey cacheKey,
-  ) async {
-    final schedule = await retrieveSchedule(cacheKey);
-    saveSchedule(cacheKey, schedule);
-    return schedule;
-  }
-
-  //Get Data from memory/local storage/remote connection
-  Future<(Week, StorageType)> retrieveSchedule(ScheduleKey cacheKey) async {
-    final memory = memoryCache[cacheKey];
+  Future<Week> getSchedule(ScheduleKey key) async {
+    final memory = memoryCache[key];
 
     if (memory != null) {
-      logger.debug('[Cache] Schedule - MEMORY CACHE HIT for $cacheKey');
-      return (memory, StorageType.memory);
+      logger.debug('[Cache] Schedule - MEMORY CACHE HIT for $key');
+      return memory;
     }
 
-    var val = localBox.getValue(cacheKey);
+    var val = localBox.getValue(key);
     if (val != null) {
-      logger.debug('[Cache] Schedule - CACHE HIT for $cacheKey');
-      return (val, StorageType.local);
+      logger.debug('[Cache] Schedule - CACHE HIT for $key');
+      return val;
     }
 
-    logger.debug('[Cache] Schedule - CACHE MISS for $cacheKey');
-    return prevDataSource.getSchedule(cacheKey.id, cacheKey.dateTime);
+    logger.debug('[Cache] Schedule - CACHE MISS for $key');
+    return prevDataSource.getSchedule(key);
   }
 
-  //Save schedule in memory/local storage
-  Future<void> saveSchedule(
-    ScheduleKey key,
-    (Week, StorageType) schedule,
-  ) async {
-    if (schedule.$2 != StorageType.local) {
-      if (isBetween(key.dateTime)) {
-        localBox.addValue(key, schedule.$1);
-        prevDataSource.removeSchedule(key.id, key.dateTime);
-        memoryCache.remove(key);
-        return;
-      }
+  @override
+  Future<Week> invalidateSchedule(ScheduleKey key) async {
+    logger.debug('[Cache] Schedule - Invalidate for $key');
+    return prevDataSource.invalidateSchedule(key);
+  }
+
+  @override
+  Future<bool> saveSchedule(ScheduleKey key, Week week) async {
+    logger.debug('[Cache] Schedule - Save for $key');
+
+    if (isBetween(key.dateTime)) {
+      localBox.addValue(key, week);
+      memoryCache.remove(key);
+      return true;
     }
-    memoryCache[key] = schedule.$1;
+    memoryCache[key] = week;
+    return prevDataSource.saveSchedule(key, week);
   }
 
   DateTime getMin() {

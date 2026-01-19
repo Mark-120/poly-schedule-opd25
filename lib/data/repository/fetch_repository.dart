@@ -17,10 +17,15 @@ class FetchRepositoryImpl extends FetchRepository {
 
   @override
   Future<List<Featured<Group>>> findGroups(String query) async {
-    final featured = await featuredRepository.getFeaturedGroups();
-    final stream = (await fetchDataSource.findGroups(
-      query,
-    )).map((x) => Featured(x, isFeatured: featured.contains(x)));
+    final rawStream = await fetchDataSource.findGroups(query);
+    final stream = await Future.wait(
+      rawStream.map((x) async {
+        return Featured(
+          x,
+          isFeatured: await featuredRepository.isSavedInFeatured(x.getId()),
+        );
+      }),
+    );
     final sorted = [
       ...stream.where((e) => e.isFeatured),
       ...stream.where((e) => !e.isFeatured),
@@ -30,10 +35,17 @@ class FetchRepositoryImpl extends FetchRepository {
 
   @override
   Future<List<Featured<Teacher>>> findTeachers(String query) async {
-    final featured = await featuredRepository.getFeaturedTeachers();
-    final stream = (await fetchDataSource.findTeachers(
-      query,
-    )).map((x) => Featured(x, isFeatured: featured.contains(x)));
+    final rawStream = (await fetchDataSource.findTeachers(query));
+
+    final stream = await Future.wait(
+      rawStream.map((x) async {
+        return Featured(
+          x,
+          isFeatured: await featuredRepository.isSavedInFeatured(x.getId()),
+        );
+      }),
+    );
+
     final sorted = [
       ...stream.where((e) => e.isFeatured),
       ...stream.where((e) => !e.isFeatured),
@@ -57,10 +69,16 @@ class FetchRepositoryImpl extends FetchRepository {
 
   @override
   Future<List<Featured<Room>>> getAllRoomsOfBuilding(int buildingId) async {
-    final featured = await featuredRepository.getFeaturedRooms();
-    final stream = (await fetchDataSource.getAllRoomsOfBuilding(
-      buildingId,
-    )).map((x) => Featured(x, isFeatured: featured.contains(x)));
+    final rawStream = (await fetchDataSource.getAllRoomsOfBuilding(buildingId));
+
+    final stream = await Future.wait(
+      rawStream.map((x) async {
+        return Featured(
+          x,
+          isFeatured: await featuredRepository.isSavedInFeatured(x.getId()),
+        );
+      }),
+    );
     final sorted = [
       ...stream.where((e) => e.isFeatured),
       ...stream.where((e) => !e.isFeatured),
