@@ -21,6 +21,8 @@ dependencies:
   provider: ^6.1.5+1
   flutter_svg: ^2.2.1
   connectivity_plus: ^6.0.0
+  appmetrica_plugin: ^3.4.0
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -37,3 +39,4 @@ flutter:
     - assets/icons/3.0x/drag_icon.png
     - assets/icons/mingcute_sad-line.png
     - assets/vectors/
+    - .env

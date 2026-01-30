@@ -1,3 +1,6 @@
+# Git related
+.env
+
 # Miscellaneous
 *.class
 *.log

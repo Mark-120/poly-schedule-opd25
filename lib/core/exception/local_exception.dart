@@ -1,8 +1,11 @@
-import 'package:equatable/equatable.dart';
+import 'app_exception.dart';
 
-class LocalException extends Equatable {
-  final String message;
-  const LocalException(this.message);
+class LocalException extends AppException {
+  const LocalException(super.message);
+
   @override
-  List<Object> get props => [];
+  ExceptionType get type => ExceptionType.local;
+
+  @override
+  List<Object> get props => [message];
 }
