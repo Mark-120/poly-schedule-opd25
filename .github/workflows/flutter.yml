@@ -14,7 +14,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       # скачивание проекта на виртуальную машину
       - uses: actions/checkout@v4
@@ -25,6 +24,11 @@ jobs:
         with:
           flutter-version: 3.29.2  # Можно указать конкретную версию
 
+      - name: Create env file
+        run: |
+          touch .env
+          echo "${{ secrets.APPMETRICS_API_KEY }}" >> .env
+          cat .env
 
       # установка зависимостей
       - name: Install dependencies
