@@ -1,11 +1,8 @@
-import 'app_exception.dart';
+import 'package:equatable/equatable.dart';
 
-class RemoteException extends AppException {
-  const RemoteException(super.message);
-
+class RemoteException extends Equatable {
+  final String message;
+  const RemoteException(this.message);
   @override
-  ExceptionType get type => ExceptionType.remote;
-
-  @override
-  List<Object> get props => [message];
+  List<Object> get props => [];
 }

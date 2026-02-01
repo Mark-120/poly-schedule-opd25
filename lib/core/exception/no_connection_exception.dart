@@ -1,11 +1,8 @@
-import 'app_exception.dart';
+import 'package:equatable/equatable.dart';
 
-class NoConnectionException extends AppException {
-  const NoConnectionException(super.message);
-
+class NoConnectionException extends Equatable {
+  final String message;
+  const NoConnectionException(this.message);
   @override
-  ExceptionType get type => ExceptionType.noConnection;
-
-  @override
-  List<Object> get props => [message];
+  List<Object> get props => [];
 }
