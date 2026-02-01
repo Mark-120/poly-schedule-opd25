@@ -161,14 +161,16 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection>
         },
       );
 
+      // ignore: use_build_context_synchronously
       await context.read<GlobalNavigationController>().pushToTab(0, route);
     }
   }
 
   Featured<Entity> _createFeaturedFromEntity(Entity entity, bool isFeatured) {
     if (entity is Group) return Featured<Group>(entity, isFeatured: isFeatured);
-    if (entity is Teacher)
+    if (entity is Teacher) {
       return Featured<Teacher>(entity, isFeatured: isFeatured);
+    }
     if (entity is Room) return Featured<Room>(entity, isFeatured: isFeatured);
     throw UnimplementedError();
   }
