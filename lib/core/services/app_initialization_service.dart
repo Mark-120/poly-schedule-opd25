@@ -17,7 +17,6 @@ class AppInitializationService {
     await di.init();
     await dotenv.load();
     AppMetrica.activate(AppMetricaConfig(dotenv.get('APPMETRICS_API_KEY')));
-    AppMetrica.reportEvent('My first AppMetrica event!');
 
     sl<OnAppStart>()()
         .catchError((Object exception) {
