@@ -19,11 +19,10 @@ dependencies:
   bloc_concurrency: ^0.3.0
   logger: ^2.6.1
   provider: ^6.1.5+1
-  firebase_core: ^4.2.0
-  firebase_crashlytics: ^5.0.3
-  firebase_analytics: ^12.0.3
   flutter_svg: ^2.2.1
   connectivity_plus: ^6.0.0
+  appmetrica_plugin: ^3.4.0
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -40,3 +39,4 @@ flutter:
     - assets/icons/3.0x/drag_icon.png
     - assets/icons/mingcute_sad-line.png
     - assets/vectors/
+    - .env

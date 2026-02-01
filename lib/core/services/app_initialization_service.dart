@@ -1,12 +1,11 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:appmetrica_plugin/appmetrica_plugin.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import '../../domain/usecases/schedule_usecases/on_app_start.dart';
-import '../../firebase_options.dart';
 import '../../service_locator.dart' as di;
 import '../../service_locator.dart';
 import '../logger.dart';
@@ -16,6 +15,8 @@ class AppInitializationService {
   static Future<void> initializeApplication() async {
     await initializeDateFormatting('ru', null);
     await di.init();
+    await dotenv.load();
+    AppMetrica.activate(AppMetricaConfig(dotenv.get('APPMETRICS_API_KEY')));
 
     sl<OnAppStart>()()
         .catchError((Object exception) {
@@ -27,14 +28,17 @@ class AppInitializationService {
 
     Bloc.observer = BlocLogger(sl<AppLogger>());
     WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
     FlutterError.onError = (errorDetails) {
-      FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+      AppMetrica.reportError(
+        message: errorDetails.exception.toString(),
+        errorDescription: AppMetricaErrorDescription(StackTrace.current),
+      );
     };
     PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      AppMetrica.reportError(
+        message: error.toString(),
+        errorDescription: AppMetricaErrorDescription(stack),
+      );
       return true;
     };
   }

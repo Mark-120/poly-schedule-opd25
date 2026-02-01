@@ -1,12 +1,11 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:appmetrica_plugin/appmetrica_plugin.dart';
 import 'package:flutter/material.dart';
 
 class ErrorHandlingService {
   static void handleError(BuildContext context, String message) {
-    FirebaseCrashlytics.instance.recordError(
-      message,
-      StackTrace.current,
-      fatal: false,
+    AppMetrica.reportError(
+      message: message,
+      errorDescription: AppMetricaErrorDescription(StackTrace.current),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
