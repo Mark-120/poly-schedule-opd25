@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/configs/assets/app_vectors.dart';
 import '../../core/presentation/navigation/scaffold_ui_state/global_navigation_ontroller.dart';
@@ -90,6 +91,7 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection>
                   teachersList: lesson.teachers,
                   groupsList: lesson.groups,
                   auditoriesList: lesson.auditories,
+                  lmsUrl: lesson.lmsUrl,
                   onNavigateToEntity: _navigateToEntity,
                 ),
               ),
@@ -205,6 +207,7 @@ class _LectureInfo extends StatelessWidget {
   final List<Teacher> teachersList;
   final List<Group> groupsList;
   final List<Room> auditoriesList;
+  final String lmsUrl;
   final Function(Entity) onNavigateToEntity;
 
   const _LectureInfo({
@@ -218,8 +221,18 @@ class _LectureInfo extends StatelessWidget {
     required this.teachersList,
     required this.groupsList,
     required this.auditoriesList,
+    required this.lmsUrl,
     required this.onNavigateToEntity,
   }) : _isExpanded = isExpanded;
+
+  bool get _isValidLmsUrl {
+    final s = lmsUrl.trim();
+    if (s.isEmpty) return false;
+    final uri = Uri.tryParse(s);
+    return uri != null &&
+        uri.hasScheme &&
+        (uri.scheme == 'http' || uri.scheme == 'https');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -240,7 +253,7 @@ class _LectureInfo extends StatelessWidget {
             _buildClickableAuditories(textStyles),
             _buildClickableTeachers(textStyles),
             _buildClickableGroups(textStyles),
-            Text('Ссылка на СДО', style: textStyles.expandedSubjectSubtitle),
+            _buildLmsLink(textStyles),
           ],
         )
         : Column(
@@ -252,6 +265,25 @@ class _LectureInfo extends StatelessWidget {
             Text('$location, $lessonType', style: textStyles.subjectSubtitle),
           ],
         );
+  }
+
+  Widget _buildLmsLink(AppTypography textStyles) {
+    if (!_isValidLmsUrl) return const SizedBox.shrink();
+    final url = lmsUrl.trim();
+    return GestureDetector(
+      onTap: () async {
+        final uri = Uri.parse(url);
+        try {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } catch (_) {}
+      },
+      child: Text(
+        'Ссылка на СДО',
+        style: textStyles.expandedSubjectSubtitle.copyWith(
+          decoration: TextDecoration.underline,
+        ),
+      ),
+    );
   }
 
   Widget _buildClickableAuditories(AppTypography textStyles) {
