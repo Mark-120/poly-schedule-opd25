@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/configs/assets/app_vectors.dart';
+import '../../core/presentation/navigation/scaffold_ui_state/global_navigation_ontroller.dart';
 import '../../core/presentation/uikit_2.0/app_text_styles.dart';
 import '../../core/presentation/uikit_2.0/theme_colors.dart';
+import '../../domain/entities/entity.dart';
+import '../../domain/entities/featured.dart';
+import '../../domain/entities/group.dart';
+import '../../domain/entities/room.dart';
 import '../../domain/entities/schedule/lesson.dart';
+import '../../domain/entities/teacher.dart';
+import '../../domain/usecases/featured_usecases/is_featured.dart';
+import '../../service_locator.dart';
+import '../pages/schedule_page.dart';
 
 class ScheduleClassSection extends StatefulWidget {
   final Lesson lesson;
@@ -77,6 +88,11 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection>
                   lessonType: lessonType,
                   isExpanded: _isExpanded,
                   teachers: teachers,
+                  teachersList: lesson.teachers,
+                  groupsList: lesson.groups,
+                  auditoriesList: lesson.auditories,
+                  lmsUrl: lesson.lmsUrl,
+                  onNavigateToEntity: _navigateToEntity,
                 ),
               ),
               _buildArrowIcon(),
@@ -132,6 +148,34 @@ class _ScheduleClassSectionState extends State<ScheduleClassSection>
       ],
     );
   }
+
+  Future<void> _navigateToEntity(Entity entity) async {
+    if (entity is ScheduleEntity) {
+      final isSavedInFeatured = sl<IsSavedInFeatured>();
+      final entityId = entity.getId();
+      final isFeatured = await isSavedInFeatured(entityId);
+
+      final featured = _createFeaturedFromEntity(entity, isFeatured);
+
+      final route = MaterialPageRoute(
+        builder: (_) {
+          return SchedulePage(dayTime: DateTime.now(), featured: featured);
+        },
+      );
+
+      // ignore: use_build_context_synchronously
+      await context.read<GlobalNavigationController>().pushToTab(0, route);
+    }
+  }
+
+  Featured<Entity> _createFeaturedFromEntity(Entity entity, bool isFeatured) {
+    if (entity is Group) return Featured<Group>(entity, isFeatured: isFeatured);
+    if (entity is Teacher) {
+      return Featured<Teacher>(entity, isFeatured: isFeatured);
+    }
+    if (entity is Room) return Featured<Room>(entity, isFeatured: isFeatured);
+    throw UnimplementedError();
+  }
 }
 
 class _LectureTime extends StatelessWidget {
@@ -160,6 +204,11 @@ class _LectureInfo extends StatelessWidget {
   final String? teachers;
   final List<String> groups;
   final String lessonType;
+  final List<Teacher> teachersList;
+  final List<Group> groupsList;
+  final List<Room> auditoriesList;
+  final String lmsUrl;
+  final Function(Entity) onNavigateToEntity;
 
   const _LectureInfo({
     required this.title,
@@ -169,7 +218,21 @@ class _LectureInfo extends StatelessWidget {
     required this.groups,
     required this.lessonType,
     required isExpanded,
+    required this.teachersList,
+    required this.groupsList,
+    required this.auditoriesList,
+    required this.lmsUrl,
+    required this.onNavigateToEntity,
   }) : _isExpanded = isExpanded;
+
+  bool get _isValidLmsUrl {
+    final s = lmsUrl.trim();
+    if (s.isEmpty) return false;
+    final uri = Uri.tryParse(s);
+    return uri != null &&
+        uri.hasScheme &&
+        (uri.scheme == 'http' || uri.scheme == 'https');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -187,15 +250,10 @@ class _LectureInfo extends StatelessWidget {
                 fontStyle: FontStyle.italic,
               ),
             ),
-            Text(location, style: textStyles.expandedSubjectSubtitle),
-            Text(
-              teachers ?? '—',
-              style: textStyles.expandedSubjectSubtitle.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Text(groups.join(', '), style: textStyles.expandedSubjectSubtitle),
-            Text('Ссылка на СДО', style: textStyles.expandedSubjectSubtitle),
+            _buildClickableAuditories(textStyles),
+            _buildClickableTeachers(textStyles),
+            _buildClickableGroups(textStyles),
+            _buildLmsLink(textStyles),
           ],
         )
         : Column(
@@ -207,5 +265,100 @@ class _LectureInfo extends StatelessWidget {
             Text('$location, $lessonType', style: textStyles.subjectSubtitle),
           ],
         );
+  }
+
+  Widget _buildLmsLink(AppTypography textStyles) {
+    if (!_isValidLmsUrl) return const SizedBox.shrink();
+    final url = lmsUrl.trim();
+    return GestureDetector(
+      onTap: () async {
+        final uri = Uri.parse(url);
+        try {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } catch (_) {}
+      },
+      child: Text(
+        'Ссылка на СДО',
+        style: textStyles.expandedSubjectSubtitle.copyWith(
+          decoration: TextDecoration.underline,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildClickableAuditories(AppTypography textStyles) {
+    if (auditoriesList.isEmpty) {
+      return Text(location, style: textStyles.expandedSubjectSubtitle);
+    }
+
+    return Wrap(
+      spacing: 4,
+      runSpacing: 4,
+      children:
+          auditoriesList.map((room) {
+            final roomText = '${room.building.abbr}, ${room.name} ауд.';
+            return GestureDetector(
+              onTap: () => onNavigateToEntity(room),
+              child: Text(
+                roomText,
+                style: textStyles.expandedSubjectSubtitle.copyWith(
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            );
+          }).toList(),
+    );
+  }
+
+  Widget _buildClickableTeachers(AppTypography textStyles) {
+    if (teachersList.isEmpty) {
+      return Text(
+        '—',
+        style: textStyles.expandedSubjectSubtitle.copyWith(
+          fontWeight: FontWeight.w500,
+        ),
+      );
+    }
+
+    return Wrap(
+      spacing: 4,
+      runSpacing: 4,
+      children:
+          teachersList.map((teacher) {
+            return GestureDetector(
+              onTap: () => onNavigateToEntity(teacher),
+              child: Text(
+                teacher.fullName,
+                style: textStyles.expandedSubjectSubtitle.copyWith(
+                  fontWeight: FontWeight.w500,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            );
+          }).toList(),
+    );
+  }
+
+  Widget _buildClickableGroups(AppTypography textStyles) {
+    if (groupsList.isEmpty) {
+      return SizedBox.shrink();
+    }
+
+    return Wrap(
+      spacing: 4,
+      runSpacing: 4,
+      children:
+          groupsList.map((group) {
+            return GestureDetector(
+              onTap: () => onNavigateToEntity(group),
+              child: Text(
+                group.name,
+                style: textStyles.expandedSubjectSubtitle.copyWith(
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            );
+          }).toList(),
+    );
   }
 }
